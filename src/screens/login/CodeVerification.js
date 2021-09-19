@@ -267,7 +267,7 @@ class CodeVerification extends Component {
         <View style={{flex: 1, backgroundColor: colors.gray}}>
           <View style={{flexGrow: 1, padding: 1}}>
             <View style={styles.mainView}>
-              <View style={{marginBottom: hp('15%')}}>
+              <View style={{marginBottom: hp('5%')}}>
                 <Image
                   resizeMode={'center'}
                   source={require('../../assets/vero-logo.png')}
@@ -283,7 +283,7 @@ class CodeVerification extends Component {
                   Enter Verification Code
                 </Text>
 
-                <View style={{marginBottom: '30%'}}>
+                <View style={{marginBottom: hp('10%')}}>
                   <View style={styles.vCodeInputView}>
                     <TextInput
                       style={styles.vCodeInputStyle}
@@ -434,11 +434,11 @@ export default connect(mapDispatchToProps)(CodeVerification);
 const styles = StyleSheet.create({
   mainView: {
     marginLeft: '10%',
-    marginTop: '10%',
+    marginTop: hp('5%'),
     backgroundColor: colors.gray,
   },
   innerViews: {
-    marginBottom: '35%',
+    marginBottom: hp('10%'),
   },
   logoStyle: {
     // height: 60,

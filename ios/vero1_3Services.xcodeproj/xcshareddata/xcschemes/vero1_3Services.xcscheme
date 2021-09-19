@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-               BuildableName = "vero1_3Services.app"
-               BlueprintName = "vero1_3Services"
-               ReferencedContainer = "container:vero1_3Services.xcodeproj">
+               BuildableName = "vero1express.app"
+               BlueprintName = "vero1express"
+               ReferencedContainer = "container:vero1express.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "00E356ED1AD99517003FC87E"
-               BuildableName = "vero1_3ServicesTests.xctest"
-               BlueprintName = "vero1_3ServicesTests"
-               ReferencedContainer = "container:vero1_3Services.xcodeproj">
+               BuildableName = "vero1expressTests.xctest"
+               BlueprintName = "vero1expressTests"
+               ReferencedContainer = "container:vero1express.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -55,9 +55,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "vero1_3Services.app"
-            BlueprintName = "vero1_3Services"
-            ReferencedContainer = "container:vero1_3Services.xcodeproj">
+            BuildableName = "vero1express.app"
+            BlueprintName = "vero1express"
+            ReferencedContainer = "container:vero1express.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -72,9 +72,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "vero1_3Services.app"
-            BlueprintName = "vero1_3Services"
-            ReferencedContainer = "container:vero1_3Services.xcodeproj">
+            BuildableName = "vero1express.app"
+            BlueprintName = "vero1express"
+            ReferencedContainer = "container:vero1express.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

@@ -24,9 +24,7 @@ export const headerInfo = {
 };
 let userApiKey = async () => {
   const {auth} = Store.getState();
-  debugger;
   if (auth.user) {
-    debugger;
     if (typeof auth.user == 'string') {
       const user_data = JSON.parse(auth.user);
       const api_key = user_data.api_key;
@@ -41,7 +39,6 @@ let userApiKey = async () => {
       userStringData = res;
     });
     console.log('userStringData: ', userStringData);
-    debugger;
     if (typeof userStringData == 'string') {
       let userJsonData = JSON.parse(userStringData);
       let userApiKey = userJsonData.api_key;
