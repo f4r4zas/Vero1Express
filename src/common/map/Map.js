@@ -21,10 +21,7 @@ import Octicons from 'react-native-vector-icons/Octicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import RNGooglePlaces from 'react-native-google-places';
 import {textStyle} from 'styled-system';
-<<<<<<< HEAD
 import FooterButton from '../FooterButton';
-=======
->>>>>>> 123ca7db83e8bc0bbf54283d09355c0d45aefab7
 
 const {width, height} = Dimensions.get('window');
 
@@ -161,10 +158,7 @@ class Map extends Component {
 
     var that = this;
 
-<<<<<<< HEAD
     // await Geolocation.setRNConfiguration(config);
-=======
->>>>>>> 123ca7db83e8bc0bbf54283d09355c0d45aefab7
     await Geolocation.getCurrentPosition(
       position => {
         console.log('check', position);
@@ -274,10 +268,7 @@ class Map extends Component {
             latitude: 0,
             longitude: 0,
           },
-<<<<<<< HEAD
           locationData: place,
-=======
->>>>>>> 123ca7db83e8bc0bbf54283d09355c0d45aefab7
         });
         // this.map.animateToCoordinate(tempCords, 1)
         this.map.animateToRegion(tempCords, 2000);
@@ -356,16 +347,12 @@ class Map extends Component {
                 style={styles.map}
                 initialRegion={this.state.initialPosition}
                 // showsUserLocation={true}
-<<<<<<< HEAD
                 // showsMyLocationButton={true}
                 showsCompass={true}
                 toolbarEnabled={true}
                 zoomEnabled={true}
                 rotateEnabled={true}
                 // moveOnMarkerPress={true}
-=======
-                showsCompass={true}
->>>>>>> 123ca7db83e8bc0bbf54283d09355c0d45aefab7
                 onTouchStart={() =>
                   this.setState({
                     regionChange1: true,
@@ -412,81 +399,8 @@ class Map extends Component {
                 />
               </MapView>
               <View style={styles.topView}>
-<<<<<<< HEAD
                 <View style={styles.innerTopView}>
                   <View style={{marginRight: 10}}>
-=======
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    justifyContent: 'space-around',
-                  }}>
-                  <View style={styles.innerTopView}>
-                    <View style={{marginRight: 10}}>
-                      <Octicons
-                        type="Octicons"
-                        name="location"
-                        size={26}
-                        color="#fff"
-                      />
-                    </View>
-                    <TouchableOpacity
-                      style={styles.searchBarView}
-                      onPress={() => this.openSearchModal1()}>
-                      <View>
-                        <Text
-                          style={[
-                            styles.textStyle,
-                            {color: '#fff', fontSize: 18},
-                          ]}>
-                          {this.state.pickUp}
-                        </Text>
-                        <Text
-                          style={[
-                            styles.textStyle,
-                            {color: '#fff', fontSize: 14},
-                          ]}>
-                          {this.state.pickUpAddress + '...'}
-                        </Text>
-                      </View>
-                    </TouchableOpacity>
-                  </View>
-                  <View>
-                    <TouchableOpacity
-                      onPress={() =>
-                        this.props.handleScreen(this.state.locationData, 0)
-                      }
-                      style={{
-                        borderColor: '#fff',
-                        borderWidth: 2,
-                        borderRadius: 10,
-                        padding: '10%',
-                        // textAlign: 'center',
-                      }}>
-                      <Text
-                        style={[
-                          styles.textStyle,
-                          {color: '#fff', fontSize: 14, textAlign: 'center'},
-                        ]}>
-                        Confirm
-                      </Text>
-                    </TouchableOpacity>
-                  </View>
-                </View>
-
-                {/* <View style={{marginLeft: 9}}>
-                  <View style={styles.dottedView2} />
-                  <View style={styles.dottedView2} />
-                  <View style={styles.dottedView2} />
-                  <View style={styles.dottedView2} />
-                  <View style={styles.dottedView2} />
-                  <View style={styles.dottedView2} />
-                  <View style={styles.dottedView2} />
-                </View>
-
-                <View style={[styles.innerTopView, {marginTop: 0}]}>
-                  <View style={{width: '10%', marginRight: 10}}>
->>>>>>> 123ca7db83e8bc0bbf54283d09355c0d45aefab7
                     <Octicons
                       type="Octicons"
                       name="location"
@@ -496,7 +410,6 @@ class Map extends Component {
                   </View>
                   <TouchableOpacity
                     style={styles.searchBarView}
-<<<<<<< HEAD
                     onPress={() => this.openSearchModal1()}>
                     <View>
                       <Text
@@ -525,19 +438,6 @@ class Map extends Component {
                   }
                   // disabled={this.state.loading}
                 />
-=======
-                    onPress={() => this.openSearchModal2()}>
-                    <View>
-                      <Text style={styles.locationText}>
-                        {this.state.dropOff}
-                      </Text>
-                      <Text style={{color: '#fff', fontSize: 11}}>
-                        {this.state.dropOffAddress + '...'}
-                      </Text>
-                    </View>
-                  </TouchableOpacity>
-                </View> */}
->>>>>>> 123ca7db83e8bc0bbf54283d09355c0d45aefab7
               </View>
             </View>
           </View>
@@ -619,7 +519,6 @@ const styles = StyleSheet.create({
   topView: {
     backgroundColor: colors.primaryOrange,
     alignSelf: 'center',
-<<<<<<< HEAD
     width: '90%',
     height: 80,
     borderRadius: 20,
@@ -631,28 +530,13 @@ const styles = StyleSheet.create({
 
     position: 'absolute',
     top: 50,
-=======
-    width: '100%',
-    height: 140,
-    borderTopRightRadius: 15,
-    borderTopLeftRadius: 15,
-    justifyContent: 'center',
-    padding: 15,
-    // to get 8% of height
-    top: height * 0.0,
->>>>>>> 123ca7db83e8bc0bbf54283d09355c0d45aefab7
   },
   innerTopView: {
     flexDirection: 'row',
     alignItems: 'center',
-<<<<<<< HEAD
     // justifyContent: 'space-around',
     // width: '60%',
     // marginRight: 5,
-=======
-    justifyContent: 'space-around',
-    //margin: 15,
->>>>>>> 123ca7db83e8bc0bbf54283d09355c0d45aefab7
     // marginBottom: 0,
   },
   locationText: {

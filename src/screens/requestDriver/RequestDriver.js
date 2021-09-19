@@ -20,12 +20,9 @@ import Geolocation from '@react-native-community/geolocation';
 import Octicons from 'react-native-vector-icons/Octicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import RNGooglePlaces from 'react-native-google-places';
-<<<<<<< HEAD
 import {textStyle} from 'styled-system';
 import FooterButton from '../../common/FooterButton';
 import Entypo from 'react-native-vector-icons/Entypo';
-=======
->>>>>>> 123ca7db83e8bc0bbf54283d09355c0d45aefab7
 
 const {width, height} = Dimensions.get('window');
 
@@ -164,12 +161,8 @@ class RequestDriver extends Component {
 
     // var that = this;
 
-<<<<<<< HEAD
     // await Geolocation.setRNConfiguration(config);
     await Geolocation.getCurrentPosition(
-=======
-    Geolocation.getCurrentPosition(
->>>>>>> 123ca7db83e8bc0bbf54283d09355c0d45aefab7
       position => {
         console.log('check', position);
         var lat = parseFloat(position.coords.latitude);
@@ -236,10 +229,6 @@ class RequestDriver extends Component {
     RNGooglePlaces.openAutocompleteModal()
       .then(place => {
         console.log('See place:', place);
-<<<<<<< HEAD
-=======
-        console.log('Address:', place.address);
->>>>>>> 123ca7db83e8bc0bbf54283d09355c0d45aefab7
 
         var ULat = place.location.latitude.toString();
         var ULong = place.location.longitude.toString();
@@ -282,10 +271,7 @@ class RequestDriver extends Component {
             latitude: 0,
             longitude: 0,
           },
-<<<<<<< HEAD
           locationData: place,
-=======
->>>>>>> 123ca7db83e8bc0bbf54283d09355c0d45aefab7
         });
         // this.map.animateToCoordinate(tempCords, 1)
         this.map.animateToRegion(tempCords, 2000);
@@ -352,12 +338,9 @@ class RequestDriver extends Component {
       })
       .catch(error => console.log(error.message)); // error is a Javascript Error object
   }
-<<<<<<< HEAD
 
   confirmLocation = () => {};
 
-=======
->>>>>>> 123ca7db83e8bc0bbf54283d09355c0d45aefab7
   render() {
     if (this.state.screen == 1) {
       return (
@@ -491,7 +474,6 @@ class RequestDriver extends Component {
                       color="#fff"
                     />
                   </View>
-<<<<<<< HEAD
                   <View style={[styles.innerTopView]}>
                     <Text style={[styles.textStyle, {fontSize: 12}]}>
                       Est.{'  '}
@@ -515,22 +497,6 @@ class RequestDriver extends Component {
                   disabled={this.state.loading}
                 />
               </View> */}
-=======
-                  <TouchableOpacity
-                    style={styles.searchBarView}
-                    onPress={() => this.openSearchModal2()}>
-                    <View>
-                      <Text style={styles.locationText}>
-                        {this.state.dropOff}
-                      </Text>
-                      <Text style={{color: '#7d92a7', fontSize: 11}}>
-                        {this.state.dropOffAddress + '...'}
-                      </Text>
-                    </View>
-                  </TouchableOpacity>
-                </View>
-              </View>
->>>>>>> 123ca7db83e8bc0bbf54283d09355c0d45aefab7
             </View>
           </View>
         </NativeBaseProvider>
@@ -557,14 +523,11 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     alignItems: 'center',
   },
-<<<<<<< HEAD
   textStyle: {
     fontWeight: 'bold',
     fontSize: 20,
     color: colors.darkGrey,
   },
-=======
->>>>>>> 123ca7db83e8bc0bbf54283d09355c0d45aefab7
   map: {
     position: 'absolute',
     top: 0,
@@ -575,11 +538,7 @@ const styles = StyleSheet.create({
   locateIconView1: {
     width: 45,
     height: 45,
-<<<<<<< HEAD
     backgroundColor: '#fff',
-=======
-    backgroundColor: '#fdfbfc',
->>>>>>> 123ca7db83e8bc0bbf54283d09355c0d45aefab7
     alignItems: 'center',
     justifyContent: 'center',
     position: 'absolute',
@@ -590,11 +549,7 @@ const styles = StyleSheet.create({
   locateIconView2: {
     width: 45,
     height: 45,
-<<<<<<< HEAD
     backgroundColor: '#fff',
-=======
-    backgroundColor: '#fdfbfc',
->>>>>>> 123ca7db83e8bc0bbf54283d09355c0d45aefab7
     alignItems: 'center',
     justifyContent: 'center',
     position: 'absolute',
@@ -605,11 +560,7 @@ const styles = StyleSheet.create({
   locateIconView3: {
     width: 45,
     height: 45,
-<<<<<<< HEAD
     backgroundColor: '#fff',
-=======
-    backgroundColor: '#fdfbfc',
->>>>>>> 123ca7db83e8bc0bbf54283d09355c0d45aefab7
     alignItems: 'center',
     justifyContent: 'center',
     position: 'absolute',
@@ -624,7 +575,6 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   topView: {
-<<<<<<< HEAD
     backgroundColor: colors.primaryOrange,
     alignSelf: 'center',
     width: '90%',
@@ -653,23 +603,10 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: height / 1.5,
     right: 0,
-=======
-    backgroundColor: '#fdfbfc',
-    alignSelf: 'center',
-    width: '100%',
-    height: 140,
-    borderTopRightRadius: 15,
-    borderTopLeftRadius: 15,
-    justifyContent: 'center',
-    padding: 15,
-    // to get 8% of height
-    top: height * 0.0,
->>>>>>> 123ca7db83e8bc0bbf54283d09355c0d45aefab7
   },
   innerTopView: {
     flexDirection: 'row',
     alignItems: 'center',
-<<<<<<< HEAD
     // justifyContent: 'space-around',
     // width: '60%',
     // marginRight: 5,
@@ -677,22 +614,11 @@ const styles = StyleSheet.create({
   },
   locationText: {
     color: '#fff',
-=======
-    //margin: 15,
-    // marginBottom: 0,
-  },
-  locationText: {
-    color: '#022651',
->>>>>>> 123ca7db83e8bc0bbf54283d09355c0d45aefab7
     fontWeight: 'bold',
     fontSize: 16,
   },
   dottedView2: {
-<<<<<<< HEAD
     backgroundColor: '#fff',
-=======
-    backgroundColor: '#7893a7',
->>>>>>> 123ca7db83e8bc0bbf54283d09355c0d45aefab7
     width: 2,
     height: 2,
     borderRadius: 1,
@@ -701,11 +627,7 @@ const styles = StyleSheet.create({
   },
   searchBarView: {
     // padding: 6,
-<<<<<<< HEAD
     // width: '90%',
-=======
-    width: '90%',
->>>>>>> 123ca7db83e8bc0bbf54283d09355c0d45aefab7
     // backgroundColor: 'yellow',
   },
 });

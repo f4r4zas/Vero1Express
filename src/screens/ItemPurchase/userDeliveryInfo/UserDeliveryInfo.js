@@ -39,7 +39,6 @@ class UserDeliveryInfo extends Component {
       error: false,
       screen: 0,
       locationData: '',
-<<<<<<< HEAD
       payload: '',
     };
   }
@@ -51,12 +50,6 @@ class UserDeliveryInfo extends Component {
     };
     this.setState(newState);
   }
-=======
-    };
-  }
-
-  componentDidMount() {}
->>>>>>> 123ca7db83e8bc0bbf54283d09355c0d45aefab7
   screenHandler = screen => {
     console.log(screen);
     // if (field === 'deliveryAddress') {
@@ -65,7 +58,6 @@ class UserDeliveryInfo extends Component {
     // }
   };
   addressHandler = (data, screen) => {
-<<<<<<< HEAD
     // if (field === 'deliveryAddress')
     console.log('data: ', data);
     // debugger;
@@ -91,23 +83,6 @@ class UserDeliveryInfo extends Component {
       };
       this.setState(newState);
     }
-=======
-    // debugger;
-    console.log(data);
-    // if (field === 'deliveryAddress')
-    let addressComponent = data.results[0].address_components;
-    let newState = {
-      screen: screen,
-      locationData: data,
-      deliveryAddress:
-        addressComponent[0].long_name +
-        ' ' +
-        addressComponent[1].long_name +
-        ' ' +
-        addressComponent[3].long_name,
-    };
-    this.setState(newState);
->>>>>>> 123ca7db83e8bc0bbf54283d09355c0d45aefab7
     // }
   };
 
@@ -253,10 +228,7 @@ class UserDeliveryInfo extends Component {
       return (
         <Map
           handleScreen={(data, screen) => this.addressHandler(data, screen)}
-<<<<<<< HEAD
           // pickupLocation={this.state.payload.item_purchases.store}
-=======
->>>>>>> 123ca7db83e8bc0bbf54283d09355c0d45aefab7
         />
       );
     }
