@@ -1,0 +1,215 @@
+{
+  "project_info": {
+    "project_number": "931509373457",
+    "firebase_url": "https://vero-a62a5.firebaseio.com",
+    "project_id": "vero-a62a5",
+    "storage_bucket": "vero-a62a5.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:931509373457:android:cc72f5f585184fa5047fb0",
+        "android_client_info": {
+          "package_name": "com.vero"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "931509373457-06l24qn9gbbkrojmpbdvstjn6p1iaipo.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDvektWM0xorsQiKMwDMo3ple_yFMri3xM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "931509373457-06l24qn9gbbkrojmpbdvstjn6p1iaipo.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "931509373457-2qvqch2p0lrh7jp9vsn03joj409r8keo.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.vero"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:931509373457:android:e3140efd8f77ecdc047fb0",
+        "android_client_info": {
+          "package_name": "com.vero.driver"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "931509373457-kl1tgiibaq9fcmch08ff5l4d6ho8m88i.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.vero.driver",
+            "certificate_hash": "b36cb68b9a18871a3ce235f0b9861aefd88572ee"
+          }
+        },
+        {
+          "client_id": "931509373457-06l24qn9gbbkrojmpbdvstjn6p1iaipo.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDvektWM0xorsQiKMwDMo3ple_yFMri3xM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "931509373457-06l24qn9gbbkrojmpbdvstjn6p1iaipo.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "931509373457-2qvqch2p0lrh7jp9vsn03joj409r8keo.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.vero"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:931509373457:android:3e7f9380cea414a0047fb0",
+        "android_client_info": {
+          "package_name": "com.vero.rideshare"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "931509373457-i2jnmrij5itls5imaj09q9u565v868i0.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.vero.rideshare",
+            "certificate_hash": "b36cb68b9a18871a3ce235f0b9861aefd88572ee"
+          }
+        },
+        {
+          "client_id": "931509373457-06l24qn9gbbkrojmpbdvstjn6p1iaipo.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDvektWM0xorsQiKMwDMo3ple_yFMri3xM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "931509373457-06l24qn9gbbkrojmpbdvstjn6p1iaipo.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "931509373457-2qvqch2p0lrh7jp9vsn03joj409r8keo.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.vero"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:931509373457:android:562721430b01d8ba",
+        "android_client_info": {
+          "package_name": "com.vero1"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "931509373457-tfokksg2kr7trj8p345a1rkavresubpf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.vero1",
+            "certificate_hash": "b36cb68b9a18871a3ce235f0b9861aefd88572ee"
+          }
+        },
+        {
+          "client_id": "931509373457-06l24qn9gbbkrojmpbdvstjn6p1iaipo.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDvektWM0xorsQiKMwDMo3ple_yFMri3xM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "931509373457-06l24qn9gbbkrojmpbdvstjn6p1iaipo.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "931509373457-2qvqch2p0lrh7jp9vsn03joj409r8keo.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.vero"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:931509373457:android:fabc366e5474a5e5047fb0",
+        "android_client_info": {
+          "package_name": "com.vero1express"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "931509373457-06l24qn9gbbkrojmpbdvstjn6p1iaipo.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDvektWM0xorsQiKMwDMo3ple_yFMri3xM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "931509373457-06l24qn9gbbkrojmpbdvstjn6p1iaipo.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "931509373457-2qvqch2p0lrh7jp9vsn03joj409r8keo.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.vero"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
