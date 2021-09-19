@@ -1,0 +1,5 @@
+1. delete product from cart
+	- 400 error
+2. update product
+	- not updating value in db
+3. 
