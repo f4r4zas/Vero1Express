@@ -446,11 +446,11 @@ export default connect(mapDispatchToProps)(CodeVerification);
 const styles = StyleSheet.create({
   mainView: {
     marginLeft: '10%',
-    marginTop: '10%',
+    marginTop: hp('5%'),
     backgroundColor: colors.gray,
   },
   innerViews: {
-    marginBottom: '35%',
+    marginBottom: hp('10%'),
   },
   logoStyle: {
     // height: 60,

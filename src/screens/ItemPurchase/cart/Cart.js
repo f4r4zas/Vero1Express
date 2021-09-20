@@ -147,7 +147,7 @@ const Cart = props => {
     // console.log('id: ', item);
     try {
       await AppService.deleteItemFromCart(id).then(res => {
-        // console.log('deleteProduct: ', res);
+        console.log('deleteProduct: ', res);
         if (res.data.status) {
           Snackbar.show({
             text: res.data.message,

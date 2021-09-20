@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-  package="com.vero1_3Services">
+  package="com.vero1express">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
@@ -31,6 +31,5 @@
       <meta-data
         android:name="com.google.android.geo.API_KEY"
         android:value="AIzaSyC6Vo_6ohnkLyGIw2IPmZka0TarRaeWJ2g"/>
-        <!-- android:value="AIzaSyDCT0MAvDCwnR1ti7v7ewvJdk29M9WGgDI"/> -->
     </application>
 </manifest>
