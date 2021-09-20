@@ -155,8 +155,6 @@ class AppService extends HttpServices {
   static async getItemsFromCart() {
     let api_key = await userApiKey();
     console.log('headerInfo.userApiKey: ', api_key);
-    console.log('headerInfo.userApiKey: ', api_key);
-
     return this.get(
       requestUrls['getItemsFromCart'],
       (headers = {Authorization: api_key}),

@@ -5,23 +5,12 @@ import {
   StyleSheet,
   TouchableOpacity,
   Image,
-  TextInput,
   FlatList,
-  Button,
   Modal,
-  SectionList,
   ScrollView,
-  ActivityIndicator,
+  Alert,
 } from 'react-native';
-import {
-  Container,
-  NativeBaseProvider,
-  Content,
-  Footer,
-  FooterTab,
-  Input,
-  Spinner,
-} from 'native-base';
+import {NativeBaseProvider, Spinner} from 'native-base';
 import {colors} from '../../../util/colors';
 import ReadMore from 'react-native-read-more-text';
 import AppService from '../../../services/AppService';
@@ -41,7 +30,7 @@ class ItemList extends Component {
     this.state = {
       DATA: [],
       storeData: this.props.route.params,
-      isVisible: false, //state of modal default false
+      isVisible: false,
       styleModal: styles.modalStyle,
       styleModalOnPress: styles.modalStyleOnPress,
       itemPressed: null,
@@ -64,6 +53,76 @@ class ItemList extends Component {
     this.getItemList();
   }
 
+  productExistanceAllert = async item => {
+    Alert.alert(
+      '',
+      'This product is already added, Do you want to add this again!',
+      [
+        {
+          text: 'Yes',
+          onPress: async () => {
+            let payload = {
+              items: [{product_id: item._id, quantity: 1}],
+            };
+            await AppService.updateItemToCart(payload).then(res => {
+              console.log('item updated to cart from itemList: ', res);
+              if (res.data.status) {
+                Snackbar.show({
+                  text: res.data.message,
+                  duration: Snackbar.LENGTH_LONG,
+                });
+                let newState = {
+                  loading: false,
+                };
+                this.setState(newState);
+              } else {
+                Snackbar.show({
+                  text: res.data.message,
+                  duration: Snackbar.LENGTH_LONG,
+                });
+                let newState = {
+                  loading: false,
+                };
+                this.setState(newState);
+              }
+            });
+          },
+          style: 'cancel',
+        },
+        {
+          text: 'No',
+          onPress: () => {
+            let itemPress = {
+              loading: false,
+            };
+            this.setState(itemPress);
+            // this.props.navigation.navigate('ItemList', item);
+          },
+        },
+      ],
+    );
+  };
+  getItemsFromCart = async item => {
+    this.setState({loading: true});
+    console.log('getItemsFromCart: ', item);
+    await AppService.getItemsFromCart().then(res => {
+      console.log('getItemsFromCart: ', res.data.data.items);
+      if (res.data?.data?.items != '') {
+        let count = 0;
+        for (let i = 0; i < res.data.data.items.length; i++) {
+          if (res.data.data.items[i].product_id._id === item._id) {
+            count = count + 1;
+            this.productExistanceAllert(item);
+          }
+        }
+        if (count == 0) {
+          this.addItemToCart(item);
+        }
+      } else {
+        this.addItemToCart(item);
+      }
+    });
+  };
   addItemToCart = async item => {
     this.setState({loading: true});
     let payload = {
@@ -386,7 +445,7 @@ class ItemList extends Component {
                               </Text>
                             </TouchableOpacity>
                             <Zocial
-                              onPress={() => this.addItemToCart(item)}
+                              onPress={() => this.getItemsFromCart(item)}
                               name="cart"
                               color={colors.primaryOrange}
                               size={16}

@@ -8,6 +8,42 @@
   "client": [
     {
       "client_info": {
+        "mobilesdk_app_id": "1:931509373457:android:9141d97e67929e79047fb0",
+        "android_client_info": {
+          "package_name": "com.Vero1Express"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "931509373457-06l24qn9gbbkrojmpbdvstjn6p1iaipo.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDvektWM0xorsQiKMwDMo3ple_yFMri3xM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "931509373457-06l24qn9gbbkrojmpbdvstjn6p1iaipo.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "931509373457-2qvqch2p0lrh7jp9vsn03joj409r8keo.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.vero"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:931509373457:android:cc72f5f585184fa5047fb0",
         "android_client_info": {
           "package_name": "com.vero"
@@ -146,42 +182,6 @@
             "certificate_hash": "b36cb68b9a18871a3ce235f0b9861aefd88572ee"
           }
         },
-        {
-          "client_id": "931509373457-06l24qn9gbbkrojmpbdvstjn6p1iaipo.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyDvektWM0xorsQiKMwDMo3ple_yFMri3xM"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "931509373457-06l24qn9gbbkrojmpbdvstjn6p1iaipo.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "931509373457-2qvqch2p0lrh7jp9vsn03joj409r8keo.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.vero"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:931509373457:android:fabc366e5474a5e5047fb0",
-        "android_client_info": {
-          "package_name": "com.vero1express"
-        }
-      },
-      "oauth_client": [
         {
           "client_id": "931509373457-06l24qn9gbbkrojmpbdvstjn6p1iaipo.apps.googleusercontent.com",
           "client_type": 3

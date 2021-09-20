@@ -81,19 +81,18 @@ class Store extends Component {
   };
   getProducts = async (item, index) => {
     this.setState({loading: true});
+    console.log('getItemsFromCart: ', item);
     await AppService.getItemsFromCart().then(res => {
       console.log('getItemsFromCart: ', res.data.data.items);
       if (res.data?.data?.items != '') {
-        Snackbar.show({
-          text: res.data.message,
-          duration: Snackbar.LENGTH_LONG,
-        });
-        this.emptyCartAllert(item, index);
+        if (
+          res.data.data.items[0].product_id.product_store === item.store_name
+        ) {
+          this.props.navigation.navigate('ItemList', item);
+        } else {
+          this.emptyCartAllert(item, index);
+        }
       } else {
-        Snackbar.show({
-          text: res.data.message,
-          duration: Snackbar.LENGTH_LONG,
-        });
         this.setState({loading: false});
         this.props.navigation.navigate('ItemList', item);
       }

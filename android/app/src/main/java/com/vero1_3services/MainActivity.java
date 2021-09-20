@@ -1,4 +1,4 @@
-package com.vero1express;
+package com.Vero1Express;
 
 import com.facebook.react.ReactActivity;
 
@@ -10,6 +10,6 @@ public class MainActivity extends ReactActivity {
    */
   @Override
   protected String getMainComponentName() {
-    return "vero1express";
+    return "Vero1Express";
   }
 }

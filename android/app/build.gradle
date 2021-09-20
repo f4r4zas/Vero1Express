@@ -138,7 +138,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.vero1express"
+        applicationId "com.Vero1Express"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

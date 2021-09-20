@@ -1,40 +1,25 @@
 import React, {useState, useEffect} from 'react';
-import {View, TextInput, Text, StyleSheet, FlatList} from 'react-native';
-// import {connect} from 'react-redux';
+import {View, Text, StyleSheet, FlatList, Alert} from 'react-native';
 import FooterButton from '../../../common/FooterButton';
-import {
-  NativeBaseProvider,
-  // Select,
-  // Checkbox,
-  ScrollView,
-  // Spinner,
-} from 'native-base';
+import {NativeBaseProvider, ScrollView} from 'native-base';
 import {colors} from '../../../util/colors';
 import CartCart from '../../../common/CartCart';
 import {textStyle} from 'styled-system';
-// import {useSelector, useDispatch} from 'react-redux';
 import AppService from '../../../services/AppService';
 import Snackbar from 'react-native-snackbar';
-// import Modal from '../../../common/Modal';
-// import asyncStorage from '../../../services/asyncStorage';
-import ModalPopUp from '../../../common/Modal';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import Loader from '../../../common/Loader';
 
 const Cart = props => {
   const [cartItems, setCartItems] = useState([]);
   let [totalPrice, setTotalPrice] = useState(0);
-  // const [quantity, setQuantity] = useState([]);
   const [loading, setloading] = useState(true);
-  // const {counter, cart} = useSelector(state => state.auth);
-  // const [countProduct, setcountProduct] = useState(0);
   const [showModal, setShowModal] = useState(false);
   const [modalProperties, setModalProperties] = useState({});
   const [walletData, setWalletData] = useState();
   const [amountToAdd, setAmountToAdd] = useState();
   const [paymentAmount, setPaymentAmount] = useState();
   const [hasWallet, setHasWallet] = useState(true);
-  // const dispatch = useDispatch();
   useEffect(async () => {
     if (props.route?.params?.isWallet) {
       setHasWallet(true);
@@ -68,11 +53,7 @@ const Cart = props => {
   const addProduct = async item => {
     setloading(true);
     if (item.quantity > 0) {
-      // let quantity = item.quantity - 1;
-      console.log('updateItemToCart: ', item);
       let payload = {
-        // items:[{product_id: item.product_id._id,
-        // quantity: item.quantity,}]
         items: [{product_id: item.product_id._id, quantity: 1}],
       };
       await AppService.updateItemToCart(payload).then(res => {
@@ -107,8 +88,6 @@ const Cart = props => {
   const removeProduct = async item => {
     setloading(true);
     if (item.quantity > 0) {
-      // let quantity = item.quantity - 1;
-      // console.log('updateItemToCart: ', item);
       let payload = {
         items: [{product_id: item.product_id._id, quantity: -1}],
       };
@@ -144,7 +123,6 @@ const Cart = props => {
   const deleteProduct = async item => {
     setloading(true);
     let id = {id: item._id};
-    // console.log('id: ', item);
     try {
       await AppService.deleteItemFromCart(id).then(res => {
         console.log('deleteProduct: ', res);
@@ -217,8 +195,7 @@ const Cart = props => {
               button1: 'Continue',
               button2: 'Cancel',
             };
-            setModalProperties(modalProperties);
-            setShowModal(true);
+            confirmationAlert(modalProperties);
           } else {
             let modalProperties = {
               title: tag,
@@ -226,8 +203,7 @@ const Cart = props => {
               button1: 'Continue',
               button2: 'Cancel',
             };
-            setModalProperties(modalProperties);
-            setShowModal(true);
+            confirmationAlert(modalProperties);
           }
         } else {
           let modalProperties = {
@@ -237,8 +213,7 @@ const Cart = props => {
             button2: 'Cancel',
           };
           setHasWallet(false);
-          setModalProperties(modalProperties);
-          setShowModal(true);
+          confirmationAlert(modalProperties);
         }
         setloading(false);
       } else {
@@ -249,6 +224,21 @@ const Cart = props => {
         });
       }
     });
+  };
+  const confirmationAlert = async item => {
+    Alert.alert(item.tag, item.body, [
+      {
+        text: item.button1,
+        onPress: () => onContinue(),
+        style: item.button2,
+      },
+      {
+        text: 'No',
+        onPress: () => {
+          setloading(false);
+        },
+      },
+    ]);
   };
   const addAmount = async (arrItems, storeName) => {
     setloading(true);
@@ -263,7 +253,6 @@ const Cart = props => {
           duration: Snackbar.LENGTH_LONG,
           amountToAdd: '',
         });
-        // debugger;
         setloading(false);
         let payload = {
           service_type: 'item_purchase',
@@ -274,7 +263,6 @@ const Cart = props => {
           },
         };
         console.log('payload: ', payload);
-        // debugger;
         props.navigation.navigate('UserDeliveryInfo', payload);
       } else {
         Snackbar.show({
@@ -285,17 +273,12 @@ const Cart = props => {
       }
     });
   };
-  const modalHandling = () => {
-    setShowModal(false);
-  };
   const onContinue = () => {
     if (hasWallet === false) {
-      setShowModal(false);
       let parameter = {
         isFromCart: true,
       };
       props.navigation.push('Wallet', parameter);
-      // console.log('pop from wallet: ', x);
     } else {
       let arrItems = [];
       let storeName = cartItems.items[0].product_id.product_store;
@@ -305,7 +288,6 @@ const Cart = props => {
           quantity: cartItems.items[i].quantity,
         });
       }
-      setShowModal(false);
       if (paymentAmount < 0) {
         addAmount(arrItems, storeName);
       } else {
@@ -318,7 +300,6 @@ const Cart = props => {
           },
         };
         console.log('payload: ', payload);
-        // debugger;
         props.navigation.navigate('UserDeliveryInfo', payload);
       }
     }
@@ -329,11 +310,6 @@ const Cart = props => {
         style={{
           flex: 1,
           backgroundColor: colors.gray,
-          // position: 'absolute',
-          // left: 0,
-          // right: 0,
-          // top: 0,
-          // bottom: 0,
         }}>
         <View style={{flexGrow: 1}}>
           <View style={styles.mainView}>
@@ -417,17 +393,6 @@ const Cart = props => {
               />
             </View>
           </View>
-
-          <ModalPopUp
-            showModal={showModal}
-            modalHandling={modalHandling}
-            modalProperties={modalProperties}
-            onPositiveResponse={onContinue}
-            // title={modalTitle}
-            // body={modalBody}
-            // button1={modalButton1}
-            // button2={modalButton2}
-          />
         </View>
       </View>
     </NativeBaseProvider>
