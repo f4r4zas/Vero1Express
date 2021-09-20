@@ -1013,8 +1013,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     marginTop: '10%',
     marginBottom: '1%',
-    // marginLeft: '-10%',
-    width: '80%',
+    marginLeft: '-10%',
+    // width: '80%',
   },
   textHeading: {
     marginTop: '10%',
