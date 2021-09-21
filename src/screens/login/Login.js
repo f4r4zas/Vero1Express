@@ -120,29 +120,29 @@ class Login extends Component {
   };
 
   pressHandler = async () => {
-    // if (validation == true) {
-    //   this.setState({loading: true});
-    //   await this.props.dispatch(sendMobileVerification(data));
-    //   if (this.props.reduxState.isMobileVerified) {
-    //     setTimeout(() => {
-    //       this.setState({loading: false});
-    //       this.props.navigation.navigate('CodeVerification');
-    //     }, 600);
-    //   } else {
-    //     this.setState({loading: false});
-    //     Snackbar.show({
-    //       text: this.props.reduxState.mobileVericifationError,
-    //       duration: Snackbar.LENGTH_LONG,
-    //     });
-    //   }
-    // } else {
-    //   this.setState({
-    //     inputIconShow: true,
-    //     loading: false,
-    //     errorText: '*Please enter valid mobile number',
-    //   });
-    // }
-    this.props.navigation.navigate('CodeVerification');
+    if (validation == true) {
+      this.setState({loading: true});
+      await this.props.dispatch(sendMobileVerification(data));
+      if (this.props.reduxState.isMobileVerified) {
+        setTimeout(() => {
+          this.setState({loading: false});
+          this.props.navigation.navigate('CodeVerification');
+        }, 600);
+      } else {
+        this.setState({loading: false});
+        Snackbar.show({
+          text: this.props.reduxState.mobileVericifationError,
+          duration: Snackbar.LENGTH_LONG,
+        });
+      }
+    } else {
+      this.setState({
+        inputIconShow: true,
+        loading: false,
+        errorText: '*Please enter valid mobile number',
+      });
+    }
+    // this.props.navigation.navigate('CodeVerification');
   };
 
   render() {
@@ -255,7 +255,8 @@ class Login extends Component {
               </View>
             </View>
           </View>
-          <FooterButton style={styles.footerTabStyle}
+          <FooterButton
+            style={styles.footerTabStyle}
             title="Get Started"
             onPress={this.pressHandler}
             disabled={this.state.loading}
@@ -344,7 +345,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 60,
     position: 'absolute',
     top: hp('90.5%'),
-    left: wp("21%"),
+    left: wp('21%'),
     overlayColor: 'transparent',
     borderRadius: 6,
   },

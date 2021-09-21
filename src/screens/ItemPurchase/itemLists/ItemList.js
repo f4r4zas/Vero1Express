@@ -9,17 +9,20 @@ import {
   Modal,
   ScrollView,
   Alert,
+  TextInput,
 } from 'react-native';
 import {NativeBaseProvider, Spinner} from 'native-base';
 import {colors} from '../../../util/colors';
 import ReadMore from 'react-native-read-more-text';
 import AppService from '../../../services/AppService';
 import Zocial from 'react-native-vector-icons/Zocial';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import DropDownItem from 'react-native-drop-down-item';
-import {marginRight} from 'styled-system';
+// import {marginRight} from 'styled-system';
 import Loader from '../../../common/Loader';
 import Snackbar from 'react-native-snackbar';
+import InputField from '../../../common/InputField';
 
 const IC_ARR_DOWN = require('../../../assets/ic_arr_down.png');
 const IC_ARR_UP = require('../../../assets/ic_arr_up.png');
@@ -40,6 +43,8 @@ class ItemList extends Component {
       total_count: '',
       total_pages: '',
       loading: false,
+      isSearch: false,
+      searchValue: '',
     };
   }
   setModalVisible(visible) {
@@ -285,72 +290,89 @@ class ItemList extends Component {
               <View style={{marginBottom: '7%'}}>
                 <Text style={styles.textStyle}>Item Purchase</Text>
               </View>
-              <View style={{flexDirection: 'row'}}>
-                <View
-                  style={{
-                    marginRight: 15,
-                    position: 'relative',
-                    bottom: 12,
-                    // flex: 1,
-                    // alignItems: 'center',
-                  }}>
-                  <Image
-                    resizeMode={'center'}
-                    source={{
-                      uri:
-                        'http://157.230.183.30:3000/' +
-                        this.state.storeData.store_logo,
-                    }}
-                    // style={{height: 100, width: 50}}
+              {this.state.isSearch ? (
+                <View style={{width: '100%'}}>
+                  <View
                     style={{
-                      flex: 1,
-                      //
-                      width: 55,
-                      height: 50,
-                    }}
-                  />
+                      flexDirection: 'row',
+                      // justifyContent: 'space-around',
+                    }}>
+                    <TouchableOpacity
+                      onPress={() => this.setState({isSearch: false})}>
+                      <Ionicons name="arrow-back" size={20} />
+                    </TouchableOpacity>
+                    <TextInput />
+                  </View>
                 </View>
-                <View>
-                  <Text style={[styles.textStyle, {fontSize: 14}]}>
-                    Accessories
-                  </Text>
-                  <Text
-                    style={[
-                      styles.textStyle,
-                      {fontSize: 10, color: colors.secondaryGray},
-                    ]}>
-                    {this.state.storeData.display_name}
-                  </Text>
-                </View>
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    width: '100%',
-                  }}>
-                  <FontAwesome
-                    // onPress={handleLogOut}
-                    name="search"
-                    // color="#22aebb"
-                    size={20}
+              ) : (
+                <View style={{flexDirection: 'row'}}>
+                  <View
                     style={{
-                      textAlign: 'right',
-                      width: '38%',
-                      marginRight: '5%',
-                    }}
-                  />
-                  <TouchableOpacity
-                    onPress={() => {
-                      this.setState({isVisible: true});
+                      marginRight: 15,
+                      position: 'relative',
+                      bottom: 12,
+                      // flex: 1,
+                      // alignItems: 'center',
+                    }}>
+                    <Image
+                      resizeMode={'center'}
+                      source={{
+                        uri:
+                          'http://157.230.183.30:3000/' +
+                          this.state.storeData.store_logo,
+                      }}
+                      // style={{height: 100, width: 50}}
+                      style={{
+                        flex: 1,
+                        //
+                        width: 55,
+                        height: 50,
+                      }}
+                    />
+                  </View>
+                  <View>
+                    <Text style={[styles.textStyle, {fontSize: 14}]}>
+                      Accessories
+                    </Text>
+                    <Text
+                      style={[
+                        styles.textStyle,
+                        {fontSize: 10, color: colors.secondaryGray},
+                      ]}>
+                      {this.state.storeData.display_name}
+                    </Text>
+                  </View>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      width: '100%',
                     }}>
                     <FontAwesome
-                      name="filter"
+                      onPress={() => this.setState({isSearch: true})}
+                      name="search"
                       // color="#22aebb"
                       size={20}
-                      // style={{marginRight: '10%'}}
+                      style={{
+                        textAlign: 'right',
+                        width: '38%',
+                        marginRight: '5%',
+                      }}
                     />
-                  </TouchableOpacity>
+                    <TouchableOpacity
+                      onPress={() => {
+                        this.setState({isVisible: true});
+                      }}>
+                      <FontAwesome
+                        name="filter"
+                        // color="#22aebb"
+                        size={20}
+                        // style={{marginRight: '10%'}}
+                      />
+                    </TouchableOpacity>
+                  </View>
                 </View>
-              </View>
+              )}
+
               <View style={{flex: 1}}>
                 <FlatList
                   data={this.state.DATA}

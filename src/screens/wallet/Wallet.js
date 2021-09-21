@@ -428,282 +428,6 @@ export class Wallet extends Component {
                             </View>
                           </View>
                         </View>
-                        <View style={styles.walletCard}>
-                          <View style={{height: 90}}>
-                            <Image
-                              resizeMode={'center'}
-                              source={require('../../assets/cvs.png')}
-                              // source={{
-                              //   uri:
-                              //     'http://157.230.183.30:3000/' +
-                              //     item.store_logo,
-                              // }}
-                              style={{height: 100, width: 100}}
-                            />
-                          </View>
-                          <View style={{justifyContent: 'center'}}>
-                            <View
-                              style={{
-                                flexDirection: 'row',
-                                // justifyContent: 'space-around',
-                              }}>
-                              <Text
-                                style={[
-                                  styles.textStyle,
-                                  {fontSize: 14, width: '60%'},
-                                ]}>
-                                Electician fair
-                              </Text>
-                              <Text style={[styles.textStyle, {fontSize: 14}]}>
-                                $120.25
-                              </Text>
-                            </View>
-                            <View
-                              style={{
-                                flexDirection: 'row',
-                              }}>
-                              <Text
-                                style={[
-                                  styles.textStyle,
-                                  {
-                                    fontSize: 10,
-                                    color: colors.secondaryGray,
-                                    width: '71%',
-                                  },
-                                ]}>
-                                <Entypo
-                                  name="location-pin"
-                                  color={colors.primaryOrange}
-                                  size={10}
-                                />
-                                10/10 Garden Road, Street 20
-                              </Text>
-                              <Text
-                                style={[
-                                  styles.textStyle,
-                                  {fontSize: 10, color: 'red'},
-                                ]}>
-                                -$20
-                              </Text>
-                            </View>
-                            <View style={{marginTop: '5%'}}>
-                              <Text
-                                style={[
-                                  styles.textStyle,
-                                  {fontSize: 10, color: colors.secondaryGray},
-                                ]}>
-                                Dec 17, 08:57 PM
-                              </Text>
-                            </View>
-                          </View>
-                        </View>
-                        <View style={styles.walletCard}>
-                          <View style={{height: 90}}>
-                            <Image
-                              resizeMode={'center'}
-                              source={require('../../assets/cvs.png')}
-                              // source={{
-                              //   uri:
-                              //     'http://157.230.183.30:3000/' +
-                              //     item.store_logo,
-                              // }}
-                              style={{height: 100, width: 100}}
-                            />
-                          </View>
-                          <View style={{justifyContent: 'center'}}>
-                            <View
-                              style={{
-                                flexDirection: 'row',
-                                // justifyContent: 'space-around',
-                              }}>
-                              <Text
-                                style={[
-                                  styles.textStyle,
-                                  {fontSize: 14, width: '60%'},
-                                ]}>
-                                Electician fair
-                              </Text>
-                              <Text style={[styles.textStyle, {fontSize: 14}]}>
-                                $120.25
-                              </Text>
-                            </View>
-                            <View
-                              style={{
-                                flexDirection: 'row',
-                              }}>
-                              <Text
-                                style={[
-                                  styles.textStyle,
-                                  {
-                                    fontSize: 10,
-                                    color: colors.secondaryGray,
-                                    width: '71%',
-                                  },
-                                ]}>
-                                <Entypo
-                                  name="location-pin"
-                                  color={colors.primaryOrange}
-                                  size={10}
-                                />
-                                10/10 Garden Road, Street 20
-                              </Text>
-                              <Text
-                                style={[
-                                  styles.textStyle,
-                                  {fontSize: 10, color: 'red'},
-                                ]}>
-                                -$20
-                              </Text>
-                            </View>
-                            <View style={{marginTop: '5%'}}>
-                              <Text
-                                style={[
-                                  styles.textStyle,
-                                  {fontSize: 10, color: colors.secondaryGray},
-                                ]}>
-                                Dec 17, 08:57 PM
-                              </Text>
-                            </View>
-                          </View>
-                        </View>
-                        <View style={styles.walletCard}>
-                          <View style={{height: 90}}>
-                            <Image
-                              resizeMode={'center'}
-                              source={require('../../assets/cvs.png')}
-                              // source={{
-                              //   uri:
-                              //     'http://157.230.183.30:3000/' +
-                              //     item.store_logo,
-                              // }}
-                              style={{height: 100, width: 100}}
-                            />
-                          </View>
-                          <View style={{justifyContent: 'center'}}>
-                            <View
-                              style={{
-                                flexDirection: 'row',
-                                // justifyContent: 'space-around',
-                              }}>
-                              <Text
-                                style={[
-                                  styles.textStyle,
-                                  {fontSize: 14, width: '60%'},
-                                ]}>
-                                Electician fair
-                              </Text>
-                              <Text style={[styles.textStyle, {fontSize: 14}]}>
-                                $120.25
-                              </Text>
-                            </View>
-                            <View
-                              style={{
-                                flexDirection: 'row',
-                              }}>
-                              <Text
-                                style={[
-                                  styles.textStyle,
-                                  {
-                                    fontSize: 10,
-                                    color: colors.secondaryGray,
-                                    width: '71%',
-                                  },
-                                ]}>
-                                <Entypo
-                                  name="location-pin"
-                                  color={colors.primaryOrange}
-                                  size={10}
-                                />
-                                10/10 Garden Road, Street 20
-                              </Text>
-                              <Text
-                                style={[
-                                  styles.textStyle,
-                                  {fontSize: 10, color: 'red'},
-                                ]}>
-                                -$20
-                              </Text>
-                            </View>
-                            <View style={{marginTop: '5%'}}>
-                              <Text
-                                style={[
-                                  styles.textStyle,
-                                  {fontSize: 10, color: colors.secondaryGray},
-                                ]}>
-                                Dec 17, 08:57 PM
-                              </Text>
-                            </View>
-                          </View>
-                        </View>
-                        <View style={styles.walletCard}>
-                          <View style={{height: 90}}>
-                            <Image
-                              resizeMode={'center'}
-                              source={require('../../assets/cvs.png')}
-                              // source={{
-                              //   uri:
-                              //     'http://157.230.183.30:3000/' +
-                              //     item.store_logo,
-                              // }}
-                              style={{height: 100, width: 100}}
-                            />
-                          </View>
-                          <View style={{justifyContent: 'center'}}>
-                            <View
-                              style={{
-                                flexDirection: 'row',
-                                // justifyContent: 'space-around',
-                              }}>
-                              <Text
-                                style={[
-                                  styles.textStyle,
-                                  {fontSize: 14, width: '60%'},
-                                ]}>
-                                Electician fair
-                              </Text>
-                              <Text style={[styles.textStyle, {fontSize: 14}]}>
-                                $120.25
-                              </Text>
-                            </View>
-                            <View
-                              style={{
-                                flexDirection: 'row',
-                              }}>
-                              <Text
-                                style={[
-                                  styles.textStyle,
-                                  {
-                                    fontSize: 10,
-                                    color: colors.secondaryGray,
-                                    width: '71%',
-                                  },
-                                ]}>
-                                <Entypo
-                                  name="location-pin"
-                                  color={colors.primaryOrange}
-                                  size={10}
-                                />
-                                10/10 Garden Road, Street 20
-                              </Text>
-                              <Text
-                                style={[
-                                  styles.textStyle,
-                                  {fontSize: 10, color: 'red'},
-                                ]}>
-                                -$20
-                              </Text>
-                            </View>
-                            <View style={{marginTop: '5%'}}>
-                              <Text
-                                style={[
-                                  styles.textStyle,
-                                  {fontSize: 10, color: colors.secondaryGray},
-                                ]}>
-                                Dec 17, 08:57 PM
-                              </Text>
-                            </View>
-                          </View>
-                        </View>
                       </>
                     ) : (
                       <View>
@@ -922,27 +646,30 @@ export class Wallet extends Component {
                             </Text>
                             {/* <Text style={styles.skipText}>Create</Text> */}
                           </TouchableOpacity>
-                          <Text
-                            style={[
-                              styles.textStyle,
-                              {
-                                marginLeft: '2%',
-                                marginRight: '2%',
-                                marginBottom: '5%',
-                              },
-                            ]}>
-                            /
-                          </Text>
-                          <TouchableOpacity
-                            activeOpacity={0.8}
-                            onPress={() =>
-                              this.state.deleteCard
-                                ? this.setState({deleteCard: false})
-                                : this.setState({deleteCard: true})
-                            }
-                            disabled={this.state.loading}>
-                            <Text style={[styles.textStyle, {fontSize: 16}]}>
-                              {/* <FontAwesome
+                          {this.state.cards.length == 0 ? null : (
+                            <>
+                              <Text
+                                style={[
+                                  styles.textStyle,
+                                  {
+                                    marginLeft: '2%',
+                                    marginRight: '2%',
+                                    marginBottom: '5%',
+                                  },
+                                ]}>
+                                /
+                              </Text>
+                              <TouchableOpacity
+                                activeOpacity={0.8}
+                                onPress={() =>
+                                  this.state.deleteCard
+                                    ? this.setState({deleteCard: false})
+                                    : this.setState({deleteCard: true})
+                                }
+                                disabled={this.state.loading}>
+                                <Text
+                                  style={[styles.textStyle, {fontSize: 16}]}>
+                                  {/* <FontAwesome
                                   type="FontAwesome"
                                   name="edit"
                                   size={20}
@@ -950,10 +677,14 @@ export class Wallet extends Component {
                                     fontWeight: 'bold',
                                   }}
                                 /> */}
-                              {this.state.deleteCard ? 'Cancel' : 'Delete Card'}
-                            </Text>
-                            {/* <Text style={styles.skipText}>Create</Text> */}
-                          </TouchableOpacity>
+                                  {this.state.deleteCard
+                                    ? 'Cancel'
+                                    : 'Delete Card'}
+                                </Text>
+                                {/* <Text style={styles.skipText}>Create</Text> */}
+                              </TouchableOpacity>
+                            </>
+                          )}
                         </View>
                       </View>
                     )
