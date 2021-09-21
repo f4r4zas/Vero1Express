@@ -57,6 +57,10 @@ class ItemList extends Component {
     this.setState(newState);
     this.getItemList();
   }
+  handleSearch = (text) => {
+    this.setState({ searchValue: text })
+    console.log("---------",searchValue)
+ }
 
   productExistanceAllert = async item => {
     Alert.alert(
@@ -301,7 +305,14 @@ class ItemList extends Component {
                       onPress={() => this.setState({isSearch: false})}>
                       <Ionicons name="arrow-back" size={20} />
                     </TouchableOpacity>
-                    <TextInput />
+                    <TextInput 
+                    
+                    underlineColorAndroid = "transparent"
+                    placeholder = "Search"
+                    value={this.state.searchValue||""}
+                    placeholderTextColor = "#9a73ef"
+                    autoCapitalize = "none"
+                    onChangeText = {this.handleSearch}/>
                   </View>
                 </View>
               ) : (
