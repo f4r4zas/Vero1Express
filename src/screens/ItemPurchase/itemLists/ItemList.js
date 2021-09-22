@@ -10,6 +10,7 @@ import {
   ScrollView,
   Alert,
   TextInput,
+  SafeAreaView,
 } from 'react-native';
 import {NativeBaseProvider, Spinner} from 'native-base';
 import {colors} from '../../../util/colors';
@@ -45,6 +46,8 @@ class ItemList extends Component {
       loading: false,
       isSearch: false,
       searchValue: '',
+      isMainCategories: '',
+      isSubCategories: '',
     };
   }
   setModalVisible(visible) {
@@ -56,11 +59,12 @@ class ItemList extends Component {
     };
     this.setState(newState);
     this.getItemList();
+    this.getCategories();
   }
-  handleSearch = (text) => {
-    this.setState({ searchValue: text })
-    console.log("---------",searchValue)
- }
+  handleSearch = text => {
+    this.setState({searchValue: text});
+    console.log('---------', searchValue);
+  };
 
   productExistanceAllert = async item => {
     Alert.alert(
@@ -183,6 +187,72 @@ class ItemList extends Component {
     });
   };
 
+  getCategories = async item => {
+    debugger;
+    let payload = '';
+    if (item?.item?.has_sub) {
+      payload = {
+        store_name: this.state.store_name,
+        is_main: 'false',
+        parent_id: item.item._id,
+      };
+    } else {
+      payload = {
+        store_name: this.state.store_name,
+        is_main: 'true',
+      };
+    }
+    await AppService.getCategories(payload).then(res => {
+      console.log('getCategories: ', res);
+      debugger;
+      if (res.data.status) {
+        if (item) {
+          let newState = '';
+          newState = {
+            isSubCategories: res.data.data.categories,
+            loading: false,
+          };
+          this.setState(newState);
+        } else {
+          let newState = '';
+          newState = {
+            isMainCategories: res.data.data.categories,
+            loading: false,
+          };
+          this.setState(newState);
+        }
+      } else {
+        let newState = {
+          loading: false,
+        };
+        this.setState(newState);
+      }
+    });
+  };
+
+  getProductSearch = async item => {
+    let payload = '';
+    payload = {
+      product_store: this.state.store_name,
+      product_category: item.item._id,
+    };
+    await AppService.getProductSearch(payload).then(res => {
+      console.log('getProductSearch: ', res);
+      debugger;
+      if (res.data.status) {
+        let newState = {
+          loading: false,
+        };
+        this.setState(newState);
+      } else {
+        let newState = {
+          loading: false,
+        };
+        this.setState(newState);
+      }
+    });
+  };
+
   isCloseToBottom = ({layoutMeasurement, contentOffset, contentSize}) => {
     const paddingToBottom = 20;
     return (
@@ -230,20 +300,24 @@ class ItemList extends Component {
 
   EmptyListMessage = () => {
     return (
-      <View
-        style={{
-          textAlign: 'center',
-          justifyContent: 'center',
-          marginTop: '50%',
-        }}>
-        <Text
-          style={[
-            styles.textStyle,
-            {textAlign: 'center', color: colors.secondaryGray},
-          ]}>
-          No Data Found!
-        </Text>
-      </View>
+      <>
+        {this.state.loading ? null : (
+          <View
+            style={{
+              textAlign: 'center',
+              justifyContent: 'center',
+              marginTop: '50%',
+            }}>
+            <Text
+              style={[
+                styles.textStyle,
+                {textAlign: 'center', color: colors.secondaryGray},
+              ]}>
+              No Data Found!
+            </Text>
+          </View>
+        )}
+      </>
     );
   };
   itemDetails = (item, index) => {
@@ -274,7 +348,6 @@ class ItemList extends Component {
     }
   };
   render() {
-    console.log('data: ', this.state.DATA);
     return (
       <NativeBaseProvider>
         <ScrollView
@@ -305,14 +378,14 @@ class ItemList extends Component {
                       onPress={() => this.setState({isSearch: false})}>
                       <Ionicons name="arrow-back" size={20} />
                     </TouchableOpacity>
-                    <TextInput 
-                    
-                    underlineColorAndroid = "transparent"
-                    placeholder = "Search"
-                    value={this.state.searchValue||""}
-                    placeholderTextColor = "#9a73ef"
-                    autoCapitalize = "none"
-                    onChangeText = {this.handleSearch}/>
+                    <TextInput
+                      underlineColorAndroid="transparent"
+                      placeholder="Search"
+                      value={this.state.searchValue || ''}
+                      placeholderTextColor="#9a73ef"
+                      autoCapitalize="none"
+                      onChangeText={this.handleSearch}
+                    />
                   </View>
                 </View>
               ) : (
@@ -530,10 +603,181 @@ class ItemList extends Component {
                   size={20}
                 />
               </View>
-              <View style={{justifyContent: 'space-between', margin: '10%'}}>
-                <ScrollView>
-                  {this.state.DATA
-                    ? this.state.DATA.map((param, i) => {
+              <View
+                style={{
+                  justifyContent: 'space-between',
+                  margin: '10%',
+                  height: '80%',
+                }}>
+                <FlatList
+                  data={this.state.isMainCategories}
+                  numColumns={1}
+                  // scrollEnabled={true}
+                  keyExtractor={(item, index) => index + ''}
+                  // ListEmptyComponent={this.EmptyListMessage}
+                  // ListFooterComponent={this.renderFooter}
+                  renderItem={(itemMain, index) => {
+                    // console.log('item: ', item);
+                    return (
+                      <DropDownItem
+                        key={index}
+                        value={itemMain}
+                        style={{
+                          marginBottom: '3%',
+                          marginTop: '3%',
+                          // underlineColor: colors.black,
+                        }}
+                        contentVisible={false}
+                        invisibleImage={IC_ARR_DOWN}
+                        visibleImage={IC_ARR_UP}
+                        underlineColor={colors.secondaryGray}
+                        header={
+                          itemMain.item.has_sub ? (
+                            <View>
+                              <TouchableOpacity
+                                onPress={
+                                  itemMain.item.has_sub
+                                    ? () => this.getCategories(itemMain)
+                                    : ''
+                                }>
+                                <Text
+                                  style={{
+                                    fontSize: 18,
+                                    fontWeight: 'bold',
+                                    underlineColor: colors.black,
+                                  }}>
+                                  {itemMain.item.name}
+                                </Text>
+                              </TouchableOpacity>
+                            </View>
+                          ) : (
+                            <View>
+                              <TouchableOpacity
+                                onPress={() => this.getProductSearch(itemMain)}>
+                                <Text
+                                  style={[
+                                    {
+                                      fontSize: 14,
+                                      color: colors.primaryOrange,
+                                    },
+                                  ]}>
+                                  {itemMain.item.name}
+                                </Text>
+                              </TouchableOpacity>
+                            </View>
+                          )
+                        }>
+                        {/* <TouchableOpacity
+                          onPress={() => this.getProductSearch(itemMain)}> */}
+                        <Text
+                          style={[
+                            {
+                              fontSize: 14,
+                              color: colors.primaryOrange,
+                            },
+                          ]}>
+                          {itemMain.item.name}
+                        </Text>
+                        {/* </TouchableOpacity> */}
+                        {/* {!itemMain.item.has_sub ? (
+                          <TouchableOpacity
+                            onPress={() => this.getProductSearch(itemMain)}>
+                            <Text
+                              style={[
+                                {
+                                  fontSize: 14,
+                                  color: colors.primaryOrange,
+                                },
+                              ]}>
+                              {itemMain.item.name}
+                            </Text>
+                          </TouchableOpacity>
+                        ) : (
+                          <SafeAreaView style={{flex: 1}}>
+                            <FlatList
+                              data={this.state.isSubCategories}
+                              numColumns={1}
+                              scrollEnabled={false}
+                              keyExtractor={(item, index) => index + ''}
+                              // ListEmptyComponent={this.EmptyListMessage}
+                              // ListFooterComponent={this.renderFooter}
+                              renderItem={(itemSub, index) => {
+                                console.log('subCategories: ', itemSub);
+                                return (
+                                  <DropDownItem
+                                    key={index}
+                                    value={itemSub}
+                                    style={{
+                                      marginBottom: '3%',
+                                      marginTop: '3%',
+                                      // underlineColor: colors.black,
+                                    }}
+                                    contentVisible={false}
+                                    invisibleImage={IC_ARR_DOWN}
+                                    visibleImage={IC_ARR_UP}
+                                    underlineColor={colors.secondaryGray}
+                                    header={
+                                      itemSub.item.has_sub ? (
+                                        <TouchableOpacity
+                                          onPress={
+                                            itemSub.item.has_sub
+                                              ? () =>
+                                                  this.getCategories(itemSub)
+                                              : ''
+                                          }>
+                                          <Text
+                                            style={{
+                                              fontSize: 18,
+                                              fontWeight: 'bold',
+                                              underlineColor: colors.black,
+                                            }}>
+                                            {itemSub.item.name}
+                                          </Text>
+                                        </TouchableOpacity>
+                                      ) : (
+                                        <TouchableOpacity
+                                          onPress={() =>
+                                            this.getProductSearch(itemSub)
+                                          }>
+                                          <Text
+                                            style={[
+                                              {
+                                                fontSize: 14,
+                                                color: colors.primaryOrange,
+                                              },
+                                            ]}>
+                                            {itemSub.item.name}
+                                          </Text>
+                                        </TouchableOpacity>
+                                      )
+                                    }>
+                                    <TouchableOpacity
+                                      onPress={() =>
+                                        this.getProductSearch(itemSub)
+                                      }>
+                                      <Text
+                                        style={[
+                                          {
+                                            fontSize: 14,
+                                            color: colors.primaryOrange,
+                                          },
+                                        ]}>
+                                        {itemSub.item.name}
+                                      </Text>
+                                    </TouchableOpacity>
+                                  </DropDownItem>
+                                );
+                              }}
+                            />
+                          </SafeAreaView>
+                        )} */}
+                      </DropDownItem>
+                    );
+                  }}
+                />
+                {/* <ScrollView>
+                  {this.state.isMainCategories
+                    ? this.state.isMainCategories.map((param, i) => {
                         return (
                           <DropDownItem
                             key={i}
@@ -555,7 +799,7 @@ class ItemList extends Component {
                                     fontWeight: 'bold',
                                     underlineColor: colors.black,
                                   }}>
-                                  {param.product_category.name}
+                                  {param.name}
                                 </Text>
                               </View>
                             }>
@@ -566,14 +810,14 @@ class ItemList extends Component {
                                   color: colors.primaryOrange,
                                 },
                               ]}>
-                              {param.product_category.product_name}
+                              {param.product_name}
                             </Text>
                           </DropDownItem>
                         );
                       })
                     : null}
                   {/* <View style={{height: 150}} /> */}
-                </ScrollView>
+                {/* </ScrollView>  */}
               </View>
             </View>
           </View>

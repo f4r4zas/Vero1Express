@@ -119,6 +119,29 @@ class AppService extends HttpServices {
     let url = requestUrls['stores'];
     return this.get(url, (headers = {Authorization: headerInfo.userKey}));
   }
+  static getCategories(payload) {
+    const {store_name, is_main, parent_id} = payload;
+
+    let url = requestUrls['getCategories'];
+    // url += `?product_store=${store_name}`;
+    if (parent_id) {
+      url += `?store_name=${store_name}&is_main=${is_main}&parent_id=${parent_id}`;
+    } else {
+      url += `?store_name=${store_name}&is_main=${is_main}`;
+    }
+    return this.get(url, {});
+  }
+  static getProductSearch(payload) {
+    const {store_name, product_category, product_name} = payload;
+
+    let url = requestUrls['getProductSearch'];
+    if (product_category) {
+      url += `?store_name=${store_name}&product_category=${product_category}`;
+    } else {
+      url += `?store_name=${store_name}&product_name=${product_name}`;
+    }
+    return this.get(url, (headers = {Authorization: headerInfo.userKey}));
+  }
   static getItemList(payload) {
     const {store_name, page, per_page} = payload;
 

@@ -18,6 +18,8 @@ const requestUrls = {
   registerUser: `${serverUrl}/register`,
   stores: `${serverUrl}/stores`,
   getItemList: `${serverUrl}/product/search`,
+  getCategories: `${serverUrl}/category`,
+  getProductSearch: `${serverUrl}/product/search`,
   addItemToCart: `${serverUrl}/basket`,
   updateItemToCart: `${serverUrl}/basket/update-item`,
   getItemsFromCart: `${serverUrl}/basket`,

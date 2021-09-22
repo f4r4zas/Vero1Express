@@ -3,6 +3,7 @@ import axios from 'axios';
 export default class HttpServices {
   static get(url, headers) {
     console.log('Get Headers : ', headers);
+    console.log('url : ', url);
     return axios({method: 'GET', url, headers});
   }
 
