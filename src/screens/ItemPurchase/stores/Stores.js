@@ -22,7 +22,7 @@ import {
 import AppService from '../../../services/AppService';
 import {colors} from '../../../util/colors';
 import Snackbar from 'react-native-snackbar';
-import asyncStorage from '../../../services/asyncStorage';
+// import asyncStorage from '../../../services/asyncStorage';
 import Loader from '../../../common/Loader';
 class Store extends Component {
   constructor(props) {

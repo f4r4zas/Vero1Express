@@ -10,7 +10,10 @@ import {
   ScrollView,
   Alert,
   TextInput,
-  SafeAreaView,
+  // SafeAreaView,
+  LayoutAnimation,
+  Platform,
+  UIManager,
 } from 'react-native';
 import {NativeBaseProvider, Spinner} from 'native-base';
 import {colors} from '../../../util/colors';
@@ -19,11 +22,14 @@ import AppService from '../../../services/AppService';
 import Zocial from 'react-native-vector-icons/Zocial';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import DropDownItem from 'react-native-drop-down-item';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+// import DropDownItem from 'react-native-drop-down-item';
 // import {marginRight} from 'styled-system';
 import Loader from '../../../common/Loader';
 import Snackbar from 'react-native-snackbar';
 import InputField from '../../../common/InputField';
+// import InputField from '../../../common/InputField';
+// import Accordian from '../../../common/Accordin';
 
 const IC_ARR_DOWN = require('../../../assets/ic_arr_down.png');
 const IC_ARR_UP = require('../../../assets/ic_arr_up.png');
@@ -48,24 +54,48 @@ class ItemList extends Component {
       searchValue: '',
       isMainCategories: '',
       isSubCategories: '',
+      expanded: false,
+      collapseIndex: '',
     };
+    if (Platform.OS === 'android') {
+      UIManager.setLayoutAnimationEnabledExperimental(true);
+    }
   }
+  toggleExpand = async item => {
+    await this.getCategories(item);
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    // debugger;
+    if (this.state.collapseIndex == '') {
+      let exp = !this.state.expanded;
+      let newState = {expanded: exp, collapseIndex: item.index};
+      this.setState(newState);
+    } else if (this.state.collapseIndex == item.index) {
+      let exp = !this.state.expanded;
+      let newState = {expanded: exp, collapseIndex: item.index};
+      this.setState(newState);
+    } else if (this.state.collapseIndex != item.index) {
+      let exp = !this.state.expanded;
+      let newState = {expanded: exp, collapseIndex: item.index};
+      this.setState(newState);
+    }
+  };
   setModalVisible(visible) {
     this.setState({modalVisible: visible});
   }
-  componentDidMount() {
+  async componentDidMount() {
     let newState = {
       loading: true,
     };
     this.setState(newState);
-    this.getItemList();
-    this.getCategories();
+    await this.getItemList();
+    await this.getCategories();
   }
   handleSearch = text => {
     this.setState({searchValue: text});
-    console.log('---------', searchValue);
+    if (text.length >= 3) {
+      this.getProductSearch(text);
+    }
   };
-
   productExistanceAllert = async item => {
     Alert.alert(
       '',
@@ -164,7 +194,6 @@ class ItemList extends Component {
       }
     });
   };
-
   getItemList = async () => {
     let payload = {
       store_name: this.state.store_name,
@@ -180,17 +209,29 @@ class ItemList extends Component {
           page: res.data.data.page,
           total_count: res.data.data.total_count,
           total_pages: res.data.data.total_pages,
+          // loading: false,
+        };
+        this.setState(newState);
+      } else {
+        Snackbar.show({
+          text: res.data.message,
+          duration: Snackbar.LENGTH_LONG,
+        });
+        let newState = {
           loading: false,
         };
         this.setState(newState);
       }
     });
   };
-
   getCategories = async item => {
-    debugger;
+    // debugger;
     let payload = '';
     if (item?.item?.has_sub) {
+      let newState = {
+        loading: true,
+      };
+      this.setState(newState);
       payload = {
         store_name: this.state.store_name,
         is_main: 'false',
@@ -204,7 +245,7 @@ class ItemList extends Component {
     }
     await AppService.getCategories(payload).then(res => {
       console.log('getCategories: ', res);
-      debugger;
+      // debugger;
       if (res.data.status) {
         if (item) {
           let newState = '';
@@ -222,6 +263,10 @@ class ItemList extends Component {
           this.setState(newState);
         }
       } else {
+        Snackbar.show({
+          text: res.data.message,
+          duration: Snackbar.LENGTH_LONG,
+        });
         let newState = {
           loading: false,
         };
@@ -229,22 +274,84 @@ class ItemList extends Component {
       }
     });
   };
-
-  getProductSearch = async item => {
-    let payload = '';
-    payload = {
+  getProductSearch = async text => {
+    // let newState = {
+    //   loading: true,
+    // };
+    // this.setState(newState);
+    let payload = {
       product_store: this.state.store_name,
-      product_category: item.item._id,
+      // product_category: item.item._id,
+      product_name: text,
     };
+    try {
+      await AppService.getProductSearch(payload).then(res => {
+        console.log('getProductSearch: ', res);
+        if (res.data.status) {
+          let newState = {
+            DATA: res.data.data.products,
+            page: res.data.data.page,
+            total_count: res.data.data.total_count,
+            total_pages: res.data.data.total_pages,
+            loading: false,
+            isVisible: false,
+          };
+          this.setState(newState);
+        } else {
+          Snackbar.show({
+            text: res.data.message,
+            duration: Snackbar.LENGTH_LONG,
+          });
+          let newState = {
+            loading: false,
+          };
+          this.setState(newState);
+        }
+      });
+    } catch (error) {
+      // console.log(error.response.data.message);
+      Snackbar.show({
+        text: error.response.data.message,
+        duration: Snackbar.LENGTH_LONG,
+      });
+    }
+  };
+  getCategoryProductSearch = async item => {
+    let newState = {
+      loading: true,
+    };
+    this.setState(newState);
+    let payload = '';
+    if (item?.item?.has_sub) {
+      payload = {
+        product_store: item.item.store_name,
+        product_category: item.item._id,
+        // product_name: item.item.name,
+      };
+    } else {
+      payload = {
+        product_store: item.item.store_name,
+        product_category: item.item._id,
+        product_name: item.item.name,
+      };
+    }
     await AppService.getProductSearch(payload).then(res => {
-      console.log('getProductSearch: ', res);
-      debugger;
+      // console.log('getProductSearch: ', res);
       if (res.data.status) {
         let newState = {
+          DATA: res.data.data.products,
+          page: res.data.data.page,
+          total_count: res.data.data.total_count,
+          total_pages: res.data.data.total_pages,
           loading: false,
+          isVisible: false,
         };
         this.setState(newState);
       } else {
+        Snackbar.show({
+          text: res.data.message,
+          duration: Snackbar.LENGTH_LONG,
+        });
         let newState = {
           loading: false,
         };
@@ -252,7 +359,6 @@ class ItemList extends Component {
       }
     });
   };
-
   isCloseToBottom = ({layoutMeasurement, contentOffset, contentSize}) => {
     const paddingToBottom = 20;
     return (
@@ -260,7 +366,6 @@ class ItemList extends Component {
       contentSize.height - paddingToBottom
     );
   };
-
   loadMoreResults = async () => {
     let payload = {
       store_name: this.state.store_name,
@@ -285,19 +390,18 @@ class ItemList extends Component {
         this.setState(newState, () => {
           console.log('pagination DAta : ', this.state.DATA);
         });
+      } else {
+        Snackbar.show({
+          text: res.data.message,
+          duration: Snackbar.LENGTH_LONG,
+        });
+        let newState = {
+          loading: false,
+        };
+        this.setState(newState);
       }
     });
   };
-  renderFooter = () => {
-    return (
-      <View style={{marginTop: 50}}>
-        {this.state.loading ? (
-          <Spinner size={30} color={colors.primaryOrange} />
-        ) : null}
-      </View>
-    );
-  };
-
   EmptyListMessage = () => {
     return (
       <>
@@ -368,27 +472,43 @@ class ItemList extends Component {
                 <Text style={styles.textStyle}>Item Purchase</Text>
               </View>
               {this.state.isSearch ? (
-                <View style={{width: '100%'}}>
+                // <View style={{width: '100%'}}>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    // justifyContent: 'flex-start',
+                  }}>
+                  <View style={{width: '10%', position: 'relative'}}>
+                    <Ionicons
+                      name="arrow-back"
+                      size={20}
+                      onPress={() => {
+                        this.setState({isSearch: false, searchValue: ''});
+                        this.getItemList();
+                      }}
+                    />
+                  </View>
                   <View
-                    style={{
-                      flexDirection: 'row',
-                      // justifyContent: 'space-around',
-                    }}>
-                    <TouchableOpacity
-                      onPress={() => this.setState({isSearch: false})}>
-                      <Ionicons name="arrow-back" size={20} />
-                    </TouchableOpacity>
-                    <TextInput
+                    style={{width: '80%', position: 'relative', bottom: '8%'}}>
+                    <InputField
+                      label={''}
+                      placeholder={'Search'}
+                      value={this.state.searchValue || ''}
+                      name={''}
+                      onChangeText={e => this.handleSearch(e)}
+                    />
+                    {/* <TextInput
                       underlineColorAndroid="transparent"
                       placeholder="Search"
                       value={this.state.searchValue || ''}
-                      placeholderTextColor="#9a73ef"
+                      placeholderTextColor={colors.secondaryGray}
                       autoCapitalize="none"
                       onChangeText={this.handleSearch}
-                    />
+                    /> */}
                   </View>
                 </View>
               ) : (
+                // </View>
                 <View style={{flexDirection: 'row'}}>
                   <View
                     style={{
@@ -619,205 +739,63 @@ class ItemList extends Component {
                   renderItem={(itemMain, index) => {
                     // console.log('item: ', item);
                     return (
-                      <DropDownItem
-                        key={index}
-                        value={itemMain}
-                        style={{
-                          marginBottom: '3%',
-                          marginTop: '3%',
-                          // underlineColor: colors.black,
-                        }}
-                        contentVisible={false}
-                        invisibleImage={IC_ARR_DOWN}
-                        visibleImage={IC_ARR_UP}
-                        underlineColor={colors.secondaryGray}
-                        header={
-                          itemMain.item.has_sub ? (
-                            <View>
-                              <TouchableOpacity
-                                onPress={
-                                  itemMain.item.has_sub
-                                    ? () => this.getCategories(itemMain)
-                                    : ''
-                                }>
-                                <Text
-                                  style={{
-                                    fontSize: 18,
-                                    fontWeight: 'bold',
-                                    underlineColor: colors.black,
-                                  }}>
-                                  {itemMain.item.name}
-                                </Text>
-                              </TouchableOpacity>
-                            </View>
-                          ) : (
-                            <View>
-                              <TouchableOpacity
-                                onPress={() => this.getProductSearch(itemMain)}>
-                                <Text
-                                  style={[
-                                    {
-                                      fontSize: 14,
-                                      color: colors.primaryOrange,
-                                    },
-                                  ]}>
-                                  {itemMain.item.name}
-                                </Text>
-                              </TouchableOpacity>
-                            </View>
-                          )
-                        }>
-                        {/* <TouchableOpacity
-                          onPress={() => this.getProductSearch(itemMain)}> */}
-                        <Text
-                          style={[
-                            {
-                              fontSize: 14,
-                              color: colors.primaryOrange,
-                            },
-                          ]}>
-                          {itemMain.item.name}
-                        </Text>
-                        {/* </TouchableOpacity> */}
-                        {/* {!itemMain.item.has_sub ? (
-                          <TouchableOpacity
-                            onPress={() => this.getProductSearch(itemMain)}>
-                            <Text
-                              style={[
-                                {
-                                  fontSize: 14,
-                                  color: colors.primaryOrange,
-                                },
-                              ]}>
-                              {itemMain.item.name}
-                            </Text>
-                          </TouchableOpacity>
-                        ) : (
-                          <SafeAreaView style={{flex: 1}}>
-                            <FlatList
-                              data={this.state.isSubCategories}
-                              numColumns={1}
-                              scrollEnabled={false}
-                              keyExtractor={(item, index) => index + ''}
-                              // ListEmptyComponent={this.EmptyListMessage}
-                              // ListFooterComponent={this.renderFooter}
-                              renderItem={(itemSub, index) => {
-                                console.log('subCategories: ', itemSub);
-                                return (
-                                  <DropDownItem
-                                    key={index}
-                                    value={itemSub}
-                                    style={{
-                                      marginBottom: '3%',
-                                      marginTop: '3%',
-                                      // underlineColor: colors.black,
-                                    }}
-                                    contentVisible={false}
-                                    invisibleImage={IC_ARR_DOWN}
-                                    visibleImage={IC_ARR_UP}
-                                    underlineColor={colors.secondaryGray}
-                                    header={
-                                      itemSub.item.has_sub ? (
-                                        <TouchableOpacity
-                                          onPress={
-                                            itemSub.item.has_sub
-                                              ? () =>
-                                                  this.getCategories(itemSub)
-                                              : ''
-                                          }>
-                                          <Text
-                                            style={{
-                                              fontSize: 18,
-                                              fontWeight: 'bold',
-                                              underlineColor: colors.black,
-                                            }}>
-                                            {itemSub.item.name}
-                                          </Text>
-                                        </TouchableOpacity>
-                                      ) : (
-                                        <TouchableOpacity
-                                          onPress={() =>
-                                            this.getProductSearch(itemSub)
-                                          }>
-                                          <Text
-                                            style={[
-                                              {
-                                                fontSize: 14,
-                                                color: colors.primaryOrange,
-                                              },
-                                            ]}>
-                                            {itemSub.item.name}
-                                          </Text>
-                                        </TouchableOpacity>
-                                      )
-                                    }>
-                                    <TouchableOpacity
-                                      onPress={() =>
-                                        this.getProductSearch(itemSub)
-                                      }>
-                                      <Text
-                                        style={[
-                                          {
-                                            fontSize: 14,
-                                            color: colors.primaryOrange,
-                                          },
-                                        ]}>
-                                        {itemSub.item.name}
-                                      </Text>
-                                    </TouchableOpacity>
-                                  </DropDownItem>
-                                );
-                              }}
-                            />
-                          </SafeAreaView>
-                        )} */}
-                      </DropDownItem>
+                      <View>
+                        <TouchableOpacity
+                          // ref={this.accordian}
+                          style={styles.row}
+                          onPress={() => this.toggleExpand(itemMain)}>
+                          <Text style={[styles.title, styles.font]}>
+                            {itemMain.item.name}
+                          </Text>
+                          <Icon
+                            name={
+                              this.state.expanded &&
+                              itemMain.item._id ==
+                                this.state.isSubCategories[0].parent_id
+                                ? 'keyboard-arrow-up'
+                                : 'keyboard-arrow-down'
+                            }
+                            size={30}
+                            color={colors.darkGrey}
+                          />
+                        </TouchableOpacity>
+                        <View style={styles.parentHr} />
+                        {this.state.expanded &&
+                        itemMain.item._id ==
+                          this.state.isSubCategories[0].parent_id ? (
+                          <FlatList
+                            data={this.state.isSubCategories}
+                            numColumns={1}
+                            // scrollEnabled={true}
+                            keyExtractor={(item, index) => index + ''}
+                            // ListEmptyComponent={this.EmptyListMessage}
+                            // ListFooterComponent={this.renderFooter}
+                            renderItem={(itemSub, index) => {
+                              return (
+                                <TouchableOpacity
+                                  style={styles.child}
+                                  onPress={() =>
+                                    this.getCategoryProductSearch(itemSub)
+                                  }>
+                                  <Text
+                                    style={[
+                                      styles.textStyle,
+                                      {
+                                        fontSize: 13,
+                                        color: colors.primaryOrange,
+                                      },
+                                    ]}>
+                                    {itemSub.item.name}
+                                  </Text>
+                                </TouchableOpacity>
+                              );
+                            }}
+                          />
+                        ) : null}
+                      </View>
                     );
                   }}
                 />
-                {/* <ScrollView>
-                  {this.state.isMainCategories
-                    ? this.state.isMainCategories.map((param, i) => {
-                        return (
-                          <DropDownItem
-                            key={i}
-                            value={i}
-                            style={{
-                              marginBottom: '3%',
-                              marginTop: '3%',
-                              // underlineColor: colors.black,
-                            }}
-                            contentVisible={false}
-                            invisibleImage={IC_ARR_DOWN}
-                            visibleImage={IC_ARR_UP}
-                            underlineColor={colors.secondaryGray}
-                            header={
-                              <View>
-                                <Text
-                                  style={{
-                                    fontSize: 18,
-                                    fontWeight: 'bold',
-                                    underlineColor: colors.black,
-                                  }}>
-                                  {param.name}
-                                </Text>
-                              </View>
-                            }>
-                            <Text
-                              style={[
-                                {
-                                  fontSize: 14,
-                                  color: colors.primaryOrange,
-                                },
-                              ]}>
-                              {param.product_name}
-                            </Text>
-                          </DropDownItem>
-                        );
-                      })
-                    : null}
-                  {/* <View style={{height: 150}} /> */}
-                {/* </ScrollView>  */}
               </View>
             </View>
           </View>
@@ -830,15 +808,9 @@ class ItemList extends Component {
 export default ItemList;
 const styles = StyleSheet.create({
   mainView: {
-    // marginLeft: '10%',
-    // marginRight: '10%',
-    // marginTop: '15%',
     margin: '10%',
     backgroundColor: colors.gray,
   },
-  // innerViews: {
-  //   marginBottom: '35%',
-  // },
   textStyle: {
     fontWeight: 'bold',
     fontSize: 20,
@@ -887,5 +859,30 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 14,
     color: colors.secondaryGray,
+  },
+  title: {
+    fontSize: 15,
+    fontWeight: 'bold',
+    color: colors.white,
+  },
+  row: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    height: 40,
+    paddingLeft: '5%',
+    paddingRight: '5%',
+    alignItems: 'center',
+    backgroundColor: colors.primaryOrange,
+  },
+  parentHr: {
+    height: 3,
+    color: colors.darkGrey,
+    width: '100%',
+  },
+  child: {
+    // backgroundColor: colors.primaryOrange,
+    paddingLeft: '8%',
+    paddingBottom: '3%',
+    paddingTop: '3%',
   },
 });

@@ -132,13 +132,13 @@ class AppService extends HttpServices {
     return this.get(url, {});
   }
   static getProductSearch(payload) {
-    const {store_name, product_category, product_name} = payload;
+    const {product_store, product_category, product_name} = payload;
 
     let url = requestUrls['getProductSearch'];
     if (product_category) {
-      url += `?store_name=${store_name}&product_category=${product_category}`;
+      url += `?product_store=${product_store}&product_category=${product_category}`;
     } else {
-      url += `?store_name=${store_name}&product_name=${product_name}`;
+      url += `?product_store=${product_store}&product_name=${product_name}`;
     }
     return this.get(url, (headers = {Authorization: headerInfo.userKey}));
   }

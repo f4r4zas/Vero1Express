@@ -23,7 +23,9 @@ const InputField = ({
 }) => {
   return (
     <View style={styles.personalInfo}>
-      <Text style={[styles.textStyle, {fontSize: 16}]}>{label}</Text>
+      {label ? (
+        <Text style={[styles.textStyle, {fontSize: 16}]}>{label}</Text>
+      ) : null}
       <View style={[styles.borderStyle, styles.view1]}>
         <TextInput
           value={value}
