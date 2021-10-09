@@ -2,6 +2,7 @@ import {requestUrls} from './config';
 import HttpServices from './HttpServices';
 import {Store} from '../reduxStore/Store';
 import asyncStorage from './asyncStorage';
+import axios from 'axios';
 const params = new URLSearchParams();
 import qs from 'qs';
 
@@ -20,6 +21,7 @@ export const headerInfo = {
     'QUM5YWMyMGYyYTkyOWY2ZDE3YjI3ZmUxOGIzOWY3NGUxNTplMzdlNzFjOGUzZmJiNmZmODhiZmE3MzNlNGE3MDJjMA==',
   contentType: 'application/x-www-form-urlencoded',
   cartContentType: 'application/json',
+  uploadImage: 'multipart/form-data',
   // userApiKey: userApiKey(),
 };
 let userApiKey = async () => {
@@ -227,6 +229,7 @@ class AppService extends HttpServices {
   static async addAmount(payload) {
     let api_key = await userApiKey();
     console.log('headerInfo.userApiKey: ', api_key);
+
     return this.post(
       requestUrls['addAmount'],
       (headers = {
@@ -238,15 +241,32 @@ class AppService extends HttpServices {
   }
   static async createPurchase(payload) {
     let api_key = await userApiKey();
+    let urlApi = requestUrls['createPurchase'];
+    let dataPayload = JSON.stringify(payload);
     console.log('headerInfo.userApiKey: ', api_key);
-    return this.post(
-      requestUrls['createPurchase'],
-      (headers = {
+    return await axios({
+      method: 'post',
+      url: urlApi,
+      data: payload,
+      config: {
+        headers: {
+          Authorization: api_key,
+          'Content-Type': headerInfo.cartContentType,
+        },
+      },
+      headers: {
         Authorization: api_key,
         'Content-Type': headerInfo.cartContentType,
-      }),
-      payload,
-    );
+      },
+    });
+    // return this.post(
+    //   requestUrls['createPurchase'],
+    //   (headers = {
+    //     Authorization: api_key,
+    //     'Content-Type': headerInfo.cartContentType,
+    //   }),
+    //   payload,
+    // );
   }
   static async makePayment(payload) {
     let api_key = await userApiKey();
@@ -276,6 +296,36 @@ class AppService extends HttpServices {
       }),
       data,
     );
+  }
+  static async uploadImage(payload) {
+    let api_key = await userApiKey();
+    console.log('headerInfo.userApiKey: ', payload);
+    const formData = new FormData();
+    formData.append('image_type', 'purchase');
+    formData.append('api_key', api_key);
+    formData.append('image', payload);
+    // Object.keys(payload).forEach(key => {
+    //   formData.append(key, payload[key]);
+    // });
+    let urlApi = requestUrls['uploadImage'];
+    // console.log('formData appened: ', formData);
+    // console.log('urlApi: ', urlApi);
+
+    return await axios({
+      method: 'post',
+      url: urlApi,
+      data: formData,
+      config: {
+        headers: {
+          Authorization: api_key,
+          'Content-Type': 'multipart/form-data',
+        },
+      },
+      headers: {
+        Authorization: api_key,
+        'Content-Type': 'multipart/form-data',
+      },
+    });
   }
 }
 

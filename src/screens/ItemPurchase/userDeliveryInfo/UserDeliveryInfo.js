@@ -9,6 +9,7 @@ import {
   FlatList,
   ScrollView,
   Alert,
+  KeyboardAvoidingView,
 } from 'react-native';
 import {
   Container,
@@ -26,6 +27,10 @@ import FooterButton from '../../../common/FooterButton';
 import InputField from '../../../common/InputField';
 import Entypo from 'react-native-vector-icons/Entypo';
 import Map from '../../../common/map/Map';
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from 'react-native-responsive-screen';
 
 class UserDeliveryInfo extends Component {
   constructor(props) {
@@ -153,6 +158,7 @@ class UserDeliveryInfo extends Component {
           console.log(error.response);
         }
       }
+    } else {
     }
   };
 
@@ -168,59 +174,69 @@ class UserDeliveryInfo extends Component {
             }}>
             <View style={{flex: 1}}>
               <View style={styles.mainView}>
-                <View style={{marginBottom: '15%'}}>
-                  <Text style={styles.textStyle}>Enter Location</Text>
-                </View>
-                <InputField
-                  label={'Delivery Address'}
-                  placeholder={'11/14 Garden Road, Street 12'}
-                  value={this.state.deliveryAddress}
-                  onFocus={() => this.screenHandler(1)}
-                  isValid={this.state.isValid}
-                  initialIcon={true}
-                  inputIconShow={true}
-                  name={''}
-                  numberOfLines={3}
-                  multiline={true}
-                  inputIcon={
-                    <Entypo
-                      name="location-pin"
-                      // color={colors.primaryOrange}
-                      size={15}
-                      // style={{marginRight: '10%'}}
+                <KeyboardAvoidingView
+                  behavior="padding"
+                  keyboardVerticalOffset={50}
+                  behavior={Platform.OS === 'ios' ? 'padding' : null}
+                  // style={{flex: 1}}
+                  enabled>
+                  <ScrollView>
+                    <View style={{marginBottom: '15%'}}>
+                      <Text style={styles.textStyle}>Enter Location</Text>
+                    </View>
+                    <InputField
+                      label={'Delivery Address'}
+                      placeholder={'11/14 Garden Road, Street 12'}
+                      value={this.state.deliveryAddress}
+                      onFocus={() => this.screenHandler(1)}
+                      isValid={this.state.isValid}
+                      initialIcon={true}
+                      inputIconShow={true}
+                      name={''}
+                      numberOfLines={3}
+                      multiline={true}
+                      inputIcon={
+                        <Entypo
+                          name="location-pin"
+                          // color={colors.primaryOrange}
+                          size={15}
+                          // style={{marginRight: '10%'}}
+                        />
+                      }
                     />
-                  }
-                />
 
-                <InputField
-                  label={'Specific Instructions'}
-                  placeholder={'johan@gmail.com'}
-                  value={this.state.specificInstruction}
-                  onChangeText={e =>
-                    this.changeHandler(e, 'specificInstruction')
-                  }
-                  isValid={this.state.isValid}
-                  initialIcon={false}
-                  inputIconShow={false}
-                />
-                <InputField
-                  label={'Promo Code'}
-                  placeholder={'VERO$200'}
-                  value={this.state.promoCode}
-                  onChangeText={e => this.changeHandler(e, 'promoCode')}
-                  isValid={this.state.isValid}
-                  initialIcon={false}
-                  inputIconShow={false}
-                />
-              </View>
-              <View style={{top: this.state.deliveryAddress ? '30%' : '37%'}}>
-                <FooterButton
-                  title="Request Driver"
-                  onPress={this.pressHandler}
-                  disabled={this.state.loading}
-                />
+                    <InputField
+                      label={'Specific Instructions'}
+                      placeholder={'johan@gmail.com'}
+                      value={this.state.specificInstruction}
+                      onChangeText={e =>
+                        this.changeHandler(e, 'specificInstruction')
+                      }
+                      isValid={this.state.isValid}
+                      initialIcon={false}
+                      inputIconShow={false}
+                    />
+                    <InputField
+                      label={'Promo Code'}
+                      placeholder={'VERO$200'}
+                      value={this.state.promoCode}
+                      onChangeText={e => this.changeHandler(e, 'promoCode')}
+                      isValid={this.state.isValid}
+                      initialIcon={false}
+                      inputIconShow={false}
+                    />
+                  </ScrollView>
+                </KeyboardAvoidingView>
               </View>
             </View>
+            {/* <View style={{top: this.state.deliveryAddress ? '30%' : '37%'}}> */}
+            <FooterButton
+              style={styles.footerTabStyle}
+              title="Request Driver"
+              onPress={this.pressHandler}
+              disabled={this.state.loading}
+            />
+            {/* </View> */}
           </View>
         </NativeBaseProvider>
       );
@@ -247,5 +263,13 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 20,
     color: colors.darkGrey,
+  },
+  footerTabStyle: {
+    borderTopLeftRadius: 60,
+    position: 'absolute',
+    top: hp('90.5%'),
+    left: wp('21%'),
+    overlayColor: 'transparent',
+    borderRadius: 6,
   },
 });

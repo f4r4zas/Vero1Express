@@ -63,20 +63,24 @@ class Store extends Component {
   };
   EmptyListMessage = () => {
     return (
-      <View
-        style={{
-          textAlign: 'center',
-          justifyContent: 'center',
-          marginTop: '50%',
-        }}>
-        <Text
-          style={[
-            styles.textStyle,
-            {textAlign: 'center', color: colors.secondaryGray},
-          ]}>
-          No Data Found!
-        </Text>
-      </View>
+      <>
+        {this.state.loading ? null : (
+          <View
+            style={{
+              textAlign: 'center',
+              justifyContent: 'center',
+              marginTop: '50%',
+            }}>
+            <Text
+              style={[
+                styles.textStyle,
+                {textAlign: 'center', color: colors.secondaryGray},
+              ]}>
+              No Data Found!
+            </Text>
+          </View>
+        )}
+      </>
     );
   };
   getProducts = async (item, index) => {

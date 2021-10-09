@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
   View,
   Text,
@@ -18,8 +18,9 @@ import {
 } from 'native-base';
 import Zocial from 'react-native-vector-icons/Zocial';
 import Octicons from 'react-native-vector-icons/Octicons';
-import {colors} from '../../util/colors';
-import {style} from 'styled-system';
+import { colors } from '../../util/colors';
+import { style } from 'styled-system';
+import { showNotification } from '../../notification.android';
 class Home extends Component {
   constructor(props) {
     super(props);
@@ -33,10 +34,10 @@ class Home extends Component {
   render() {
     return (
       <NativeBaseProvider>
-        <View style={{flex: 1, backgroundColor: colors.gray}}>
-          <View style={{flex: 1}}>
+        <View style={{ flex: 1, backgroundColor: colors.gray }}>
+          <View style={{ flex: 1 }}>
             <View style={styles.mainView}>
-              <View style={{marginBottom: '20%'}}>
+              <View style={{ marginBottom: '20%' }}>
                 <Text style={styles.textStyle}>Select Type of</Text>
                 <Text style={styles.textStyle}>Service You Need</Text>
               </View>
@@ -63,7 +64,7 @@ class Home extends Component {
                     <Text
                       style={[
                         styles.modalText,
-                        {fontWeight: 'normal', fontSize: 14, marginTop: 4},
+                        { fontWeight: 'normal', fontSize: 14, marginTop: 4 },
                       ]}>
                       Purchase without waste
                     </Text>
@@ -92,7 +93,7 @@ class Home extends Component {
                     styleModal3: styles.modalStyle,
                   };
                   this.setState(newState, () => {});
-                  this.props.navigation.navigate('Store');
+                  this.props.navigation.navigate('PackagePickupAndDelivery');
                 }}>
                 <View
                   style={{
@@ -107,7 +108,7 @@ class Home extends Component {
                     <Text
                       style={[
                         styles.modalText,
-                        {fontWeight: 'normal', fontSize: 14, marginTop: 4},
+                        { fontWeight: 'normal', fontSize: 14, marginTop: 4 },
                       ]}>
                       Purchase without waste
                     </Text>
@@ -138,7 +139,10 @@ class Home extends Component {
                     styleModal1: styles.modalStyle,
                   };
                   this.setState(newState, () => {});
-                  this.props.navigation.navigate('Store');
+                  showNotification(
+                    'Notification Testing',
+                    'Notification is working',
+                  );
                 }}>
                 <View
                   style={{
@@ -151,7 +155,7 @@ class Home extends Component {
                     <Text
                       style={[
                         styles.modalText,
-                        {fontWeight: 'normal', fontSize: 14, marginTop: 4},
+                        { fontWeight: 'normal', fontSize: 14, marginTop: 4 },
                       ]}>
                       Purchase without waste
                     </Text>

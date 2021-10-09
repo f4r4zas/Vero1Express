@@ -32,6 +32,7 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import AppService from '../../../services/AppService';
 import Snackbar from 'react-native-snackbar';
 import Loader from '../../../common/Loader';
+// import HTML from 'react-native-render-html';
 
 const renderUri = itemImage => {
   if (!/^(f|ht)tps?:\/\//i.test(itemImage)) {
@@ -43,7 +44,7 @@ const renderUri = itemImage => {
 const ItemDetails = props => {
   const [countProduct, setcountProduct] = useState(1);
   const [loading, setloading] = useState(false);
-  const [item, setItem] = useState(props.route.params.item);
+  const [item, setItem] = useState('');
   const [product_description, setproduct_description] = useState('');
   const [storeData, setStoreData] = useState(props.route.params.storeData);
 
@@ -79,14 +80,26 @@ const ItemDetails = props => {
     }
   };
   useEffect(() => {
-    if (item.product_description != '' || item.product_description != null) {
-      let htmlString = item.product_description;
+    setItem(props.route.params.item);
+    if (
+      props.route.params.item.product_description != '' ||
+      props.route.params.item.product_description != null
+    ) {
+      let htmlString = props.route.params.item.product_description;
       let plainString = htmlString.replace(/<[^>]+>/g, '');
       setproduct_description(plainString);
     } else {
       setproduct_description('');
     }
   }, []);
+  // const htmlContent = () => {
+  //   return {
+  //     fontSize: 16,
+  //     fontFamily: 'Montserrat-Light',
+  //     color: '#262121',
+  //   };
+  // };
+  console.log('items: ', props.route.params.item);
   return (
     <NativeBaseProvider>
       <View style={{flex: 1, backgroundColor: colors.white}}>
@@ -119,7 +132,8 @@ const ItemDetails = props => {
                       styles.textStyle,
                       {fontSize: 12, color: colors.primaryOrange},
                     ]}>
-                    Baby & Skincare
+                    {props.route.params.item.product_category.name}
+                    {/* {item?.product_category?.name} */}
                   </Text>
                 </View>
               </View>
@@ -127,7 +141,8 @@ const ItemDetails = props => {
                 style={{height: 200, width: '100%'}}
                 resizeMode="center"
                 source={{
-                  uri: renderUri(item.product_image),
+                  uri: renderUri(props.route.params.item.product_image),
+                  // uri: renderUri(item?.product_image),
                 }}
               />
               <View
@@ -138,19 +153,45 @@ const ItemDetails = props => {
                   marginBottom: '3%',
                 }}>
                 <Text style={[styles.textStyle, {fontSize: 16, width: '90%'}]}>
-                  {item.product_name}
+                  {props.route.params.item.product_name}
+                  {/* {item?.product_name} */}
                 </Text>
                 <Text
                   style={[
                     styles.textStyle,
                     {fontSize: 15, color: colors.primaryOrange},
                   ]}>
-                  ${item.product_price}
+                  ${props.route.params.item.product_price}
+                  {/* ${item?.product_price} */}
                 </Text>
               </View>
               <View style={{height: '30%'}}>
                 <ScrollView>
                   <Text style={styles.description}>
+                    {/* <HTML
+                      html={
+                        props.route.params.item.product_description
+                          ? props.route.params.item.product_description
+                          : ''
+                        // item?.product_description
+                        //   ? item?.product_description
+                        //   : ''
+                      }
+                      ignoredStyles={[
+                        'max-height',
+                        'display',
+                        'padding',
+                        'transform',
+                        'font-weight',
+                        'line-height',
+                        'width',
+                        'height',
+                        'color',
+                        'font-variant',
+                      ]}
+                      ignoredDomTags={['div', 'br']}
+                      // baseFontStyle={() => htmlContent()}
+                    /> */}
                     {product_description ? product_description : ''}
                   </Text>
                 </ScrollView>

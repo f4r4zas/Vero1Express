@@ -21,6 +21,10 @@ import {Alert, View} from 'react-native';
 import asyncStorage from '../services/asyncStorage';
 import UserDeliveryInfo from '../screens/ItemPurchase/userDeliveryInfo/UserDeliveryInfo';
 import RequestDriver from '../screens/requestDriver/RequestDriver';
+import ItemReturnsOrExchange from '../screens/ItemReturn&Exchange/ItemReturnsOrExchange';
+import ItemReturnsOrExchangeCheckout from '../screens/ItemReturn&Exchange/ItemReturnsOrExchangeCheckout';
+import PackagePickupAndDelivery from '../screens/PackagePickup&Delivery/PackagePickup&Delivery';
+import PackagePickupAndDeliveryCheckout from '../screens/PackagePickup&Delivery/PackagePickup&DeliveryCheckout';
 
 const Tab = createBottomTabNavigator();
 
@@ -281,31 +285,47 @@ const AppNavigation = (props, {navigation}) => {
         }}
       />
       <Stack.Screen
+        name="ItemReturnsOrExchange"
+        component={ItemReturnsOrExchange}
+        options={{
+          headerShown: true,
+          headerTitle: false,
+          headerTransparent: true,
+        }}
+      />
+      <Stack.Screen
+        name="ItemReturnsOrExchangeCheckout"
+        component={ItemReturnsOrExchangeCheckout}
+        options={{
+          headerShown: true,
+          headerTitle: false,
+          headerTransparent: true,
+        }}
+      />
+      <Stack.Screen
+        name="PackagePickupAndDelivery"
+        component={PackagePickupAndDelivery}
+        options={{
+          headerShown: true,
+          headerTitle: false,
+          headerTransparent: true,
+        }}
+      />
+      <Stack.Screen
+        name="PackagePickupAndDeliveryCheckout"
+        component={PackagePickupAndDeliveryCheckout}
+        options={{
+          headerShown: true,
+          headerTitle: false,
+          headerTransparent: true,
+        }}
+      />
+      <Stack.Screen
         name="RequestDriver"
         component={RequestDriver}
         options={{
           headerShown: false,
           headerTitle: false,
-          // headerTransparent: true,
-          // headerRight: () => (
-          //   <View style={{flexDirection: 'row'}}>
-          //     <Zocial
-          //       onPress={goToCart}
-          //       name="cart"
-          //       size={22}
-          //       style={{color: colors.secondaryGray, marginRight: 10}}
-          //     />
-          //     <MaterialCommunityIcons
-          //       name="logout"
-          //       size={22}
-          //       onPress={handleLogOut}
-          //       style={{color: colors.secondaryGray}}
-          //     />
-          //   </View>
-          // ),
-          // headerRightContainerStyle: {
-          //   marginRight: 20,
-          // },
         }}
       />
     </Stack.Navigator>

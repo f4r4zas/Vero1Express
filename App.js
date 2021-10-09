@@ -4,9 +4,9 @@ import {createStackNavigator} from '@react-navigation/stack';
 import Splash from './src/screens/splash/Splash';
 import AuthNavigation from './src/AuthNavigation/AuthNavigation';
 const Stack = createStackNavigator();
-const App = ({}) => {
-  return (
-    <>
+class App extends React.Component {
+  render() {
+    return (
       <NavigationContainer>
         <Stack.Navigator initialRouteName="Splash">
           <Stack.Screen
@@ -21,8 +21,8 @@ const App = ({}) => {
           />
         </Stack.Navigator>
       </NavigationContainer>
-    </>
-  );
-};
+    );
+  }
+}
 
 export default App;

@@ -40,13 +40,14 @@ const InputField = ({
           onFocus={onFocus}
           style={
             style
-              ? style
+              ? [style, {width: '90%'}]
               : [
                   styles.textStyle2,
                   {
                     height: multiline == true && value ? 80 : 30,
                     alignItems: 'center',
                     padding: 0,
+                    width: '90%',
                   },
                 ]
           }

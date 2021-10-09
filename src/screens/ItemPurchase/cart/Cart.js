@@ -160,20 +160,24 @@ const Cart = props => {
   };
   const EmptyListMessage = () => {
     return (
-      <View
-        style={{
-          textAlign: 'center',
-          justifyContent: 'center',
-          marginTop: '50%',
-        }}>
-        <Text
-          style={[
-            styles.textStyle,
-            {textAlign: 'center', color: colors.secondaryGray},
-          ]}>
-          Your Cart Is Empty!
-        </Text>
-      </View>
+      <>
+        {loading ? null : (
+          <View
+            style={{
+              textAlign: 'center',
+              justifyContent: 'center',
+              marginTop: '50%',
+            }}>
+            <Text
+              style={[
+                styles.textStyle,
+                {textAlign: 'center', color: colors.secondaryGray},
+              ]}>
+              No Data Found!
+            </Text>
+          </View>
+        )}
+      </>
     );
   };
 

@@ -62,20 +62,24 @@ class ItemList extends Component {
     }
   }
   toggleExpand = async item => {
-    await this.getCategories(item);
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-    // debugger;
+    debugger;
     if (this.state.collapseIndex == '') {
+      await this.getCategories(item);
+      LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
       let exp = !this.state.expanded;
-      let newState = {expanded: exp, collapseIndex: item.index};
+      let newState = {expanded: true, collapseIndex: item.index};
       this.setState(newState);
     } else if (this.state.collapseIndex == item.index) {
+      // await this.getCategories(item);
+      LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
       let exp = !this.state.expanded;
       let newState = {expanded: exp, collapseIndex: item.index};
       this.setState(newState);
     } else if (this.state.collapseIndex != item.index) {
+      await this.getCategories(item);
+      LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
       let exp = !this.state.expanded;
-      let newState = {expanded: exp, collapseIndex: item.index};
+      let newState = {expanded: true, collapseIndex: item.index};
       this.setState(newState);
     }
   };
@@ -492,19 +496,11 @@ class ItemList extends Component {
                     style={{width: '80%', position: 'relative', bottom: '8%'}}>
                     <InputField
                       label={''}
-                      placeholder={'Search'}
+                      placeholder={'Search Products ...'}
                       value={this.state.searchValue || ''}
                       name={''}
                       onChangeText={e => this.handleSearch(e)}
                     />
-                    {/* <TextInput
-                      underlineColorAndroid="transparent"
-                      placeholder="Search"
-                      value={this.state.searchValue || ''}
-                      placeholderTextColor={colors.secondaryGray}
-                      autoCapitalize="none"
-                      onChangeText={this.handleSearch}
-                    /> */}
                   </View>
                 </View>
               ) : (
@@ -570,7 +566,7 @@ class ItemList extends Component {
                         name="filter"
                         // color="#22aebb"
                         size={20}
-                        // style={{marginRight: '10%'}}
+                        style={{width: '40%', marginRight: '10%'}}
                       />
                     </TouchableOpacity>
                   </View>
@@ -861,9 +857,9 @@ const styles = StyleSheet.create({
     color: colors.secondaryGray,
   },
   title: {
-    fontSize: 15,
+    fontSize: 16,
     fontWeight: 'bold',
-    color: colors.white,
+    color: colors.darkGrey,
   },
   row: {
     flexDirection: 'row',
@@ -872,17 +868,17 @@ const styles = StyleSheet.create({
     paddingLeft: '5%',
     paddingRight: '5%',
     alignItems: 'center',
-    backgroundColor: colors.primaryOrange,
+    // backgroundColor: colors.primaryOrange,
   },
   parentHr: {
-    height: 3,
+    height: 2,
     color: colors.darkGrey,
     width: '100%',
   },
   child: {
     // backgroundColor: colors.primaryOrange,
-    paddingLeft: '8%',
-    paddingBottom: '3%',
-    paddingTop: '3%',
+    paddingLeft: '10%',
+    paddingBottom: '2%',
+    paddingTop: '2%',
   },
 });

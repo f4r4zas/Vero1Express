@@ -31,6 +31,7 @@ const requestUrls = {
   deleteCardFromWallet: `${serverUrl}/wallet/delete-card-customer`,
   addAmount: `${serverUrl}/purchase/charge`,
   createPurchase: `${serverUrl}/driver/request-driver`,
+  uploadImage: `${serverUrl}/image`,
 
   //Logout Controller
   // logOut: `${serverUrl}/logout`,

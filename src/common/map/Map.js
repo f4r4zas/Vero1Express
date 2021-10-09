@@ -8,19 +8,22 @@ import {
   Text,
   Dimensions,
   PermissionsAndroid,
+  Platform,
 } from 'react-native';
-import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
+// import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
 import {NativeBaseProvider} from 'native-base';
 import {colors} from '../../util/colors';
-import AutoComplete from '../../common/map/Autocomplete';
+// import AutoComplete from '../../common/map/Autocomplete';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import Autocomplete from '../../common/map/Autocomplete';
 import Geocoder from 'react-native-geocoding';
-import Geolocation from '@react-native-community/geolocation';
+import Geolocation from 'react-native-geolocation-service';
+// import Geolocation from '@react-native-community/geolocation';
+import MapViewDirections from 'react-native-maps-directions';
 import Octicons from 'react-native-vector-icons/Octicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import RNGooglePlaces from 'react-native-google-places';
-import {textStyle} from 'styled-system';
+// import {textStyle} from 'styled-system';
 import FooterButton from '../FooterButton';
 
 const {width, height} = Dimensions.get('window');
@@ -28,14 +31,6 @@ const {width, height} = Dimensions.get('window');
 const ASPECT_RATIO = width / height;
 const LATITUDE_DELTA = 1;
 const LONGITUDE_DELTA = 1;
-
-var hasPermissionLocation = PermissionsAndroid.request(
-  PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-  {
-    title: 'Location Permission',
-    message: 'You must to accept this to make it work.',
-  },
-);
 
 const GOOGLE_MAPS_APIKEY = 'AIzaSyC6Vo_6ohnkLyGIw2IPmZka0TarRaeWJ2g';
 class Map extends Component {
@@ -60,7 +55,7 @@ class Map extends Component {
         longitude: 0,
       },
       regionChange1: true,
-      regionChange2: false,
+      regionChange2: true,
       fakeMarkerAppearance: true,
 
       pickLat: 0,
@@ -77,7 +72,93 @@ class Map extends Component {
     };
   }
   componentDidMount() {
-    this.getCurrentLocation();
+    console.log(
+      'this.props.pickupLocationData: ',
+      this.props.pickupLocationData,
+    );
+    const place = this.props.pickupLocationData;
+    if (place !== '' && place?.results) {
+      let loc = place.results[0].geometry.location;
+      var tempCords = {
+        latitude: parseFloat(loc.lat),
+        longitude: parseFloat(loc.lng),
+        latitudeDelta: 0.0015,
+        longitudeDelta: 0.0015,
+      };
+
+      var fullAddress =
+        place.results[0].address_components[0].long_name +
+        ' ' +
+        place.results[0].address_components[1].long_name +
+        ' ' +
+        place.results[0].address_components[3].long_name;
+
+      this.setState({
+        pickUp: place.name,
+        pickUpAddress: fullAddress,
+        pickLat: loc.lat,
+        pickLong: loc.lng,
+        regionChange1: false,
+        regionChange2: false,
+        initialPosition: {
+          latitude: loc.lat,
+          longitude: loc.lng,
+          latitudeDelta: 0.0015,
+          longitudeDelta: 0.0015,
+        },
+        origin: {
+          latitude: loc.lat,
+          longitude: loc.lng,
+          latitudeDelta: 0.08,
+          longitudeDelta: LATITUDE_DELTA,
+        },
+
+        // destination: {
+        //   latitude: 0,
+        //   longitude: 0,
+        // },
+        // locationData: place,
+      });
+    } else if (place !== '' && !place?.results) {
+      var tempCords = {
+        latitude: parseFloat(place.location.latitude),
+        longitude: parseFloat(place.location.longitude),
+        latitudeDelta: 0.0015,
+        longitudeDelta: 0.0015,
+      };
+
+      var fullAddress = place.address.slice(0, 39);
+
+      this.setState({
+        pickUp: place.name,
+        pickUpAddress: fullAddress,
+        pickLat: place.location.latitude,
+        pickLong: place.location.longitude,
+        regionChange1: false,
+        regionChange2: false,
+        initialPosition: {
+          latitude: place.location.latitude,
+          longitude: place.location.longitude,
+          latitudeDelta: 0.0015,
+          longitudeDelta: 0.0015,
+        },
+        origin: {
+          latitude: place.location.latitude,
+          longitude: place.location.longitude,
+          latitudeDelta: 0.08,
+          longitudeDelta: LATITUDE_DELTA,
+        },
+
+        // destination: {
+        //   latitude: 0,
+        //   longitude: 0,
+        // },
+        // locationData: place,
+      });
+    }
+    if (this.props.locationType === 'pickup') {
+      this.getCurrentLocation();
+    }
   }
   handleScreen = screen => {
     let newState = {
@@ -157,22 +238,11 @@ class Map extends Component {
     console.log('Get current location');
 
     var that = this;
-
-    // await Geolocation.setRNConfiguration(config);
-    await Geolocation.getCurrentPosition(
+    Geolocation.getCurrentPosition(
       position => {
         console.log('check', position);
         var lat = parseFloat(position.coords.latitude);
         var long = parseFloat(position.coords.longitude);
-
-        // if (this.props.Title == 'homeScreen') {
-        //   var ULat = position.coords.latitude.toString();
-        //   var ULong = position.coords.longitude.toString();
-
-        //   AsyncStorage.setItem('UserLat1', ULat);
-        //   AsyncStorage.setItem('UserLong1', ULong);
-        // }
-
         var initialRegion = {
           latitude: lat,
           longitude: long,
@@ -190,18 +260,6 @@ class Map extends Component {
             var addressComponent = json.results[0].address_components;
             let lat = json.results[0].geometry.location.lat;
             let lng = json.results[0].geometry.location.lng;
-            // console.log("Address: ", addressComponent);
-            // console.log("Address: ", addressComponent[0].long_name);
-            // console.log("Address: ", addressComponent[1].long_name);
-
-            // if (this.props.Title == 'homeScreen') {
-            //   AsyncStorage.setItem('address', addressComponent[0].long_name);
-            //   AsyncStorage.setItem(
-            //     'fullAddress',
-            //     addressComponent[1].long_name,
-            //   );
-            // }
-
             let newState = {
               pickUp: addressComponent[0].long_name,
               pickUpAddress: addressComponent[1].long_name,
@@ -215,10 +273,21 @@ class Map extends Component {
             };
             that.setState(newState);
           })
-          .catch(error => console.warn(error));
+          .catch(error => {
+            console.log('error: ', error);
+            console.log('error.response: ', error.response);
+          });
       },
-      error => console.log(JSON.stringify(error)),
-      // {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000},
+      error => {
+        console.log('error: ', error);
+        console.log('error.resp: ', error.response);
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 1000,
+        showLocationDialog: true,
+      },
     );
   };
 
@@ -227,23 +296,13 @@ class Map extends Component {
       .then(place => {
         console.log('See place:', place);
 
-        var ULat = place.location.latitude.toString();
-        var ULong = place.location.longitude.toString();
-
-        // AsyncStorage.setItem('UserLat1', ULat);
-        // AsyncStorage.setItem('UserLong1', ULong);
-
         var tempCords = {
           latitude: parseFloat(place.location.latitude),
           longitude: parseFloat(place.location.longitude),
           latitudeDelta: 0.0015,
           longitudeDelta: 0.0015,
         };
-
         var fullAddress = place.address.slice(0, 39);
-        // AsyncStorage.setItem('address', place.name);
-        // AsyncStorage.setItem('fullAddress', fullAddress);
-
         this.setState({
           pickUp: place.name,
           pickUpAddress: fullAddress,
@@ -281,19 +340,7 @@ class Map extends Component {
   openSearchModal2() {
     RNGooglePlaces.openAutocompleteModal()
       .then(place => {
-        console.log('See place:', place);
-        console.log('Address:', place.address);
-        console.log('Drop Long:', place.location.longitude);
-        console.log('Drop Lat:', place.location.latitude);
-
-        var DLat = place.location.latitude.toString();
-        var DLong = place.location.longitude.toString();
-
-        console.log('openSearchModal2 DLat DLong:', DLat, DLong);
-
-        // AsyncStorage.setItem('DropLat', DLat);
-        // AsyncStorage.setItem('DropLong', DLong);
-
+        console.log('drop off location: ', place);
         var tempCords = {
           latitude: parseFloat(place.location.latitude),
           longitude: parseFloat(place.location.longitude),
@@ -315,23 +362,20 @@ class Map extends Component {
             longitude: place.location.longitude,
           },
           fakeMarkerAppearance: false,
+          locationData: place,
         });
         // place represents user's selection from the
         // suggestions and it is a simplified Google Place object.
 
-        this.map.animateToRegion(tempCords, 2500);
-
-        // AsyncStorage.setItem('dropOff', place.name);
-        // AsyncStorage.setItem('dropOffAddress', fullAddress);
-
-        setTimeout(() => {
-          this.map.animateToRegion(this.state.origin, 2000);
-          setTimeout(() => {
-            // this.CreatePurchase();
-            // this.props.navigation.navigate('carType');F
-            // Actions.carType();
-          }, 2000);
-        }, 2000);
+        this.map.animateToRegion(tempCords, 2000);
+        // setTimeout(() => {
+        //   this.map.animateToRegion(this.state.origin, 2000);
+        //   setTimeout(() => {
+        //     // this.CreatePurchase();
+        //     // this.props.navigation.navigate('carType');F
+        //     // Actions.carType();
+        //   }, 2000);
+        // }, 2000);
       })
       .catch(error => console.log(error.message)); // error is a Javascript Error object
   }
@@ -353,13 +397,14 @@ class Map extends Component {
                 zoomEnabled={true}
                 rotateEnabled={true}
                 // moveOnMarkerPress={true}
+                ref={map => (this.map = map)}
                 onTouchStart={() =>
                   this.setState({
                     regionChange1: true,
-                    destination: {
-                      latitude: 0,
-                      longitude: 0,
-                    },
+                    // destination: {
+                    //   latitude: 0,
+                    //   longitude: 0,
+                    // },
                   })
                 }
                 onRegionChangeComplete={region => {
@@ -386,17 +431,34 @@ class Map extends Component {
                   // icon={<FontAwesome5 style={{fontSize: 20}} name='car' />}
                   // image={require('./images/mark.png')}
                 />
-                <MapView.Marker.Animated
-                  //draggable
-                  coordinate={{
-                    latitude: this.state.dropLat,
-                    longitude: this.state.dropLong,
-                  }}
-                  //onDragEnd={(e) => console.log('drag position: ', e.nativeEvent.coordinate)}
-                  title={'Drop off'}
-                  description={'location'}
-                  pinColor="#ff8800"
-                />
+                {this.props.locationType === 'dropoff' ? (
+                  <>
+                    <MapView.Marker.Animated
+                      //draggable
+                      coordinate={{
+                        latitude: this.state.dropLat,
+                        longitude: this.state.dropLong,
+                      }}
+                      //onDragEnd={(e) => console.log('drag position: ', e.nativeEvent.coordinate)}
+                      title={'Drop off'}
+                      description={'location'}
+                      pinColor="#ff8800"
+                    />
+                    <MapViewDirections
+                      origin={this.state.origin}
+                      destination={this.state.destination}
+                      apikey={GOOGLE_MAPS_APIKEY}
+                      strokeWidth={5}
+                      strokeColor={colors.primaryOrange}
+                      optimizeWaypoints={true}
+                      onStart={params => {
+                        console.log(
+                          `Started routing between "${params.origin}" and "${params.destination}"`,
+                        );
+                      }}
+                    />
+                  </>
+                ) : null}
               </MapView>
               <View style={styles.topView}>
                 <View style={styles.innerTopView}>
@@ -410,26 +472,85 @@ class Map extends Component {
                   </View>
                   <TouchableOpacity
                     style={styles.searchBarView}
-                    onPress={() => this.openSearchModal1()}>
+                    onPress={() =>
+                      this.props.locationType === 'dropoff'
+                        ? ''
+                        : this.openSearchModal1()
+                    }>
                     <View>
                       <Text
                         style={[
                           styles.textStyle,
-                          {color: '#fff', fontSize: 18},
+                          {color: '#fff', fontSize: 16, width: '95%'},
                         ]}>
                         {this.state.pickUp}
                       </Text>
                       <Text
                         style={[
                           styles.textStyle,
-                          {color: '#fff', fontSize: 14},
+                          {color: '#fff', fontSize: 13},
                         ]}>
                         {this.state.pickUpAddress + '...'}
                       </Text>
                     </View>
                   </TouchableOpacity>
                 </View>
+                {this.props.locationType === 'dropoff' ? (
+                  <View>
+                    <View style={{marginLeft: 9, marginBottom: 15}}>
+                      <View style={styles.dottedView2} />
+                      <View style={styles.dottedView2} />
+                      <View style={styles.dottedView2} />
+                      <View style={styles.dottedView2} />
+                      <View style={styles.dottedView2} />
+                      <View style={styles.dottedView2} />
+                      <View style={styles.dottedView2} />
+                    </View>
+                    <View style={styles.innerTopView}>
+                      <View style={{marginRight: 10}}>
+                        <Octicons
+                          type="Octicons"
+                          name="location"
+                          size={26}
+                          color="#fff"
+                        />
+                      </View>
+                      <TouchableOpacity
+                        style={styles.searchBarView}
+                        onPress={() => this.openSearchModal2()}>
+                        <View>
+                          <Text
+                            style={[
+                              styles.textStyle,
+                              {color: '#fff', fontSize: 16, width: '95%'},
+                            ]}>
+                            {this.state.dropOff}
+                          </Text>
+                          <Text
+                            style={[
+                              styles.textStyle,
+                              {color: '#fff', fontSize: 13},
+                            ]}>
+                            {this.state.dropOffAddress + '...'}
+                          </Text>
+                        </View>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                ) : null}
               </View>
+              {this.props.locationType === 'pickup' ? (
+                <View style={styles.locateIconView1}>
+                  <TouchableOpacity onPress={() => this.getCurrentLocation()}>
+                    <MaterialIcons
+                      type="MaterialIcons"
+                      name="my-location"
+                      size={26}
+                      color="#fff"
+                    />
+                  </TouchableOpacity>
+                </View>
+              ) : null}
               <View style={{position: 'absolute', right: 0, bottom: 0}}>
                 <FooterButton
                   title="Continue"
@@ -480,14 +601,26 @@ const styles = StyleSheet.create({
   locateIconView1: {
     width: 45,
     height: 45,
-    backgroundColor: '#fff',
+    backgroundColor: colors.primaryOrange,
+    color: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
     position: 'absolute',
     borderRadius: 22.5,
     right: '5%',
-    bottom: '25%',
+    bottom: '20%',
   },
+  // locateIconView1: {
+  //   width: 45,
+  //   height: 45,
+  //   backgroundColor: '#fdfbfc',
+  //   alignItems: 'center',
+  //   justifyContent: 'center',
+  //   position: 'absolute',
+  //   borderRadius: 22.5,
+  //   right: '5%',
+  //   bottom: '45%',
+  // },
   locateIconView2: {
     width: 45,
     height: 45,
@@ -520,7 +653,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primaryOrange,
     alignSelf: 'center',
     width: '90%',
-    height: 80,
+    height: 'auto',
     borderRadius: 20,
     justifyContent: 'center',
     paddingTop: 10,
