@@ -1,6 +1,6 @@
-import React, {useEffect} from 'react';
-import {NavigationContainer} from '@react-navigation/native';
-import {createStackNavigator} from '@react-navigation/stack';
+import React, { useEffect } from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
 import MyTabBar from '../common/BottomNavigation';
 import Theme from '../util/colors';
 import Home from '../screens/home/Home';
@@ -12,12 +12,12 @@ import ItemCart from '../screens/ItemPurchase/itemCart.js/ItemCart';
 
 import ItemDetails from '../screens/ItemPurchase/itemDetails/ItemDetails';
 import Cart from '../screens/ItemPurchase/cart/Cart';
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 // import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Zocial from 'react-native-vector-icons/Zocial';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import {colors} from '../util/colors';
-import {Alert, View} from 'react-native';
+import { colors } from '../util/colors';
+import { Alert, View } from 'react-native';
 import asyncStorage from '../services/asyncStorage';
 import UserDeliveryInfo from '../screens/ItemPurchase/userDeliveryInfo/UserDeliveryInfo';
 import RequestDriver from '../screens/requestDriver/RequestDriver';
@@ -30,7 +30,7 @@ const Tab = createBottomTabNavigator();
 
 const Stack = createStackNavigator();
 
-const AppNavigation = (props, {navigation}) => {
+const AppNavigation = (props, { navigation }) => {
   const handleLogOut = async () => {
     Alert.alert('', 'Are you sure you want to logout?', [
       {
@@ -67,18 +67,18 @@ const AppNavigation = (props, {navigation}) => {
           headerTitle: false,
           headerTransparent: true,
           headerRight: () => (
-            <View style={{flexDirection: 'row'}}>
+            <View style={{ flexDirection: 'row' }}>
               <Zocial
                 onPress={goToCart}
                 name="cart"
                 size={22}
-                style={{color: colors.secondaryGray, marginRight: 10}}
+                style={{ color: colors.secondaryGray, marginRight: 10 }}
               />
               <MaterialCommunityIcons
                 name="logout"
                 size={22}
                 onPress={handleLogOut}
-                style={{color: colors.secondaryGray}}
+                style={{ color: colors.secondaryGray }}
               />
             </View>
           ),
@@ -96,18 +96,18 @@ const AppNavigation = (props, {navigation}) => {
           headerTitle: false,
           headerTransparent: true,
           headerRight: () => (
-            <View style={{flexDirection: 'row'}}>
+            <View style={{ flexDirection: 'row' }}>
               <Zocial
                 onPress={goToCart}
                 name="cart"
                 size={22}
-                style={{color: colors.secondaryGray, marginRight: 10}}
+                style={{ color: colors.secondaryGray, marginRight: 10 }}
               />
               <MaterialCommunityIcons
                 name="logout"
                 size={22}
                 onPress={handleLogOut}
-                style={{color: colors.secondaryGray}}
+                style={{ color: colors.secondaryGray }}
               />
             </View>
           ),
@@ -124,18 +124,18 @@ const AppNavigation = (props, {navigation}) => {
           headerTitle: false,
           headerTransparent: true,
           headerRight: () => (
-            <View style={{flexDirection: 'row'}}>
+            <View style={{ flexDirection: 'row' }}>
               <Zocial
                 onPress={goToCart}
                 name="cart"
                 size={22}
-                style={{color: colors.secondaryGray, marginRight: 10}}
+                style={{ color: colors.secondaryGray, marginRight: 10 }}
               />
               <MaterialCommunityIcons
                 name="logout"
                 size={22}
                 onPress={handleLogOut}
-                style={{color: colors.secondaryGray}}
+                style={{ color: colors.secondaryGray }}
               />
             </View>
           ),
@@ -152,18 +152,18 @@ const AppNavigation = (props, {navigation}) => {
           headerTitle: false,
           headerTransparent: true,
           headerRight: () => (
-            <View style={{flexDirection: 'row'}}>
+            <View style={{ flexDirection: 'row' }}>
               <Zocial
                 onPress={goToCart}
                 name="cart"
                 size={22}
-                style={{color: colors.secondaryGray, marginRight: 10}}
+                style={{ color: colors.secondaryGray, marginRight: 10 }}
               />
               <MaterialCommunityIcons
                 name="logout"
                 size={22}
                 onPress={handleLogOut}
-                style={{color: colors.secondaryGray}}
+                style={{ color: colors.secondaryGray }}
               />
             </View>
           ),
@@ -180,18 +180,18 @@ const AppNavigation = (props, {navigation}) => {
           headerTitle: false,
           headerTransparent: true,
           headerRight: () => (
-            <View style={{flexDirection: 'row'}}>
+            <View style={{ flexDirection: 'row' }}>
               <Zocial
                 onPress={goToCart}
                 name="cart"
                 size={22}
-                style={{color: colors.secondaryGray, marginRight: 10}}
+                style={{ color: colors.secondaryGray, marginRight: 10 }}
               />
               <MaterialCommunityIcons
                 name="logout"
                 size={22}
                 onPress={handleLogOut}
-                style={{color: colors.secondaryGray}}
+                style={{ color: colors.secondaryGray }}
               />
             </View>
           ),
@@ -208,18 +208,18 @@ const AppNavigation = (props, {navigation}) => {
           headerTitle: false,
           headerTransparent: true,
           headerRight: () => (
-            <View style={{flexDirection: 'row'}}>
+            <View style={{ flexDirection: 'row' }}>
               <Zocial
                 onPress={goToCart}
                 name="cart"
                 size={22}
-                style={{color: colors.secondaryGray, marginRight: 10}}
+                style={{ color: colors.secondaryGray, marginRight: 10 }}
               />
               <MaterialCommunityIcons
                 name="logout"
                 size={22}
                 onPress={handleLogOut}
-                style={{color: colors.secondaryGray}}
+                style={{ color: colors.secondaryGray }}
               />
             </View>
           ),
@@ -236,18 +236,18 @@ const AppNavigation = (props, {navigation}) => {
           headerTitle: false,
           headerTransparent: true,
           headerRight: () => (
-            <View style={{flexDirection: 'row'}}>
+            <View style={{ flexDirection: 'row' }}>
               <Zocial
                 onPress={goToCart}
                 name="cart"
                 size={22}
-                style={{color: colors.secondaryGray, marginRight: 10}}
+                style={{ color: colors.secondaryGray, marginRight: 10 }}
               />
               <MaterialCommunityIcons
                 name="logout"
                 size={22}
                 onPress={handleLogOut}
-                style={{color: colors.secondaryGray}}
+                style={{ color: colors.secondaryGray }}
               />
             </View>
           ),
@@ -347,7 +347,7 @@ const BottomTabNavigator = () => {
           margin: 12,
         },
 
-        shadowOffset: {width: 0, height: 0},
+        shadowOffset: { width: 0, height: 0 },
         style: {
           position: 'absolute',
           bottom: 0,
@@ -363,7 +363,7 @@ const BottomTabNavigator = () => {
         options={{
           tabBarLabel: 'Home',
 
-          tabBarIcon: ({color}) => (
+          tabBarIcon: ({ color }) => (
             <MaterialCommunityIcons name="home" color={color} size={28} />
           ),
         }}
@@ -373,7 +373,7 @@ const BottomTabNavigator = () => {
         component={Home}
         options={{
           tabBarLabel: 'Jobs',
-          tabBarIcon: ({color}) => (
+          tabBarIcon: ({ color }) => (
             <MaterialCommunityIcons
               name="file-document-outline"
               color={color}
@@ -387,7 +387,7 @@ const BottomTabNavigator = () => {
         component={Wallet}
         options={{
           tabBarLabel: 'Wallet',
-          tabBarIcon: ({color}) => (
+          tabBarIcon: ({ color }) => (
             <MaterialCommunityIcons
               name="wallet-outline"
               color={color}
@@ -401,7 +401,7 @@ const BottomTabNavigator = () => {
         component={Home}
         options={{
           tabBarLabel: 'Notification',
-          tabBarIcon: ({color}) => (
+          tabBarIcon: ({ color }) => (
             <MaterialCommunityIcons name="bell" color={color} size={28} />
           ),
         }}
@@ -412,7 +412,7 @@ const BottomTabNavigator = () => {
         component={Home}
         options={{
           tabBarLabel: 'More',
-          tabBarIcon: ({color}) => (
+          tabBarIcon: ({ color }) => (
             <MaterialCommunityIcons
               name="dots-vertical"
               color={color}

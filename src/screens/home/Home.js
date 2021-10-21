@@ -20,7 +20,8 @@ import Zocial from 'react-native-vector-icons/Zocial';
 import Octicons from 'react-native-vector-icons/Octicons';
 import { colors } from '../../util/colors';
 import { style } from 'styled-system';
-import { showNotification } from '../../notification.android';
+// import { showNotification } from '../../notification.android';
+import notificationManager from '../../NotificationManager';
 class Home extends Component {
   constructor(props) {
     super(props);
@@ -29,8 +30,48 @@ class Home extends Component {
       styleModal2: styles.modalStyle,
       styleModal3: styles.modalStyle,
     };
+    this.localNotify = null;
+    this.senderID = '931509373457';
   }
 
+  componentDidMount() {
+    // this.localNotify = notificationManager;
+
+    notificationManager.configure(
+      this.onRegister,
+      this.onNotification,
+      this.onOpenNotification,
+      this.senderID,
+    );
+  }
+  onRegister = token => {
+    console.log('Notification, onRegister: ', token);
+  };
+  onNotification = notify => {
+    console.log('Notification, onNotification: ', notify);
+  };
+  onOpenNotification = notify => {
+    console.log('Notification, onOpenNotification: ', notify);
+    alert('open Notification');
+  };
+  onPressCancelNotification = () => {
+    notificationManager.cancelAllLocalNotificaion();
+  };
+  onPressSendNotification = () => {
+    const options = {
+      soundName: 'default',
+      playSound: true,
+      vibrate: true,
+    };
+
+    notificationManager.showNotification(
+      1,
+      'App Notification',
+      'Local Notification',
+      {},
+      options,
+    );
+  };
   render() {
     return (
       <NativeBaseProvider>
@@ -139,10 +180,7 @@ class Home extends Component {
                     styleModal1: styles.modalStyle,
                   };
                   this.setState(newState, () => {});
-                  showNotification(
-                    'Notification Testing',
-                    'Notification is working',
-                  );
+                  this.onPressSendNotification();
                 }}>
                 <View
                   style={{
