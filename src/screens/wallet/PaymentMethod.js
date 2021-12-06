@@ -1,6 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable prettier/prettier */
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
   View,
   Text,
@@ -11,7 +11,7 @@ import {
   ScrollView,
   Alert,
 } from 'react-native';
-import {NativeBaseProvider, Separator, Body, Spinner} from 'native-base';
+import { NativeBaseProvider, Separator, Body, Spinner } from 'native-base';
 // import Ionicons from 'react-native-vector-icons/Ionicons';
 import Octicons from 'react-native-vector-icons/Octicons';
 // import Foundation from 'react-native-vector-icons/Foundation';
@@ -24,9 +24,9 @@ import {
   CollapseBody,
 } from 'accordion-collapse-react-native';
 import FooterButton from '../../common/FooterButton';
-import {colors} from '../../util/colors';
+import { colors } from '../../util/colors';
 // import FooterButton from '../../common/FooterButton';
-import {TextInputMask} from 'react-native-masked-text';
+import { TextInputMask } from 'react-native-masked-text';
 import AsyncStorage from '@react-native-community/async-storage';
 import AppService from '../../services/AppService';
 import Snackbar from 'react-native-snackbar';
@@ -67,25 +67,35 @@ export default class PaymentMethod extends Component {
 
   getWallet = async () => {
     try {
-      await AppService.getCustomerWallet().then(res => {
-        console.log('getCustomerWallet: ', res);
-        if (res.data.status) {
-          let newState = {
-            loading: false,
-            cardAvailable: true,
-            // lastFour: response.data.data.cards[0].last4,
-            // expMonth: response.data.data.cards[0].exp_month,
-            // expYear: response.data.data.cards[0].exp_year,
-          };
-          this.setState(newState);
-          // this.props.handleScreen();
-        } else {
-          let newState = {
-            loading: false,
-          };
-          this.setState(newState);
-        }
-      });
+      await AppService.getCustomerWallet()
+        .then(res => {
+          console.log('getCustomerWallet: ', res);
+          if (res.data.status) {
+            let newState = {
+              loading: false,
+              cardAvailable: true,
+              // lastFour: response.data.data.cards[0].last4,
+              // expMonth: response.data.data.cards[0].exp_month,
+              // expYear: response.data.data.cards[0].exp_year,
+            };
+            this.setState(newState);
+            // this.props.handleScreen();
+          } else {
+            let newState = {
+              loading: false,
+            };
+            this.setState(newState);
+          }
+        })
+        .catch(error => {
+          console.log('error: ', error);
+          console.log('error.response: ', error.response);
+          this.setState({ loading: false });
+          Snackbar.show({
+            text: error.response.data.message,
+            duration: Snackbar.LENGTH_LONG,
+          });
+        });
     } catch (error) {
       let res = error?.response?.data?.message;
       if (res) {
@@ -121,7 +131,7 @@ export default class PaymentMethod extends Component {
   };
 
   pressHandler = async () => {
-    this.setState({loading: true});
+    this.setState({ loading: true });
     var validation = true;
     if (
       this.state.creditCard == '' ||
@@ -170,7 +180,7 @@ export default class PaymentMethod extends Component {
         .then(res => {
           console.log('createWallet response: ', res);
           if (res.data.status) {
-            let newState = {loading: false, cardAvailable: true};
+            let newState = { loading: false, cardAvailable: true };
             that.setState(newState);
             Snackbar.show({
               text: res.data.message,
@@ -178,7 +188,7 @@ export default class PaymentMethod extends Component {
             });
             this.props.handleScreen();
           } else {
-            let newState = {loading: false, cardAvailable: false};
+            let newState = { loading: false, cardAvailable: false };
             that.setState(newState);
             Snackbar.show({
               text: res.data.message,
@@ -187,10 +197,19 @@ export default class PaymentMethod extends Component {
           }
         })
         .catch(function (error) {
-          that.setState({loading: false});
+          that.setState({ loading: false });
           console.log('Error:', error);
           console.log('Error:', error.response);
           // this.props.handleScreen();
+          Snackbar.show({
+            text: error.response.data.message,
+            duration: Snackbar.LENGTH_LONG,
+          });
+        })
+        .catch(error => {
+          console.log('error: ', error);
+          console.log('error.response: ', error.response);
+          this.setState({ loading: false });
           Snackbar.show({
             text: error.response.data.message,
             duration: Snackbar.LENGTH_LONG,
@@ -224,36 +243,46 @@ export default class PaymentMethod extends Component {
   };
 
   onPressAddAmount = async () => {
-    this.setState({loading: true});
+    this.setState({ loading: true });
     let payload = {
       total_amount: Number(this.state.amountToAdd),
     };
 
     if (this.state.amountToAdd !== '') {
-      await AppService.addAmount(payload).then(res => {
-        console.log('addAmountToWallet: ', res);
-        if (res.data.status) {
+      await AppService.addAmount(payload)
+        .then(res => {
+          console.log('addAmountToWallet: ', res);
+          if (res.data.status) {
+            Snackbar.show({
+              text: res.data.message,
+              duration: Snackbar.LENGTH_LONG,
+              amountToAdd: '',
+            });
+            let newState = {
+              loading: false,
+            };
+            this.setState(newState);
+            this.props.handleScreen();
+          } else {
+            Snackbar.show({
+              text: res.data.message,
+              duration: Snackbar.LENGTH_LONG,
+            });
+            let newState = {
+              loading: false,
+            };
+            this.setState(newState);
+          }
+        })
+        .catch(error => {
+          console.log('error: ', error);
+          console.log('error.response: ', error.response);
+          this.setState({ loading: false });
           Snackbar.show({
-            text: res.data.message,
-            duration: Snackbar.LENGTH_LONG,
-            amountToAdd: '',
-          });
-          let newState = {
-            loading: false,
-          };
-          this.setState(newState);
-          this.props.handleScreen();
-        } else {
-          Snackbar.show({
-            text: res.data.message,
+            text: error.response.data.message,
             duration: Snackbar.LENGTH_LONG,
           });
-          let newState = {
-            loading: false,
-          };
-          this.setState(newState);
-        }
-      });
+        });
     } else {
       this.setState({
         errorText: '*Please enter amount',
@@ -267,11 +296,11 @@ export default class PaymentMethod extends Component {
     console.log('this.state.cardAvailable: ', this.state.cardAvailable);
     return (
       <NativeBaseProvider>
-        <View style={{flexGrow: 1, backgroundColor: colors.gray}}>
-          <View style={{flex: 1}}>
+        <View style={{ flexGrow: 1, backgroundColor: colors.gray }}>
+          <View style={{ flex: 1 }}>
             <View style={styles.mainView}>
               <View style={styles.innerViews}>
-                <View style={{marginBottom: 40}}>
+                <View style={{ marginBottom: 40 }}>
                   <Image
                     resizeMode={'center'}
                     source={require('../../assets/vero-logo.png')}
@@ -321,7 +350,7 @@ export default class PaymentMethod extends Component {
                 </View>
               </View>
 
-              <View style={{marginLeft: '10%'}}>
+              <View style={{ marginLeft: '10%' }}>
                 {!this.props.addAmount ? (
                   <View style={styles.creditView}>
                     {this.state.logoCheck === '3782' ? (
@@ -353,7 +382,7 @@ export default class PaymentMethod extends Component {
                         />
                       </View>
                     ) : (
-                      <View style={{marginTop: 10}}>
+                      <View style={{ marginTop: 10 }}>
                         <Octicons
                           type="Octicons"
                           name="credit-card"
@@ -363,7 +392,7 @@ export default class PaymentMethod extends Component {
                       </View>
                     )}
 
-                    <View style={{width: '90%', margin: '3%'}}>
+                    <View style={{ width: '90%', margin: '3%' }}>
                       <Collapse
                         onToggle={() => this.changeIcon1()}
                         isCollapsed={true}>
@@ -391,7 +420,8 @@ export default class PaymentMethod extends Component {
                         </CollapseHeader>
 
                         <CollapseBody style={styles.collapseBodyStyle}>
-                          <View style={[styles.inputTextView, {width: '100%'}]}>
+                          <View
+                            style={[styles.inputTextView, { width: '100%' }]}>
                             <TextInputMask
                               type="only-numbers"
                               value={this.state.creditCard}
@@ -416,7 +446,7 @@ export default class PaymentMethod extends Component {
                               returnKeyType="next"
                             />
                           </View>
-                          <View style={{flexDirection: 'row'}}>
+                          <View style={{ flexDirection: 'row' }}>
                             <View style={styles.inputTextView}>
                               <TextInputMask
                                 type="only-numbers"
@@ -462,7 +492,10 @@ export default class PaymentMethod extends Component {
                                 placeholderTextColor="#7892ab"
                                 placeholderTextColor="#7892ab"
                                 onChangeText={text =>
-                                  this.setState({expYear: text, errorText: ''})
+                                  this.setState({
+                                    expYear: text,
+                                    errorText: '',
+                                  })
                                 }
                                 returnKeyLabel="Next"
                                 returnKeyType="next"
@@ -487,7 +520,7 @@ export default class PaymentMethod extends Component {
                                 }
                                 placeholderTextColor="#7892ab"
                                 onChangeText={text =>
-                                  this.setState({CVV: text, errorText: ''})
+                                  this.setState({ CVV: text, errorText: '' })
                                 }
                                 returnKeyLabel="Done"
                                 returnKeyType="done"
@@ -522,12 +555,12 @@ export default class PaymentMethod extends Component {
                         <View
                           style={[
                             styles.inputTextView,
-                            {alignSelf: 'center', marginBottom: '12%'},
+                            { alignSelf: 'center', marginBottom: '12%' },
                           ]}>
                           <Text
                             style={[
                               styles.selectTextStyle,
-                              {color: colors.primaryOrange, fontSize: 16},
+                              { color: colors.primaryOrange, fontSize: 16 },
                             ]}>
                             Add Amount
                           </Text>
@@ -540,7 +573,10 @@ export default class PaymentMethod extends Component {
                             placeholderTextColor="#7892ab"
                             placeholderTextColor="#7892ab"
                             onChangeText={text =>
-                              this.setState({amountToAdd: text, errorText: ''})
+                              this.setState({
+                                amountToAdd: text,
+                                errorText: '',
+                              })
                             }
                             returnKeyLabel="Done"
                             returnKeyType="done"
@@ -609,7 +645,7 @@ export default class PaymentMethod extends Component {
                                 </Collapse>
                             </View>
                         </View> */}
-                <View style={{flexDirection: 'row'}}>
+                <View style={{ flexDirection: 'row' }}>
                   <View style={styles.dottedView2} />
                   <View style={styles.dottedView2} />
                   <View style={styles.dottedView1} />
@@ -689,7 +725,7 @@ export default class PaymentMethod extends Component {
                   <Text
                     style={[
                       styles.textStyle,
-                      {color: colors.primaryOrange, fontSize: 16},
+                      { color: colors.primaryOrange, fontSize: 16 },
                     ]}>
                     <AntDesign
                       type="AntDesign"
@@ -714,7 +750,7 @@ export default class PaymentMethod extends Component {
                   <Text
                     style={[
                       styles.textStyle,
-                      {color: colors.primaryOrange, fontSize: 16},
+                      { color: colors.primaryOrange, fontSize: 16 },
                     ]}>
                     {this.props.addAmount ? 'Add Amount' : 'Create Wallet'}
                     <AntDesign

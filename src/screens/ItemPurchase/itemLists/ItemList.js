@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
   View,
   Text,
@@ -15,8 +15,8 @@ import {
   Platform,
   UIManager,
 } from 'react-native';
-import {NativeBaseProvider, Spinner} from 'native-base';
-import {colors} from '../../../util/colors';
+import { NativeBaseProvider, Spinner } from 'native-base';
+import { colors } from '../../../util/colors';
 import ReadMore from 'react-native-read-more-text';
 import AppService from '../../../services/AppService';
 import Zocial from 'react-native-vector-icons/Zocial';
@@ -67,24 +67,24 @@ class ItemList extends Component {
       await this.getCategories(item);
       LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
       let exp = !this.state.expanded;
-      let newState = {expanded: true, collapseIndex: item.index};
+      let newState = { expanded: true, collapseIndex: item.index };
       this.setState(newState);
     } else if (this.state.collapseIndex == item.index) {
       // await this.getCategories(item);
       LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
       let exp = !this.state.expanded;
-      let newState = {expanded: exp, collapseIndex: item.index};
+      let newState = { expanded: exp, collapseIndex: item.index };
       this.setState(newState);
     } else if (this.state.collapseIndex != item.index) {
       await this.getCategories(item);
       LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
       let exp = !this.state.expanded;
-      let newState = {expanded: true, collapseIndex: item.index};
+      let newState = { expanded: true, collapseIndex: item.index };
       this.setState(newState);
     }
   };
   setModalVisible(visible) {
-    this.setState({modalVisible: visible});
+    this.setState({ modalVisible: visible });
   }
   async componentDidMount() {
     let newState = {
@@ -95,7 +95,7 @@ class ItemList extends Component {
     await this.getCategories();
   }
   handleSearch = text => {
-    this.setState({searchValue: text});
+    this.setState({ searchValue: text });
     if (text.length >= 3) {
       this.getProductSearch(text);
     }
@@ -109,30 +109,40 @@ class ItemList extends Component {
           text: 'Yes',
           onPress: async () => {
             let payload = {
-              items: [{product_id: item._id, quantity: 1}],
+              items: [{ product_id: item._id, quantity: 1 }],
             };
-            await AppService.updateItemToCart(payload).then(res => {
-              console.log('item updated to cart from itemList: ', res);
-              if (res.data.status) {
+            await AppService.updateItemToCart(payload)
+              .then(res => {
+                console.log('item updated to cart from itemList: ', res);
+                if (res.data.status) {
+                  Snackbar.show({
+                    text: res.data.message,
+                    duration: Snackbar.LENGTH_LONG,
+                  });
+                  let newState = {
+                    loading: false,
+                  };
+                  this.setState(newState);
+                } else {
+                  Snackbar.show({
+                    text: res.data.message,
+                    duration: Snackbar.LENGTH_LONG,
+                  });
+                  let newState = {
+                    loading: false,
+                  };
+                  this.setState(newState);
+                }
+              })
+              .catch(error => {
+                console.log('error: ', error);
+                console.log('error.response: ', error.response);
+                this.setState({ loading: false });
                 Snackbar.show({
-                  text: res.data.message,
+                  text: error.response.data.message,
                   duration: Snackbar.LENGTH_LONG,
                 });
-                let newState = {
-                  loading: false,
-                };
-                this.setState(newState);
-              } else {
-                Snackbar.show({
-                  text: res.data.message,
-                  duration: Snackbar.LENGTH_LONG,
-                });
-                let newState = {
-                  loading: false,
-                };
-                this.setState(newState);
-              }
-            });
+              });
           },
           style: 'cancel',
         },
@@ -150,53 +160,73 @@ class ItemList extends Component {
     );
   };
   getItemsFromCart = async item => {
-    this.setState({loading: true});
+    this.setState({ loading: true });
     console.log('getItemsFromCart: ', item);
-    await AppService.getItemsFromCart().then(res => {
-      console.log('getItemsFromCart: ', res.data.data.items);
-      if (res.data?.data?.items != '') {
-        let count = 0;
-        for (let i = 0; i < res.data.data.items.length; i++) {
-          if (res.data.data.items[i].product_id._id === item._id) {
-            count = count + 1;
-            this.productExistanceAllert(item);
+    await AppService.getItemsFromCart()
+      .then(res => {
+        console.log('getItemsFromCart: ', res.data.data.items);
+        if (res.data?.data?.items != '') {
+          let count = 0;
+          for (let i = 0; i < res.data.data.items.length; i++) {
+            if (res.data.data.items[i].product_id._id === item._id) {
+              count = count + 1;
+              this.productExistanceAllert(item);
+            }
           }
-        }
-        if (count == 0) {
+          if (count == 0) {
+            this.addItemToCart(item);
+          }
+        } else {
           this.addItemToCart(item);
         }
-      } else {
-        this.addItemToCart(item);
-      }
-    });
+      })
+      .catch(error => {
+        console.log('error: ', error);
+        console.log('error.response: ', error.response);
+        this.setState({ loading: false });
+        Snackbar.show({
+          text: error.response.data.message,
+          duration: Snackbar.LENGTH_LONG,
+        });
+      });
   };
   addItemToCart = async item => {
-    this.setState({loading: true});
+    this.setState({ loading: true });
     let payload = {
-      items: [{product_id: item._id, quantity: 1}],
+      items: [{ product_id: item._id, quantity: 1 }],
       store_name: this.state.store_name,
     };
-    await AppService.addItemToCart(payload).then(res => {
-      console.log('res: ', res);
-      if (res.data.status) {
+    await AppService.addItemToCart(payload)
+      .then(res => {
+        console.log('res: ', res);
+        if (res.data.status) {
+          Snackbar.show({
+            text: res.data.message,
+            duration: Snackbar.LENGTH_LONG,
+          });
+          setTimeout(() => {
+            this.setState({ loading: false });
+          }, 1000);
+          // props.navigation.navigate('Cart');
+        } else {
+          Snackbar.show({
+            text: res.data.message,
+            duration: Snackbar.LENGTH_LONG,
+          });
+          setTimeout(() => {
+            this.setState({ loading: false });
+          }, 1000);
+        }
+      })
+      .catch(error => {
+        console.log('error: ', error);
+        console.log('error.response: ', error.response);
+        this.setState({ loading: false });
         Snackbar.show({
-          text: res.data.message,
+          text: error.response.data.message,
           duration: Snackbar.LENGTH_LONG,
         });
-        setTimeout(() => {
-          this.setState({loading: false});
-        }, 1000);
-        // props.navigation.navigate('Cart');
-      } else {
-        Snackbar.show({
-          text: res.data.message,
-          duration: Snackbar.LENGTH_LONG,
-        });
-        setTimeout(() => {
-          this.setState({loading: false});
-        }, 1000);
-      }
-    });
+      });
   };
   getItemList = async () => {
     let payload = {
@@ -205,28 +235,38 @@ class ItemList extends Component {
       per_page: this.state.per_page,
     };
     console.log('payload: ', payload);
-    await AppService.getItemList(payload).then(res => {
-      console.log('res: ', res);
-      if (res.data.status) {
-        let newState = {
-          DATA: res.data.data.products,
-          page: res.data.data.page,
-          total_count: res.data.data.total_count,
-          total_pages: res.data.data.total_pages,
-          // loading: false,
-        };
-        this.setState(newState);
-      } else {
+    await AppService.getItemList(payload)
+      .then(res => {
+        console.log('res: ', res);
+        if (res.data.status) {
+          let newState = {
+            DATA: res.data.data.products,
+            page: res.data.data.page,
+            total_count: res.data.data.total_count,
+            total_pages: res.data.data.total_pages,
+            // loading: false,
+          };
+          this.setState(newState);
+        } else {
+          Snackbar.show({
+            text: res.data.message,
+            duration: Snackbar.LENGTH_LONG,
+          });
+          let newState = {
+            loading: false,
+          };
+          this.setState(newState);
+        }
+      })
+      .catch(error => {
+        console.log('error: ', error);
+        console.log('error.response: ', error.response);
+        this.setState({ loading: false });
         Snackbar.show({
-          text: res.data.message,
+          text: error.response.data.message,
           duration: Snackbar.LENGTH_LONG,
         });
-        let newState = {
-          loading: false,
-        };
-        this.setState(newState);
-      }
-    });
+      });
   };
   getCategories = async item => {
     // debugger;
@@ -247,36 +287,46 @@ class ItemList extends Component {
         is_main: 'true',
       };
     }
-    await AppService.getCategories(payload).then(res => {
-      console.log('getCategories: ', res);
-      // debugger;
-      if (res.data.status) {
-        if (item) {
-          let newState = '';
-          newState = {
-            isSubCategories: res.data.data.categories,
-            loading: false,
-          };
-          this.setState(newState);
+    await AppService.getCategories(payload)
+      .then(res => {
+        console.log('getCategories: ', res);
+        // debugger;
+        if (res.data.status) {
+          if (item) {
+            let newState = '';
+            newState = {
+              isSubCategories: res.data.data.categories,
+              loading: false,
+            };
+            this.setState(newState);
+          } else {
+            let newState = '';
+            newState = {
+              isMainCategories: res.data.data.categories,
+              loading: false,
+            };
+            this.setState(newState);
+          }
         } else {
-          let newState = '';
-          newState = {
-            isMainCategories: res.data.data.categories,
+          Snackbar.show({
+            text: res.data.message,
+            duration: Snackbar.LENGTH_LONG,
+          });
+          let newState = {
             loading: false,
           };
           this.setState(newState);
         }
-      } else {
+      })
+      .catch(error => {
+        console.log('error: ', error);
+        console.log('error.response: ', error.response);
+        this.setState({ loading: false });
         Snackbar.show({
-          text: res.data.message,
+          text: error.response.data.message,
           duration: Snackbar.LENGTH_LONG,
         });
-        let newState = {
-          loading: false,
-        };
-        this.setState(newState);
-      }
-    });
+      });
   };
   getProductSearch = async text => {
     // let newState = {
@@ -289,29 +339,39 @@ class ItemList extends Component {
       product_name: text,
     };
     try {
-      await AppService.getProductSearch(payload).then(res => {
-        console.log('getProductSearch: ', res);
-        if (res.data.status) {
-          let newState = {
-            DATA: res.data.data.products,
-            page: res.data.data.page,
-            total_count: res.data.data.total_count,
-            total_pages: res.data.data.total_pages,
-            loading: false,
-            isVisible: false,
-          };
-          this.setState(newState);
-        } else {
+      await AppService.getProductSearch(payload)
+        .then(res => {
+          console.log('getProductSearch: ', res);
+          if (res.data.status) {
+            let newState = {
+              DATA: res.data.data.products,
+              page: res.data.data.page,
+              total_count: res.data.data.total_count,
+              total_pages: res.data.data.total_pages,
+              loading: false,
+              isVisible: false,
+            };
+            this.setState(newState);
+          } else {
+            Snackbar.show({
+              text: res.data.message,
+              duration: Snackbar.LENGTH_LONG,
+            });
+            let newState = {
+              loading: false,
+            };
+            this.setState(newState);
+          }
+        })
+        .catch(error => {
+          console.log('error: ', error);
+          console.log('error.response: ', error.response);
+          this.setState({ loading: false });
           Snackbar.show({
-            text: res.data.message,
+            text: error.response.data.message,
             duration: Snackbar.LENGTH_LONG,
           });
-          let newState = {
-            loading: false,
-          };
-          this.setState(newState);
-        }
-      });
+        });
     } catch (error) {
       // console.log(error.response.data.message);
       Snackbar.show({
@@ -339,31 +399,41 @@ class ItemList extends Component {
         product_name: item.item.name,
       };
     }
-    await AppService.getProductSearch(payload).then(res => {
-      // console.log('getProductSearch: ', res);
-      if (res.data.status) {
-        let newState = {
-          DATA: res.data.data.products,
-          page: res.data.data.page,
-          total_count: res.data.data.total_count,
-          total_pages: res.data.data.total_pages,
-          loading: false,
-          isVisible: false,
-        };
-        this.setState(newState);
-      } else {
+    await AppService.getProductSearch(payload)
+      .then(res => {
+        // console.log('getProductSearch: ', res);
+        if (res.data.status) {
+          let newState = {
+            DATA: res.data.data.products,
+            page: res.data.data.page,
+            total_count: res.data.data.total_count,
+            total_pages: res.data.data.total_pages,
+            loading: false,
+            isVisible: false,
+          };
+          this.setState(newState);
+        } else {
+          Snackbar.show({
+            text: res.data.message,
+            duration: Snackbar.LENGTH_LONG,
+          });
+          let newState = {
+            loading: false,
+          };
+          this.setState(newState);
+        }
+      })
+      .catch(error => {
+        console.log('error: ', error);
+        console.log('error.response: ', error.response);
+        this.setState({ loading: false });
         Snackbar.show({
-          text: res.data.message,
+          text: error.response.data.message,
           duration: Snackbar.LENGTH_LONG,
         });
-        let newState = {
-          loading: false,
-        };
-        this.setState(newState);
-      }
-    });
+      });
   };
-  isCloseToBottom = ({layoutMeasurement, contentOffset, contentSize}) => {
+  isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
     const paddingToBottom = 20;
     return (
       layoutMeasurement.height + contentOffset.y >=
@@ -376,35 +446,45 @@ class ItemList extends Component {
       page: this.state.page + 1,
       per_page: this.state.per_page,
     };
-    await AppService.getItemList(payload).then(res => {
-      console.log('res: ', res);
-      if (res.data.status) {
-        const newArray = this.state.DATA.slice();
-        for (let i = 0; i < res.data.data.products.length; i++) {
-          newArray.push(res.data.data.products[i]);
+    await AppService.getItemList(payload)
+      .then(res => {
+        console.log('res: ', res);
+        if (res.data.status) {
+          const newArray = this.state.DATA.slice();
+          for (let i = 0; i < res.data.data.products.length; i++) {
+            newArray.push(res.data.data.products[i]);
+          }
+          console.log('newArray: ', newArray);
+          let newState = {
+            DATA: newArray,
+            page: this.state.page + 1,
+            total_count: res.data.data.total_count,
+            total_pages: res.data.data.total_pages,
+            loading: false,
+          };
+          this.setState(newState, () => {
+            console.log('pagination DAta : ', this.state.DATA);
+          });
+        } else {
+          Snackbar.show({
+            text: res.data.message,
+            duration: Snackbar.LENGTH_LONG,
+          });
+          let newState = {
+            loading: false,
+          };
+          this.setState(newState);
         }
-        console.log('newArray: ', newArray);
-        let newState = {
-          DATA: newArray,
-          page: this.state.page + 1,
-          total_count: res.data.data.total_count,
-          total_pages: res.data.data.total_pages,
-          loading: false,
-        };
-        this.setState(newState, () => {
-          console.log('pagination DAta : ', this.state.DATA);
-        });
-      } else {
+      })
+      .catch(error => {
+        console.log('error: ', error);
+        console.log('error.response: ', error.response);
+        this.setState({ loading: false });
         Snackbar.show({
-          text: res.data.message,
+          text: error.response.data.message,
           duration: Snackbar.LENGTH_LONG,
         });
-        let newState = {
-          loading: false,
-        };
-        this.setState(newState);
-      }
-    });
+      });
   };
   EmptyListMessage = () => {
     return (
@@ -419,7 +499,7 @@ class ItemList extends Component {
             <Text
               style={[
                 styles.textStyle,
-                {textAlign: 'center', color: colors.secondaryGray},
+                { textAlign: 'center', color: colors.secondaryGray },
               ]}>
               No Data Found!
             </Text>
@@ -448,7 +528,7 @@ class ItemList extends Component {
       return itemImage;
     }
   }
-  onEndReached = ({distanceFromEnd}) => {
+  onEndReached = ({ distanceFromEnd }) => {
     // debugger;
     if (!this.onEndReachedCalledDuringMomentum) {
       this.loadMoreResults();
@@ -459,8 +539,8 @@ class ItemList extends Component {
     return (
       <NativeBaseProvider>
         <ScrollView
-          style={{flex: 1, backgroundColor: colors.gray}}
-          onScroll={({nativeEvent}) => {
+          style={{ flex: 1, backgroundColor: colors.gray }}
+          onScroll={({ nativeEvent }) => {
             if (this.isCloseToBottom(nativeEvent)) {
               let newState = {
                 loading: true,
@@ -470,9 +550,9 @@ class ItemList extends Component {
             }
           }}
           scrollEventThrottle={1000}>
-          <View style={{flex: 1}}>
+          <View style={{ flex: 1 }}>
             <View style={styles.mainView}>
-              <View style={{marginBottom: '7%'}}>
+              <View style={{ marginBottom: '7%' }}>
                 <Text style={styles.textStyle}>Item Purchase</Text>
               </View>
               {this.state.isSearch ? (
@@ -482,18 +562,22 @@ class ItemList extends Component {
                     flexDirection: 'row',
                     // justifyContent: 'flex-start',
                   }}>
-                  <View style={{width: '10%', position: 'relative'}}>
+                  <View style={{ width: '10%', position: 'relative' }}>
                     <Ionicons
                       name="arrow-back"
                       size={20}
                       onPress={() => {
-                        this.setState({isSearch: false, searchValue: ''});
+                        this.setState({ isSearch: false, searchValue: '' });
                         this.getItemList();
                       }}
                     />
                   </View>
                   <View
-                    style={{width: '80%', position: 'relative', bottom: '8%'}}>
+                    style={{
+                      width: '80%',
+                      position: 'relative',
+                      bottom: '8%',
+                    }}>
                     <InputField
                       label={''}
                       placeholder={'Search Products ...'}
@@ -505,7 +589,7 @@ class ItemList extends Component {
                 </View>
               ) : (
                 // </View>
-                <View style={{flexDirection: 'row'}}>
+                <View style={{ flexDirection: 'row' }}>
                   <View
                     style={{
                       marginRight: 15,
@@ -531,13 +615,13 @@ class ItemList extends Component {
                     />
                   </View>
                   <View>
-                    <Text style={[styles.textStyle, {fontSize: 14}]}>
+                    <Text style={[styles.textStyle, { fontSize: 14 }]}>
                       Accessories
                     </Text>
                     <Text
                       style={[
                         styles.textStyle,
-                        {fontSize: 10, color: colors.secondaryGray},
+                        { fontSize: 10, color: colors.secondaryGray },
                       ]}>
                       {this.state.storeData.display_name}
                     </Text>
@@ -548,7 +632,7 @@ class ItemList extends Component {
                       width: '100%',
                     }}>
                     <FontAwesome
-                      onPress={() => this.setState({isSearch: true})}
+                      onPress={() => this.setState({ isSearch: true })}
                       name="search"
                       // color="#22aebb"
                       size={20}
@@ -560,20 +644,20 @@ class ItemList extends Component {
                     />
                     <TouchableOpacity
                       onPress={() => {
-                        this.setState({isVisible: true});
+                        this.setState({ isVisible: true });
                       }}>
                       <FontAwesome
                         name="filter"
                         // color="#22aebb"
                         size={20}
-                        style={{width: '40%', marginRight: '10%'}}
+                        style={{ width: '40%', marginRight: '10%' }}
                       />
                     </TouchableOpacity>
                   </View>
                 </View>
               )}
 
-              <View style={{flex: 1}}>
+              <View style={{ flex: 1 }}>
                 <FlatList
                   data={this.state.DATA}
                   numColumns={2}
@@ -581,19 +665,19 @@ class ItemList extends Component {
                   keyExtractor={(item, index) => index + ''}
                   ListEmptyComponent={this.EmptyListMessage}
                   // ListFooterComponent={this.renderFooter}
-                  renderItem={({item, index}) => {
+                  renderItem={({ item, index }) => {
                     return (
-                      <View style={{flex: 1}}>
+                      <View style={{ flex: 1 }}>
                         <View
                           style={[
                             this.state.itemPressed == index
                               ? styles.modalStyleOnPress
                               : styles.modalStyle,
                             // this.state.styleModal,
-                            {flex: 1, height: 180},
+                            { flex: 1, height: 180 },
                           ]}>
                           <TouchableOpacity
-                            style={[styles.modalInnerView, {flex: 1}]}
+                            style={[styles.modalInnerView, { flex: 1 }]}
                             key={index}
                             activeOpacity={0.8}
                             onPress={() => this.itemDetails(item, index)}>
@@ -628,7 +712,7 @@ class ItemList extends Component {
                                 <Text
                                   style={[
                                     styles.textStyle,
-                                    {fontSize: 12, width: '80%'},
+                                    { fontSize: 12, width: '80%' },
                                   ]}>
                                   {item.product_name}
                                 </Text>
@@ -713,7 +797,7 @@ class ItemList extends Component {
                   //   marginRight: '10%',
                   // }}
                   onPress={() => {
-                    this.setState({isVisible: !this.state.isVisible});
+                    this.setState({ isVisible: !this.state.isVisible });
                   }}
                   name="close"
                   size={20}

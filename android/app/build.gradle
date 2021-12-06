@@ -136,7 +136,9 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-
+    // dexOptiona{
+    //     javaMaxHeapSize "4g"
+    // }
     defaultConfig {
         applicationId "com.Vero1Express"
         minSdkVersion rootProject.ext.minSdkVersion

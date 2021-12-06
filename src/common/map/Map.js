@@ -1,6 +1,6 @@
-import React, {Component} from 'react';
-import {connect} from 'react-redux';
-import MapView, {PROVIDER_GOOGLE, Marker} from 'react-native-maps';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps';
 import {
   SafeAreaView,
   View,
@@ -11,10 +11,10 @@ import {
   Platform,
 } from 'react-native';
 // import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
-import {NativeBaseProvider} from 'native-base';
-import {colors} from '../../util/colors';
+import { NativeBaseProvider } from 'native-base';
+import { colors } from '../../util/colors';
 // import AutoComplete from '../../common/map/Autocomplete';
-import {TouchableOpacity} from 'react-native-gesture-handler';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 import Autocomplete from '../../common/map/Autocomplete';
 import Geocoder from 'react-native-geocoding';
 import Geolocation from 'react-native-geolocation-service';
@@ -26,7 +26,7 @@ import RNGooglePlaces from 'react-native-google-places';
 // import {textStyle} from 'styled-system';
 import FooterButton from '../FooterButton';
 
-const {width, height} = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 
 const ASPECT_RATIO = width / height;
 const LATITUDE_DELTA = 1;
@@ -72,89 +72,92 @@ class Map extends Component {
     };
   }
   componentDidMount() {
-    console.log(
-      'this.props.pickupLocationData: ',
-      this.props.pickupLocationData,
-    );
-    const place = this.props.pickupLocationData;
-    if (place !== '' && place?.results) {
-      let loc = place.results[0].geometry.location;
-      var tempCords = {
-        latitude: parseFloat(loc.lat),
-        longitude: parseFloat(loc.lng),
-        latitudeDelta: 0.0015,
-        longitudeDelta: 0.0015,
-      };
-
-      var fullAddress =
-        place.results[0].address_components[0].long_name +
-        ' ' +
-        place.results[0].address_components[1].long_name +
-        ' ' +
-        place.results[0].address_components[3].long_name;
-
-      this.setState({
-        pickUp: place.name,
-        pickUpAddress: fullAddress,
-        pickLat: loc.lat,
-        pickLong: loc.lng,
-        regionChange1: false,
-        regionChange2: false,
-        initialPosition: {
-          latitude: loc.lat,
-          longitude: loc.lng,
+    console.log('this.props: ', this.props);
+    if (this.props.isFrom != 'PurchaseItemsService') {
+      console.log(
+        'this.props.pickupLocationData: ',
+        this.props.pickupLocationData,
+      );
+      const place = this.props.pickupLocationData;
+      if (place !== '' && place?.results) {
+        let loc = place.results[0].geometry.location;
+        var tempCords = {
+          latitude: parseFloat(loc.lat),
+          longitude: parseFloat(loc.lng),
           latitudeDelta: 0.0015,
           longitudeDelta: 0.0015,
-        },
-        origin: {
-          latitude: loc.lat,
-          longitude: loc.lng,
-          latitudeDelta: 0.08,
-          longitudeDelta: LATITUDE_DELTA,
-        },
+        };
 
-        // destination: {
-        //   latitude: 0,
-        //   longitude: 0,
-        // },
-        // locationData: place,
-      });
-    } else if (place !== '' && !place?.results) {
-      var tempCords = {
-        latitude: parseFloat(place.location.latitude),
-        longitude: parseFloat(place.location.longitude),
-        latitudeDelta: 0.0015,
-        longitudeDelta: 0.0015,
-      };
+        var fullAddress =
+          place.results[0].address_components[0].long_name +
+          ' ' +
+          place.results[0].address_components[1].long_name +
+          ' ' +
+          place.results[0].address_components[3].long_name;
 
-      var fullAddress = place.address.slice(0, 39);
+        this.setState({
+          pickUp: place.name,
+          pickUpAddress: fullAddress,
+          pickLat: loc.lat,
+          pickLong: loc.lng,
+          regionChange1: false,
+          regionChange2: false,
+          initialPosition: {
+            latitude: loc.lat,
+            longitude: loc.lng,
+            latitudeDelta: 0.0015,
+            longitudeDelta: 0.0015,
+          },
+          origin: {
+            latitude: loc.lat,
+            longitude: loc.lng,
+            latitudeDelta: 0.08,
+            longitudeDelta: LATITUDE_DELTA,
+          },
 
-      this.setState({
-        pickUp: place.name,
-        pickUpAddress: fullAddress,
-        pickLat: place.location.latitude,
-        pickLong: place.location.longitude,
-        regionChange1: false,
-        regionChange2: false,
-        initialPosition: {
-          latitude: place.location.latitude,
-          longitude: place.location.longitude,
+          // destination: {
+          //   latitude: 0,
+          //   longitude: 0,
+          // },
+          // locationData: place,
+        });
+      } else if (place !== '' && !place?.results) {
+        var tempCords = {
+          latitude: parseFloat(place.location.latitude),
+          longitude: parseFloat(place.location.longitude),
           latitudeDelta: 0.0015,
           longitudeDelta: 0.0015,
-        },
-        origin: {
-          latitude: place.location.latitude,
-          longitude: place.location.longitude,
-          latitudeDelta: 0.08,
-          longitudeDelta: LATITUDE_DELTA,
-        },
+        };
 
-        // destination: {
-        //   latitude: 0,
-        //   longitude: 0,
-        // },
-        // locationData: place,
-      });
+        var fullAddress = place.address.slice(0, 39);
+
+        this.setState({
+          pickUp: place.name,
+          pickUpAddress: fullAddress,
+          pickLat: place.location.latitude,
+          pickLong: place.location.longitude,
+          regionChange1: false,
+          regionChange2: false,
+          initialPosition: {
+            latitude: place.location.latitude,
+            longitude: place.location.longitude,
+            latitudeDelta: 0.0015,
+            longitudeDelta: 0.0015,
+          },
+          origin: {
+            latitude: place.location.latitude,
+            longitude: place.location.longitude,
+            latitudeDelta: 0.08,
+            longitudeDelta: LATITUDE_DELTA,
+          },
+
+          // destination: {
+          //   latitude: 0,
+          //   longitude: 0,
+          // },
+          // locationData: place,
+        });
+      }
     }
     if (this.props.locationType === 'pickup') {
       this.getCurrentLocation();
@@ -249,7 +252,7 @@ class Map extends Component {
           latitudeDelta: 0.0,
           longitudeDelta: 0.0015,
         };
-        this.setState({initialPosition: initialRegion});
+        this.setState({ initialPosition: initialRegion });
 
         that.map.animateToRegion(initialRegion, 500);
 
@@ -384,7 +387,7 @@ class Map extends Component {
     if (this.state.screen == 1) {
       return (
         <NativeBaseProvider>
-          <View style={{flex: 1, backgroundColor: colors.gray}}>
+          <View style={{ flex: 1, backgroundColor: colors.gray }}>
             <View style={styles.container}>
               <MapView
                 provider={PROVIDER_GOOGLE}
@@ -462,7 +465,7 @@ class Map extends Component {
               </MapView>
               <View style={styles.topView}>
                 <View style={styles.innerTopView}>
-                  <View style={{marginRight: 10}}>
+                  <View style={{ marginRight: 10 }}>
                     <Octicons
                       type="Octicons"
                       name="location"
@@ -481,14 +484,14 @@ class Map extends Component {
                       <Text
                         style={[
                           styles.textStyle,
-                          {color: '#fff', fontSize: 16, width: '95%'},
+                          { color: '#fff', fontSize: 16, width: '95%' },
                         ]}>
                         {this.state.pickUp}
                       </Text>
                       <Text
                         style={[
                           styles.textStyle,
-                          {color: '#fff', fontSize: 13},
+                          { color: '#fff', fontSize: 13 },
                         ]}>
                         {this.state.pickUpAddress + '...'}
                       </Text>
@@ -497,7 +500,7 @@ class Map extends Component {
                 </View>
                 {this.props.locationType === 'dropoff' ? (
                   <View>
-                    <View style={{marginLeft: 9, marginBottom: 15}}>
+                    <View style={{ marginLeft: 9, marginBottom: 15 }}>
                       <View style={styles.dottedView2} />
                       <View style={styles.dottedView2} />
                       <View style={styles.dottedView2} />
@@ -507,7 +510,7 @@ class Map extends Component {
                       <View style={styles.dottedView2} />
                     </View>
                     <View style={styles.innerTopView}>
-                      <View style={{marginRight: 10}}>
+                      <View style={{ marginRight: 10 }}>
                         <Octicons
                           type="Octicons"
                           name="location"
@@ -522,14 +525,14 @@ class Map extends Component {
                           <Text
                             style={[
                               styles.textStyle,
-                              {color: '#fff', fontSize: 16, width: '95%'},
+                              { color: '#fff', fontSize: 16, width: '95%' },
                             ]}>
                             {this.state.dropOff}
                           </Text>
                           <Text
                             style={[
                               styles.textStyle,
-                              {color: '#fff', fontSize: 13},
+                              { color: '#fff', fontSize: 13 },
                             ]}>
                             {this.state.dropOffAddress + '...'}
                           </Text>
@@ -551,7 +554,7 @@ class Map extends Component {
                   </TouchableOpacity>
                 </View>
               ) : null}
-              <View style={{position: 'absolute', right: 0, bottom: 0}}>
+              <View style={{ position: 'absolute', right: 0, bottom: 0 }}>
                 <FooterButton
                   title="Continue"
                   onPress={() =>
@@ -693,82 +696,82 @@ const styles = StyleSheet.create({
 });
 
 const mapStyle = [
-  {elementType: 'geometry', stylers: [{color: '#242f3e'}]},
-  {elementType: 'labels.text.fill', stylers: [{color: '#746855'}]},
-  {elementType: 'labels.text.stroke', stylers: [{color: '#242f3e'}]},
+  { elementType: 'geometry', stylers: [{ color: '#242f3e' }] },
+  { elementType: 'labels.text.fill', stylers: [{ color: '#746855' }] },
+  { elementType: 'labels.text.stroke', stylers: [{ color: '#242f3e' }] },
   {
     featureType: 'administrative.locality',
     elementType: 'labels.text.fill',
-    stylers: [{color: '#d59563'}],
+    stylers: [{ color: '#d59563' }],
   },
   {
     featureType: 'poi',
     elementType: 'labels.text.fill',
-    stylers: [{color: '#d59563'}],
+    stylers: [{ color: '#d59563' }],
   },
   {
     featureType: 'poi.park',
     elementType: 'geometry',
-    stylers: [{color: '#263c3f'}],
+    stylers: [{ color: '#263c3f' }],
   },
   {
     featureType: 'poi.park',
     elementType: 'labels.text.fill',
-    stylers: [{color: '#6b9a76'}],
+    stylers: [{ color: '#6b9a76' }],
   },
   {
     featureType: 'road',
     elementType: 'geometry',
-    stylers: [{color: '#38414e'}],
+    stylers: [{ color: '#38414e' }],
   },
   {
     featureType: 'road',
     elementType: 'geometry.stroke',
-    stylers: [{color: '#212a37'}],
+    stylers: [{ color: '#212a37' }],
   },
   {
     featureType: 'road',
     elementType: 'labels.text.fill',
-    stylers: [{color: '#9ca5b3'}],
+    stylers: [{ color: '#9ca5b3' }],
   },
   {
     featureType: 'road.highway',
     elementType: 'geometry',
-    stylers: [{color: '#746855'}],
+    stylers: [{ color: '#746855' }],
   },
   {
     featureType: 'road.highway',
     elementType: 'geometry.stroke',
-    stylers: [{color: '#1f2835'}],
+    stylers: [{ color: '#1f2835' }],
   },
   {
     featureType: 'road.highway',
     elementType: 'labels.text.fill',
-    stylers: [{color: '#f3d19c'}],
+    stylers: [{ color: '#f3d19c' }],
   },
   {
     featureType: 'transit',
     elementType: 'geometry',
-    stylers: [{color: '#2f3948'}],
+    stylers: [{ color: '#2f3948' }],
   },
   {
     featureType: 'transit.station',
     elementType: 'labels.text.fill',
-    stylers: [{color: '#d59563'}],
+    stylers: [{ color: '#d59563' }],
   },
   {
     featureType: 'water',
     elementType: 'geometry',
-    stylers: [{color: '#17263c'}],
+    stylers: [{ color: '#17263c' }],
   },
   {
     featureType: 'water',
     elementType: 'labels.text.fill',
-    stylers: [{color: '#515c6d'}],
+    stylers: [{ color: '#515c6d' }],
   },
   {
     featureType: 'water',
     elementType: 'labels.text.stroke',
-    stylers: [{color: '#17263c'}],
+    stylers: [{ color: '#17263c' }],
   },
 ];

@@ -1,6 +1,6 @@
-import {requestUrls} from './config';
+import { requestUrls } from './config';
 import HttpServices from './HttpServices';
-import {Store} from '../reduxStore/Store';
+import { Store } from '../reduxStore/Store';
 import asyncStorage from './asyncStorage';
 import axios from 'axios';
 const params = new URLSearchParams();
@@ -25,7 +25,8 @@ export const headerInfo = {
   // userApiKey: userApiKey(),
 };
 let userApiKey = async () => {
-  const {auth} = Store.getState();
+  const { auth } = await Store.getState();
+  // debugger;
   if (auth.user) {
     if (typeof auth.user == 'string') {
       const user_data = JSON.parse(auth.user);
@@ -40,7 +41,7 @@ let userApiKey = async () => {
     await asyncStorage.getItem('user_data').then(res => {
       userStringData = res;
     });
-    console.log('userStringData: ', userStringData);
+    console.log('userStringData******: ', userStringData);
     if (typeof userStringData == 'string') {
       let userJsonData = JSON.parse(userStringData);
       let userApiKey = userJsonData.api_key;
@@ -53,24 +54,26 @@ let userApiKey = async () => {
 };
 class AppService extends HttpServices {
   static sendMobileVerification(mobile_number) {
-    let Channel = 'sms';
+    const key = headerInfo.mobileVerification;
+    const Channel = 'sms';
     params.append(mobile_number);
     params.append(Channel);
-    const data = qs.stringify({To: mobile_number, Channel: Channel});
+    const data = qs.stringify({ To: mobile_number, Channel: Channel });
     return this.post(
       requestUrls['sendMobileVerification'],
-      (headers = {Authorization: headerInfo.mobileVerification}),
+      (headers = { Authorization: key }),
       data,
     );
   }
   static verifyMobileVerification(mobile_number, verification_code) {
+    const key = headerInfo.mobileVerification;
     // let Channel = 'sms';
     params.append(mobile_number);
     params.append(verification_code);
-    const data = qs.stringify({To: mobile_number, Code: verification_code});
+    const data = qs.stringify({ To: mobile_number, Code: verification_code });
     return this.post(
       requestUrls['verifyMobileVerification'],
-      (headers = {Authorization: headerInfo.mobileVerification}),
+      (headers = { Authorization: key }),
       data,
     );
     // let url = requestUrls['verifyMobileVerification'];
@@ -78,8 +81,10 @@ class AppService extends HttpServices {
     // return this.get(url);
   }
   static verifyUser(mobile_number) {
+    const key = headerInfo.adminKey;
+    const apiType = headerInfo.contentType;
     params.append(mobile_number);
-    const data = qs.stringify({mobile_number: mobile_number});
+    const data = qs.stringify({ mobile_number: mobile_number });
     // debugger;
     // let url = requestUrls['verifyUser'];
     // url += `?mobile_number=${mobile_number}`;
@@ -87,14 +92,14 @@ class AppService extends HttpServices {
     return this.post(
       requestUrls['verifyUser'],
       (headers = {
-        Authorization: headerInfo.adminKey,
-        'Content-Type': headerInfo.contentType,
+        Authorization: key,
+        'Content-Type': apiType,
       }),
       data,
     );
   }
   static registerUser(payload) {
-    const {first_name, last_name, email, gender, mobile_number, user_type} =
+    const { first_name, last_name, email, gender, mobile_number, user_type } =
       payload;
     // debugger;
     params.append(user_type);
@@ -113,16 +118,18 @@ class AppService extends HttpServices {
     });
     return this.post(
       requestUrls['registerUser'],
-      (headers = {'Content-Type': headerInfo.contentType}),
+      (headers = { 'Content-Type': headerInfo.contentType }),
       data,
     );
   }
   static getStoreData() {
+    const key = headerInfo.userKey;
+
     let url = requestUrls['stores'];
-    return this.get(url, (headers = {Authorization: headerInfo.userKey}));
+    return this.get(url, (headers = { Authorization: key }));
   }
   static getCategories(payload) {
-    const {store_name, is_main, parent_id} = payload;
+    const { store_name, is_main, parent_id } = payload;
 
     let url = requestUrls['getCategories'];
     // url += `?product_store=${store_name}`;
@@ -134,7 +141,9 @@ class AppService extends HttpServices {
     return this.get(url, {});
   }
   static getProductSearch(payload) {
-    const {product_store, product_category, product_name} = payload;
+    const key = headerInfo.userKey;
+
+    const { product_store, product_category, product_name } = payload;
 
     let url = requestUrls['getProductSearch'];
     if (product_category) {
@@ -142,15 +151,16 @@ class AppService extends HttpServices {
     } else {
       url += `?product_store=${product_store}&product_name=${product_name}`;
     }
-    return this.get(url, (headers = {Authorization: headerInfo.userKey}));
+    return this.get(url, (headers = { Authorization: key }));
   }
   static getItemList(payload) {
-    const {store_name, page, per_page} = payload;
+    const { store_name, page, per_page } = payload;
+    const key = headerInfo.userKey;
 
     let url = requestUrls['getItemList'];
     // url += `?product_store=${store_name}`;
     url += `?product_store=${store_name}&page=${page}&per_page=${per_page}`;
-    return this.get(url, (headers = {Authorization: headerInfo.userKey}));
+    return this.get(url, (headers = { Authorization: key }));
   }
   static async addItemToCart(payload) {
     let api_key = await userApiKey();
@@ -182,7 +192,7 @@ class AppService extends HttpServices {
     console.log('headerInfo.userApiKey: ', api_key);
     return this.get(
       requestUrls['getItemsFromCart'],
-      (headers = {Authorization: api_key}),
+      (headers = { Authorization: api_key }),
     );
   }
   static async deleteItemFromCart(id) {
@@ -203,7 +213,7 @@ class AppService extends HttpServices {
     console.log('headerInfo.userApiKey: ', api_key);
     return this.post(
       requestUrls['emptyCart'],
-      (headers = {Authorization: api_key}),
+      (headers = { Authorization: api_key }),
     );
   }
   static async createWallet(payload) {
@@ -223,7 +233,7 @@ class AppService extends HttpServices {
     console.log('headerInfo.userApiKey: ', api_key);
     return this.get(
       requestUrls['getCustomerWallet'],
-      (headers = {Authorization: api_key}),
+      (headers = { Authorization: api_key }),
     );
   }
   static async addAmount(payload) {
@@ -283,7 +293,7 @@ class AppService extends HttpServices {
   static async deleteCardFromWallet(payload) {
     let api_key = await userApiKey();
     console.log('headerInfo.userApiKey: ', api_key);
-    const {card_id} = payload;
+    const { card_id } = payload;
     params.append(card_id);
     const data = qs.stringify({
       card_id: card_id,

@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
   View,
   Text,
@@ -21,7 +21,7 @@ import {
   Spinner,
 } from 'native-base';
 import AppService from '../../../services/AppService';
-import {colors} from '../../../util/colors';
+import { colors } from '../../../util/colors';
 import Snackbar from 'react-native-snackbar';
 import FooterButton from '../../../common/FooterButton';
 import InputField from '../../../common/InputField';
@@ -58,7 +58,7 @@ class UserDeliveryInfo extends Component {
   screenHandler = screen => {
     console.log(screen);
     // if (field === 'deliveryAddress') {
-    let newState = {screen: screen};
+    let newState = { screen: screen };
     this.setState(newState);
     // }
   };
@@ -94,10 +94,10 @@ class UserDeliveryInfo extends Component {
   changeHandler = (e, field) => {
     console.log(e);
     if (field === 'specificInstruction') {
-      let newState = {specificInstruction: e};
+      let newState = { specificInstruction: e };
       this.setState(newState);
     } else if (field === 'promoCode') {
-      let newState = {promoCode: e};
+      let newState = { promoCode: e };
       this.setState(newState);
     }
   };
@@ -107,7 +107,13 @@ class UserDeliveryInfo extends Component {
     if (this.state.deliveryAddress != '') {
       if (this.state.locationData?.results) {
         let payload = Object.assign(this.state.payload, {
-          pick_up_location: {},
+          pick_up_location: {
+            type: 'Point',
+            coordinates: [
+              this.state.locationData.results[0].geometry.location.lat,
+              this.state.locationData.results[0].geometry.location.lng,
+            ],
+          },
           drop_of_location: {
             type: 'Point',
             coordinates: [
@@ -119,13 +125,23 @@ class UserDeliveryInfo extends Component {
           discount_code: this.state.promoCode,
         });
         console.log('final payload: ', payload);
-        await AppService.createPurchase(payload).then(res => {
-          console.log('create Purchase: ', res);
-          if (res.data.status) {
-            this.props.navigation.navigate('RequestDriver');
-          } else {
-          }
-        });
+        await AppService.createPurchase(payload)
+          .then(res => {
+            console.log('create Purchase: ', res);
+            if (res.data.status) {
+              this.props.navigation.navigate('RequestDriver');
+            } else {
+            }
+          })
+          .catch(error => {
+            console.log('error: ', error);
+            console.log('error.response: ', error.response);
+            this.setState({ loading: false });
+            Snackbar.show({
+              text: error.response.data.message,
+              duration: Snackbar.LENGTH_LONG,
+            });
+          });
       } else {
         let payload = Object.assign(this.state.payload, {
           pick_up_location: {
@@ -147,13 +163,23 @@ class UserDeliveryInfo extends Component {
         });
         console.log('final payload: ', payload);
         try {
-          await AppService.createPurchase(payload).then(res => {
-            console.log('create Purchase: ', res);
-            if (res.data.status) {
-              this.props.navigation.navigate('RequestDriver');
-            } else {
-            }
-          });
+          await AppService.createPurchase(payload)
+            .then(res => {
+              console.log('create Purchase: ', res);
+              if (res.data.status) {
+                this.props.navigation.navigate('RequestDriver');
+              } else {
+              }
+            })
+            .catch(error => {
+              console.log('error: ', error);
+              console.log('error.response: ', error.response);
+              this.setState({ loading: false });
+              Snackbar.show({
+                text: error.response.data.message,
+                duration: Snackbar.LENGTH_LONG,
+              });
+            });
         } catch (error) {
           console.log(error.response);
         }
@@ -172,7 +198,7 @@ class UserDeliveryInfo extends Component {
               flex: 1,
               backgroundColor: colors.gray,
             }}>
-            <View style={{flex: 1}}>
+            <View style={{ flex: 1 }}>
               <View style={styles.mainView}>
                 <KeyboardAvoidingView
                   behavior="padding"
@@ -181,7 +207,7 @@ class UserDeliveryInfo extends Component {
                   // style={{flex: 1}}
                   enabled>
                   <ScrollView>
-                    <View style={{marginBottom: '15%'}}>
+                    <View style={{ marginBottom: '15%' }}>
                       <Text style={styles.textStyle}>Enter Location</Text>
                     </View>
                     <InputField
@@ -244,7 +270,8 @@ class UserDeliveryInfo extends Component {
       return (
         <Map
           handleScreen={(data, screen) => this.addressHandler(data, screen)}
-          // pickupLocation={this.state.payload.item_purchases.store}
+          // pickupLocationData={this.state.payload.item_purchases.store}
+          isFrom="PurchaseItemsService"
         />
       );
     }

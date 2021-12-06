@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
   View,
   Text,
@@ -20,7 +20,7 @@ import {
   Spinner,
 } from 'native-base';
 import AppService from '../../../services/AppService';
-import {colors} from '../../../util/colors';
+import { colors } from '../../../util/colors';
 import Snackbar from 'react-native-snackbar';
 // import asyncStorage from '../../../services/asyncStorage';
 import Loader from '../../../common/Loader';
@@ -44,22 +44,32 @@ class Store extends Component {
     this.getStoreData();
   }
   getStoreData = async () => {
-    await AppService.getStoreData().then(res => {
-      console.log('res: ', res);
-      const data = res.data;
-      if (data.status) {
-        let newState = {
-          storeData: data.data,
-          loading: false,
-        };
-        this.setState(newState);
-      } else {
-        let newState = {
-          loading: false,
-        };
-        this.setState(newState);
-      }
-    });
+    await AppService.getStoreData()
+      .then(res => {
+        console.log('res: ', res);
+        const data = res.data;
+        if (data.status) {
+          let newState = {
+            storeData: data.data,
+            loading: false,
+          };
+          this.setState(newState);
+        } else {
+          let newState = {
+            loading: false,
+          };
+          this.setState(newState);
+        }
+      })
+      .catch(error => {
+        console.log('error: ', error);
+        console.log('error.response: ', error.response);
+        this.setState({ loading: false });
+        Snackbar.show({
+          text: error.response.data.message,
+          duration: Snackbar.LENGTH_LONG,
+        });
+      });
   };
   EmptyListMessage = () => {
     return (
@@ -74,7 +84,7 @@ class Store extends Component {
             <Text
               style={[
                 styles.textStyle,
-                {textAlign: 'center', color: colors.secondaryGray},
+                { textAlign: 'center', color: colors.secondaryGray },
               ]}>
               No Data Found!
             </Text>
@@ -84,44 +94,64 @@ class Store extends Component {
     );
   };
   getProducts = async (item, index) => {
-    this.setState({loading: true});
+    this.setState({ loading: true });
     console.log('getItemsFromCart: ', item);
-    await AppService.getItemsFromCart().then(res => {
-      console.log('getItemsFromCart: ', res.data.data.items);
-      if (res.data?.data?.items != '') {
-        if (
-          res.data.data.items[0].product_id.product_store === item.store_name
-        ) {
-          this.props.navigation.navigate('ItemList', item);
+    await AppService.getItemsFromCart()
+      .then(res => {
+        console.log('getItemsFromCart: ', res.data.data.items);
+        if (res.data?.data?.items != '') {
+          if (
+            res.data.data.items[0].product_id.product_store === item.store_name
+          ) {
+            this.props.navigation.navigate('ItemList', item);
+          } else {
+            this.emptyCartAllert(item, index);
+          }
         } else {
-          this.emptyCartAllert(item, index);
+          this.setState({ loading: false });
+          this.props.navigation.navigate('ItemList', item);
         }
-      } else {
-        this.setState({loading: false});
-        this.props.navigation.navigate('ItemList', item);
-      }
-    });
+      })
+      .catch(error => {
+        console.log('error: ', error);
+        console.log('error.response: ', error.response);
+        this.setState({ loading: false });
+        Snackbar.show({
+          text: error.response.data.message,
+          duration: Snackbar.LENGTH_LONG,
+        });
+      });
   };
   emptyCartAllert = async (item, index) => {
     Alert.alert('', 'Your Cart Will be removed!', [
       {
         text: 'Yes',
         onPress: () => {
-          AppService.emptyCart().then(res => {
-            console.log('emptyCart: ', res);
-            if (res.data.status) {
+          AppService.emptyCart()
+            .then(res => {
+              console.log('emptyCart: ', res);
+              if (res.data.status) {
+                Snackbar.show({
+                  text: res.data.message,
+                  duration: Snackbar.LENGTH_LONG,
+                });
+                let itemPress = {
+                  itemPressed: index,
+                  loading: false,
+                };
+                this.setState(itemPress);
+                this.props.navigation.navigate('ItemList', item);
+              }
+            })
+            .catch(error => {
+              console.log('error: ', error);
+              console.log('error.response: ', error.response);
+              this.setState({ loading: false });
               Snackbar.show({
-                text: res.data.message,
+                text: error.response.data.message,
                 duration: Snackbar.LENGTH_LONG,
               });
-              let itemPress = {
-                itemPressed: index,
-                loading: false,
-              };
-              this.setState(itemPress);
-              this.props.navigation.navigate('ItemList', item);
-            }
-          });
+            });
         },
         style: 'cancel',
       },
@@ -141,14 +171,14 @@ class Store extends Component {
   render() {
     return (
       <NativeBaseProvider>
-        <ScrollView style={{flex: 1, backgroundColor: colors.gray}}>
-          <View style={{flex: 1}}>
+        <ScrollView style={{ flex: 1, backgroundColor: colors.gray }}>
+          <View style={{ flex: 1 }}>
             <View style={styles.mainView}>
-              <View style={{marginBottom: '15%'}}>
+              <View style={{ marginBottom: '15%' }}>
                 <Text style={styles.textStyle}>Select Your</Text>
                 <Text style={styles.textStyle}>Desired Store</Text>
               </View>
-              <View style={{flex: 1}}>
+              <View style={{ flex: 1 }}>
                 <FlatList
                   data={this.state.storeData}
                   style={{
@@ -159,9 +189,9 @@ class Store extends Component {
                   keyExtractor={(item, index) => index + ''}
                   ListEmptyComponent={this.EmptyListMessage}
                   // ListFooterComponent={this.renderFooter}
-                  renderItem={({item, index}) => {
+                  renderItem={({ item, index }) => {
                     return (
-                      <View style={{flex: 1}}>
+                      <View style={{ flex: 1 }}>
                         <TouchableOpacity
                           // style={this.state.modalStyle}
                           key={index}
@@ -170,12 +200,12 @@ class Store extends Component {
                               ? styles.modalStyleOnPress
                               : styles.modalStyle,
                             // this.state.styleModal,
-                            {flex: 1, height: 145},
+                            { flex: 1, height: 145 },
                           ]}
                           activeOpacity={0.8}
                           onPress={() => this.getProducts(item, index)}>
-                          <View style={[styles.modalInnerView, {flex: 1}]}>
-                            <View style={{flex: 1, height: 80}}>
+                          <View style={[styles.modalInnerView, { flex: 1 }]}>
+                            <View style={{ flex: 1, height: 80 }}>
                               <Image
                                 resizeMode={'center'}
                                 // source={require('../../../assets/vero-logo.png')}
@@ -184,10 +214,10 @@ class Store extends Component {
                                     'http://157.230.183.30:3000/' +
                                     item.store_logo,
                                 }}
-                                style={{height: 100, width: 50}}
+                                style={{ height: 100, width: 50 }}
                               />
                             </View>
-                            <Text style={[styles.textStyle, {fontSize: 14}]}>
+                            <Text style={[styles.textStyle, { fontSize: 14 }]}>
                               {item.display_name}
                             </Text>
                             <Text

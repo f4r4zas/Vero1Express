@@ -1,14 +1,17 @@
-import React, {useState, useEffect} from 'react';
-import {View, StyleSheet, Image} from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, StyleSheet, Image } from 'react-native';
 import asyncStorage from '../../services/asyncStorage';
-import {useDispatch} from 'react-redux';
-import {userData} from '../../reduxStore/actions/AuthActions';
+import { useDispatch } from 'react-redux';
+import { userData } from '../../reduxStore/actions/AuthActions';
 
-const Splash = ({navigation}) => {
+const Splash = ({ navigation }) => {
   const dispatch = useDispatch();
   const [animating, setAnimating] = useState(true);
   useEffect(() => {
-    let api_key = asyncStorage.getItem('user_data').then(res => {
+    gettingDataFromAsync();
+  }, []);
+  const gettingDataFromAsync = async () => {
+    await asyncStorage.getItem('user_data').then(res => {
       if (res != null) {
         dispatch(userData(res));
         setTimeout(() => {
@@ -22,13 +25,12 @@ const Splash = ({navigation}) => {
         }, 2000);
       }
     });
-  }, []);
-
+  };
   return (
     <View style={styles.container}>
       <Image
         source={require('../../assets/vero-logo.png')}
-        style={{width: '100%', resizeMode: 'contain'}}
+        style={{ width: '100%', resizeMode: 'contain' }}
       />
     </View>
   );

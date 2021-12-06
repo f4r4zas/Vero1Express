@@ -1,5 +1,5 @@
 // import history from '@history.js';
-
+import Snackbar from 'react-native-snackbar';
 import {
   MOBILE_VERIFICATION,
   MOBILE_VERIFICATION_SUCCESS,
@@ -45,18 +45,28 @@ export const sendMobileVerification = payload => async dispatch => {
   dispatch({ type: MOBILE_VERIFICATION });
   asyncStorage.setItem('mobile_num', mobile_number);
   // try {
-  await AppService.sendMobileVerification(mobile_number).then(res => {
-    console.log('login: data: ', res);
-    // const {data} = res.data;
-    if (res.data.account_sid) {
-      dispatch({ type: MOBILE_VERIFICATION_SUCCESS, payload: res.data });
-      // asyncStorage.setItem('verification_code', res.data);
-      // return data.message
-    } else {
-      dispatch({ type: MOBILE_VERIFICATION_FAILURE, payload: data });
-      // return data.message
-    }
-  });
+  await AppService.sendMobileVerification(mobile_number)
+    .then(res => {
+      console.log('login: data: ', res);
+      // const {data} = res.data;
+      if (res.data.account_sid) {
+        dispatch({ type: MOBILE_VERIFICATION_SUCCESS, payload: res.data });
+        // asyncStorage.setItem('verification_code', res.data);
+        // return data.message
+      } else {
+        dispatch({ type: MOBILE_VERIFICATION_FAILURE, payload: data });
+        // return data.message
+      }
+    })
+    .catch(error => {
+      console.log('error: ', error);
+      console.log('error.response: ', error.response);
+      // this.setState({ loading: false });
+      Snackbar.show({
+        text: error.response.data.message,
+        duration: Snackbar.LENGTH_LONG,
+      });
+    });
   // } catch (error) {
   //   // showError(error);
   //   dispatch({type: MOBILE_VERIFICATION_FAILURE, error});
@@ -68,22 +78,29 @@ export const verifyMobileVerification = payload => async dispatch => {
   const { mobile_number, verification_code } = payload;
   dispatch({ type: CODE_VERIFICATION });
   try {
-    await AppService.verifyMobileVerification(
-      mobile_number,
-      verification_code,
-    ).then(res => {
-      console.log('code Verification: ', res);
-      const { data } = res.data;
-      if (res.data.status) {
-        // verifyUser(mobile_number);
-        dispatch({ type: CODE_VERIFICATION_SUCCESS, payload: data });
-        // asyncStorage.setItem(data.data.mobile_number);
-        // return data.message
-      } else {
-        dispatch({ type: CODE_VERIFICATION_FAILURE, payload: data });
-        // return data.message
-      }
-    });
+    await AppService.verifyMobileVerification(mobile_number, verification_code)
+      .then(res => {
+        console.log('code Verification: ', res);
+        const { data } = res.data;
+        if (res.data.status) {
+          // verifyUser(mobile_number);
+          dispatch({ type: CODE_VERIFICATION_SUCCESS, payload: data });
+          // asyncStorage.setItem(data.data.mobile_number);
+          // return data.message
+        } else {
+          dispatch({ type: CODE_VERIFICATION_FAILURE, payload: data });
+          // return data.message
+        }
+      })
+      .catch(error => {
+        console.log('error: ', error);
+        console.log('error.response: ', error.response);
+        // this.setState({ loading: false });
+        Snackbar.show({
+          text: error.response.data.message,
+          duration: Snackbar.LENGTH_LONG,
+        });
+      });
   } catch (error) {
     // showError(error);
     dispatch({ type: CODE_VERIFICATION_FAILURE, error });
@@ -96,25 +113,35 @@ export const verifyUser = data => async dispatch => {
 
   console.log('mobile_number***: ', mobile_number);
   try {
-    let api = await AppService.verifyUser(mobile_number).then(res => {
-      console.log('verify User api: ', res);
-      // debugger;
-      const { data } = res.data;
-      // debugger;
-      if (res.data.status) {
-        // let api_key = data[0].api_key;
-        // let mobile_num = data[0].mobile_number;
-        // let user_type = data[0].user_type;
-        let user_data = data[0];
-        dispatch({ type: LOGIN_SUCCESS, payload: data[0] });
-        // asyncStorage.setItem('api_key', api_key);
-        // asyncStorage.setItem('mobile_number', mobile_num);
-        // asyncStorage.setItem('user_type', user_type);
-        asyncStorage.setItem('user_data', user_data);
-      } else {
-        dispatch({ type: LOGIN_FAILURE, payload: res.data.error });
-      }
-    });
+    let api = await AppService.verifyUser(mobile_number)
+      .then(res => {
+        console.log('verify User api: ', res);
+        // debugger;
+        const { data } = res.data;
+        // debugger;
+        if (res.data.status) {
+          // let api_key = data[0].api_key;
+          // let mobile_num = data[0].mobile_number;
+          // let user_type = data[0].user_type;
+          let user_data = data[0];
+          dispatch({ type: LOGIN_SUCCESS, payload: data[0] });
+          // asyncStorage.setItem('api_key', api_key);
+          // asyncStorage.setItem('mobile_number', mobile_num);
+          // asyncStorage.setItem('user_type', user_type);
+          asyncStorage.setItem('user_data', user_data);
+        } else {
+          dispatch({ type: LOGIN_FAILURE, payload: res.data.error });
+        }
+      })
+      .catch(error => {
+        console.log('error: ', error);
+        console.log('error.response: ', error.response);
+        // this.setState({ loading: false });
+        Snackbar.show({
+          text: error.response.data.message,
+          duration: Snackbar.LENGTH_LONG,
+        });
+      });
   } catch (error) {
     let errorMessage = error.response.data.message;
     console.log(
@@ -136,28 +163,38 @@ export const registerUser = payload => async dispatch => {
   dispatch({ type: REGISTER });
   try {
     // debugger;
-    await AppService.registerUser(payload).then(res => {
-      console.log('code Verification: ', res);
-      const { data } = res.data;
-      // debugger;
-      if (res.data.status) {
-        // asyncStorage.setItem(data.data.mobile_number);
-        dispatch({ type: REGISTER_SUCCESS, payload: data });
-        // let api_key = data[0].api_key;
-        let mobile_num = data[0].mobile_number;
-        // let user_type = data[0].user_type;
-        let user_data = data[0];
-        dispatch({ type: LOGIN_SUCCESS, payload: data[0] });
-        // asyncStorage.setItem('api_key', api_key);
-        asyncStorage.setItem('mobile_number', mobile_num);
-        // asyncStorage.setItem('user_type', user_type);
-        asyncStorage.setItem('user_data', user_data);
-        // return data.message
-      } else {
-        dispatch({ type: REGISTER_FAILURE, payload: data });
-        // return data.message
-      }
-    });
+    await AppService.registerUser(payload)
+      .then(res => {
+        console.log('code Verification: ', res);
+        const { data } = res.data;
+        // debugger;
+        if (res.data.status) {
+          // asyncStorage.setItem(data.data.mobile_number);
+          dispatch({ type: REGISTER_SUCCESS, payload: data });
+          // let api_key = data[0].api_key;
+          let mobile_num = data[0].mobile_number;
+          // let user_type = data[0].user_type;
+          let user_data = data[0];
+          dispatch({ type: LOGIN_SUCCESS, payload: data[0] });
+          // asyncStorage.setItem('api_key', api_key);
+          asyncStorage.setItem('mobile_number', mobile_num);
+          // asyncStorage.setItem('user_type', user_type);
+          asyncStorage.setItem('user_data', user_data);
+          // return data.message
+        } else {
+          dispatch({ type: REGISTER_FAILURE, payload: data });
+          // return data.message
+        }
+      })
+      .catch(error => {
+        console.log('error: ', error);
+        console.log('error.response: ', error.response);
+        // this.setState({ loading: false });
+        Snackbar.show({
+          text: error.response.data.message,
+          duration: Snackbar.LENGTH_LONG,
+        });
+      });
   } catch (error) {
     // showError(error);
     dispatch({ type: REGISTER_FAILURE, error });

@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import WalletCard from '../../common/walletCard';
 import {
   View,
@@ -9,7 +9,7 @@ import {
   BackHandler,
   ScrollView,
 } from 'react-native';
-import {NativeBaseProvider, Separator, Body, Spinner} from 'native-base';
+import { NativeBaseProvider, Separator, Body, Spinner } from 'native-base';
 // import Ionicons from 'react-native-vector-icons/Ionicons';
 import Octicons from 'react-native-vector-icons/Octicons';
 // import Foundation from 'react-native-vector-icons/Foundation';
@@ -21,14 +21,14 @@ import Octicons from 'react-native-vector-icons/Octicons';
 //   CollapseBody,
 // } from 'accordion-collapse-react-native';
 // import FooterButton from '../../common/FooterButton';
-import {colors} from '../../util/colors';
+import { colors } from '../../util/colors';
 import Entypo from 'react-native-vector-icons/Entypo';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import PaymentMethod from './PaymentMethod';
 import AppService from '../../services/AppService';
 import Snackbar from 'react-native-snackbar';
 import LoaderModal from '../../common/LoaderModal';
-import {tSDeclareFunction} from '@babel/types';
+import { tSDeclareFunction } from '@babel/types';
 import asyncStorage from '../../services/asyncStorage';
 import FooterButton from '../../common/FooterButton';
 import Loader from '../../common/Loader';
@@ -62,30 +62,40 @@ export class Wallet extends Component {
     };
     this.setState(isLoading);
     // try {
-    await AppService.getCustomerWallet().then(res => {
-      console.log('getCustomerWallet: ', res);
-      // debugger;
-      if (res.data.status) {
-        let newState = {
-          loading: false,
-          wallet: res.data.data.wallet,
-          cards: res.data.data.cards,
-          default_card: res.data.data.default_card,
-          createWallet: res.data.data.wallet ? false : true,
-          // createWallet: true,
-        };
-        this.setState(newState);
-      } else {
-        let newState = {
-          loading: false,
-        };
-        this.setState(newState);
-        // Snackbar.show({
-        //   text: res.data.message,
-        //   duration: Snackbar.LENGTH_LONG,
-        // });
-      }
-    });
+    await AppService.getCustomerWallet()
+      .then(res => {
+        console.log('getCustomerWallet: ', res);
+        // debugger;
+        if (res.data.status) {
+          let newState = {
+            loading: false,
+            wallet: res.data.data.wallet,
+            cards: res.data.data.cards,
+            default_card: res.data.data.default_card,
+            createWallet: res.data.data.wallet ? false : true,
+            // createWallet: true,
+          };
+          this.setState(newState);
+        } else {
+          let newState = {
+            loading: false,
+          };
+          this.setState(newState);
+          // Snackbar.show({
+          //   text: res.data.message,
+          //   duration: Snackbar.LENGTH_LONG,
+          // });
+        }
+      })
+      .catch(error => {
+        console.log('error: ', error);
+        console.log('error.response: ', error.response);
+        this.setState({ loading: false });
+        Snackbar.show({
+          text: error.response.data.message,
+          duration: Snackbar.LENGTH_LONG,
+        });
+      });
   };
   renderUri(itemImage) {
     if (!/^(f|ht)tps?:\/\//i.test(itemImage)) {
@@ -101,52 +111,62 @@ export class Wallet extends Component {
     this.setState(newState);
   };
   handleScreen = () => {
-    let newState = {createWallet: false};
+    let newState = { createWallet: false };
     this.setState(newState);
     this.getCustomerWallet();
   };
   deletePaymentMethod = async item => {
     console.log(item);
-    let newState = {loading: true};
+    let newState = { loading: true };
     this.setState(newState);
     let payload = {
       card_id: item.id,
     };
-    await AppService.deleteCardFromWallet(payload).then(res => {
-      console.log('deleteCardFromWallet: ', res);
-      if (res.data.status) {
+    await AppService.deleteCardFromWallet(payload)
+      .then(res => {
+        console.log('deleteCardFromWallet: ', res);
+        if (res.data.status) {
+          Snackbar.show({
+            text: res.data.message,
+            duration: Snackbar.LENGTH_LONG,
+          });
+          let newState = {
+            loading: false,
+            deleteCard: false,
+          };
+          this.getCustomerWallet();
+        } else {
+          Snackbar.show({
+            text: res.data.message,
+            duration: Snackbar.LENGTH_LONG,
+          });
+          let newState = {
+            loading: false,
+            deleteCard: false,
+          };
+          this.setState(newState);
+        }
+      })
+      .catch(error => {
+        console.log('error: ', error);
+        console.log('error.response: ', error.response);
+        this.setState({ loading: false });
         Snackbar.show({
-          text: res.data.message,
+          text: error.response.data.message,
           duration: Snackbar.LENGTH_LONG,
         });
-        let newState = {
-          loading: false,
-          deleteCard: false,
-        };
-        this.getCustomerWallet();
-      } else {
-        Snackbar.show({
-          text: res.data.message,
-          duration: Snackbar.LENGTH_LONG,
-        });
-        let newState = {
-          loading: false,
-          deleteCard: false,
-        };
-        this.setState(newState);
-      }
-    });
+      });
   };
   checkAddAmount = () => {
     if (this.state.cards.length > 0) {
-      let newState = {addAmount: true, createWallet: true};
+      let newState = { addAmount: true, createWallet: true };
       this.setState(newState);
     } else {
       Snackbar.show({
         text: 'No Payment Method Found!',
         duration: Snackbar.LENGTH_LONG,
       });
-      let newState = {addAmount: false, createWallet: true};
+      let newState = { addAmount: false, createWallet: true };
       this.setState(newState);
     }
   };
@@ -166,14 +186,14 @@ export class Wallet extends Component {
     } else {
       return (
         <NativeBaseProvider>
-          <View style={{flex: 1, backgroundColor: colors.gray}}>
-            <View style={{flexGrow: 1}}>
+          <View style={{ flex: 1, backgroundColor: colors.gray }}>
+            <View style={{ flexGrow: 1 }}>
               <View style={styles.mainView}>
                 <View style={styles.innerViews}>
                   <View>
                     <Text style={styles.textStyle}>Wallet</Text>
                   </View>
-                  <View style={{marginRight: '2%'}}>
+                  <View style={{ marginRight: '2%' }}>
                     <TouchableOpacity
                       activeOpacity={0.8}
                       onPress={this.checkAddAmount}
@@ -181,7 +201,7 @@ export class Wallet extends Component {
                       <Text
                         style={[
                           styles.textStyle,
-                          {color: colors.primaryOrange, fontSize: 16},
+                          { color: colors.primaryOrange, fontSize: 16 },
                         ]}>
                         <FontAwesome
                           type="FontAwesome"
@@ -211,11 +231,11 @@ export class Wallet extends Component {
                         this.state.activeTab == 0
                           ? [
                               styles.textStyle,
-                              {fontSize: 14, color: colors.primaryOrange},
+                              { fontSize: 14, color: colors.primaryOrange },
                             ]
                           : [
                               styles.textStyle,
-                              {fontSize: 14, color: colors.secondaryGray},
+                              { fontSize: 14, color: colors.secondaryGray },
                             ]
                       }>
                       Transaction History
@@ -251,11 +271,11 @@ export class Wallet extends Component {
                         this.state.activeTab == 1
                           ? [
                               styles.textStyle,
-                              {fontSize: 14, color: colors.primaryOrange},
+                              { fontSize: 14, color: colors.primaryOrange },
                             ]
                           : [
                               styles.textStyle,
-                              {fontSize: 14, color: colors.secondaryGray},
+                              { fontSize: 14, color: colors.secondaryGray },
                             ]
                       }>
                       Payment Method
@@ -286,12 +306,12 @@ export class Wallet extends Component {
                     />
                   </TouchableOpacity>
                 </View>
-                <ScrollView style={{height: '45%'}}>
+                <ScrollView style={{ height: '45%' }}>
                   {
                     this.state.activeTab == 0 ? (
                       <>
                         <View style={styles.walletCard}>
-                          <View style={{height: 90}}>
+                          <View style={{ height: 90 }}>
                             <Image
                               resizeMode={'center'}
                               source={require('../../assets/cvs.png')}
@@ -300,10 +320,10 @@ export class Wallet extends Component {
                               //     'http://157.230.183.30:3000/' +
                               //     item.store_logo,
                               // }}
-                              style={{height: 100, width: 100}}
+                              style={{ height: 100, width: 100 }}
                             />
                           </View>
-                          <View style={{justifyContent: 'center'}}>
+                          <View style={{ justifyContent: 'center' }}>
                             <View
                               style={{
                                 flexDirection: 'row',
@@ -312,11 +332,12 @@ export class Wallet extends Component {
                               <Text
                                 style={[
                                   styles.textStyle,
-                                  {fontSize: 14, width: '60%'},
+                                  { fontSize: 14, width: '60%' },
                                 ]}>
                                 Electician fair
                               </Text>
-                              <Text style={[styles.textStyle, {fontSize: 14}]}>
+                              <Text
+                                style={[styles.textStyle, { fontSize: 14 }]}>
                                 $120.25
                               </Text>
                             </View>
@@ -343,16 +364,16 @@ export class Wallet extends Component {
                               <Text
                                 style={[
                                   styles.textStyle,
-                                  {fontSize: 10, color: 'red'},
+                                  { fontSize: 10, color: 'red' },
                                 ]}>
                                 -$20
                               </Text>
                             </View>
-                            <View style={{marginTop: '5%'}}>
+                            <View style={{ marginTop: '5%' }}>
                               <Text
                                 style={[
                                   styles.textStyle,
-                                  {fontSize: 10, color: colors.secondaryGray},
+                                  { fontSize: 10, color: colors.secondaryGray },
                                 ]}>
                                 Dec 17, 08:57 PM
                               </Text>
@@ -360,7 +381,7 @@ export class Wallet extends Component {
                           </View>
                         </View>
                         <View style={styles.walletCard}>
-                          <View style={{height: 90}}>
+                          <View style={{ height: 90 }}>
                             <Image
                               resizeMode={'center'}
                               source={require('../../assets/cvs.png')}
@@ -369,10 +390,10 @@ export class Wallet extends Component {
                               //     'http://157.230.183.30:3000/' +
                               //     item.store_logo,
                               // }}
-                              style={{height: 100, width: 100}}
+                              style={{ height: 100, width: 100 }}
                             />
                           </View>
-                          <View style={{justifyContent: 'center'}}>
+                          <View style={{ justifyContent: 'center' }}>
                             <View
                               style={{
                                 flexDirection: 'row',
@@ -381,11 +402,12 @@ export class Wallet extends Component {
                               <Text
                                 style={[
                                   styles.textStyle,
-                                  {fontSize: 14, width: '60%'},
+                                  { fontSize: 14, width: '60%' },
                                 ]}>
                                 Electician fair
                               </Text>
-                              <Text style={[styles.textStyle, {fontSize: 14}]}>
+                              <Text
+                                style={[styles.textStyle, { fontSize: 14 }]}>
                                 $120.25
                               </Text>
                             </View>
@@ -412,16 +434,16 @@ export class Wallet extends Component {
                               <Text
                                 style={[
                                   styles.textStyle,
-                                  {fontSize: 10, color: 'red'},
+                                  { fontSize: 10, color: 'red' },
                                 ]}>
                                 -$20
                               </Text>
                             </View>
-                            <View style={{marginTop: '5%'}}>
+                            <View style={{ marginTop: '5%' }}>
                               <Text
                                 style={[
                                   styles.textStyle,
-                                  {fontSize: 10, color: colors.secondaryGray},
+                                  { fontSize: 10, color: colors.secondaryGray },
                                 ]}>
                                 Dec 17, 08:57 PM
                               </Text>
@@ -451,7 +473,7 @@ export class Wallet extends Component {
                                           borderTopColor: 'red',
                                           position: 'absolute',
                                           right: 0,
-                                          transform: [{rotate: '90deg'}],
+                                          transform: [{ rotate: '90deg' }],
                                         }}></View>
                                       <FontAwesome
                                         name="close"
@@ -467,7 +489,7 @@ export class Wallet extends Component {
                                       />
                                     </>
                                   ) : null}
-                                  <View style={{height: 90}}>
+                                  <View style={{ height: 90 }}>
                                     {/* <Image
                                         resizeMode={'center'}
                                         source={require('../../assets/cvs.png')}
@@ -481,7 +503,7 @@ export class Wallet extends Component {
                                     {item.brand === '3782' ? (
                                       <Image
                                         source={require('../../assets/american-express.png')}
-                                        style={{height: 100, width: 100}}
+                                        style={{ height: 100, width: 100 }}
                                       />
                                     ) : item.brand === 'Visa' ? (
                                       <Image
@@ -496,15 +518,15 @@ export class Wallet extends Component {
                                     ) : item.brand === '6011' ? (
                                       <Image
                                         source={require('../../assets/discover-icon.png')}
-                                        style={{height: 100, width: 100}}
+                                        style={{ height: 100, width: 100 }}
                                       />
                                     ) : item.brand === '5555' ? (
                                       <Image
                                         source={require('../../assets/masterCardNew.png')}
-                                        style={{height: 100, width: 100}}
+                                        style={{ height: 100, width: 100 }}
                                       />
                                     ) : (
-                                      <View style={{marginTop: 10}}>
+                                      <View style={{ marginTop: 10 }}>
                                         <Octicons
                                           type="Octicons"
                                           name="credit-card"
@@ -526,14 +548,14 @@ export class Wallet extends Component {
                                       <Text
                                         style={[
                                           styles.textStyle,
-                                          {fontSize: 14, width: '71%'},
+                                          { fontSize: 14, width: '71%' },
                                         ]}>
                                         **** **** **** {item.last4}
                                       </Text>
                                       <Text
                                         style={[
                                           styles.textStyle,
-                                          {fontSize: 14},
+                                          { fontSize: 14 },
                                         ]}>
                                         {item.country}
                                       </Text>
@@ -561,7 +583,7 @@ export class Wallet extends Component {
                                       <Text
                                         style={[
                                           styles.textStyle,
-                                          {fontSize: 10, color: 'red'},
+                                          { fontSize: 10, color: 'red' },
                                         ]}>
                                         {item.address_zip}
                                       </Text>
@@ -633,7 +655,7 @@ export class Wallet extends Component {
                               })
                             }
                             disabled={this.state.loading}>
-                            <Text style={[styles.textStyle, {fontSize: 16}]}>
+                            <Text style={[styles.textStyle, { fontSize: 16 }]}>
                               <FontAwesome
                                 type="FontAwesome"
                                 name="plus-circle"
@@ -663,12 +685,12 @@ export class Wallet extends Component {
                                 activeOpacity={0.8}
                                 onPress={() =>
                                   this.state.deleteCard
-                                    ? this.setState({deleteCard: false})
-                                    : this.setState({deleteCard: true})
+                                    ? this.setState({ deleteCard: false })
+                                    : this.setState({ deleteCard: true })
                                 }
                                 disabled={this.state.loading}>
                                 <Text
-                                  style={[styles.textStyle, {fontSize: 16}]}>
+                                  style={[styles.textStyle, { fontSize: 16 }]}>
                                   {/* <FontAwesome
                                   type="FontAwesome"
                                   name="edit"
@@ -697,11 +719,11 @@ export class Wallet extends Component {
           </View>
 
           {this.props.route.params?.isFromCart ? (
-            <View style={{position: 'absolute', right: 0, bottom: 0}}>
+            <View style={{ position: 'absolute', right: 0, bottom: 0 }}>
               <FooterButton
                 title="Continue"
                 onPress={() =>
-                  this.props.navigation.navigate('Cart', {isWallet: true})
+                  this.props.navigation.navigate('Cart', { isWallet: true })
                 }
                 disabled={this.state.loading}
               />

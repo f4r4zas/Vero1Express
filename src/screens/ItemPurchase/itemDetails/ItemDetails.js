@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -19,7 +19,7 @@ import {
   Spinner,
 } from 'native-base';
 
-import {useSelector, useDispatch} from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import FooterButton from '../../../common/FooterButton';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import {
@@ -27,7 +27,7 @@ import {
   removeFromCart,
 } from '../../../reduxStore/actions/AuthActions';
 // import * as cartActions from '../../store/actions/cart';
-import {colors} from '../../../util/colors';
+import { colors } from '../../../util/colors';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import AppService from '../../../services/AppService';
 import Snackbar from 'react-native-snackbar';
@@ -52,25 +52,35 @@ const ItemDetails = props => {
     setloading(true);
     if (countProduct > 0) {
       let payload = {
-        items: [{product_id: item._id, quantity: countProduct}],
+        items: [{ product_id: item._id, quantity: countProduct }],
         store_name: storeData.store_name,
       };
-      await AppService.addItemToCart(payload).then(res => {
-        if (res.data.status) {
+      await AppService.addItemToCart(payload)
+        .then(res => {
+          if (res.data.status) {
+            Snackbar.show({
+              text: res.data.message,
+              duration: Snackbar.LENGTH_LONG,
+            });
+            setloading(false);
+            props.navigation.navigate('Cart');
+          } else {
+            Snackbar.show({
+              text: res.data.message,
+              duration: Snackbar.LENGTH_LONG,
+            });
+            setloading(false);
+          }
+        })
+        .catch(error => {
+          console.log('error: ', error);
+          console.log('error.response: ', error.response);
+          setloading(false);
           Snackbar.show({
-            text: res.data.message,
+            text: error.response.data.message,
             duration: Snackbar.LENGTH_LONG,
           });
-          setloading(false);
-          props.navigation.navigate('Cart');
-        } else {
-          Snackbar.show({
-            text: res.data.message,
-            duration: Snackbar.LENGTH_LONG,
-          });
-          setloading(false);
-        }
-      });
+        });
     } else {
       Snackbar.show({
         text: 'Please enter quantity',
@@ -102,8 +112,8 @@ const ItemDetails = props => {
   console.log('items: ', props.route.params.item);
   return (
     <NativeBaseProvider>
-      <View style={{flex: 1, backgroundColor: colors.white}}>
-        <View style={{flex: 1}}>
+      <View style={{ flex: 1, backgroundColor: colors.white }}>
+        <View style={{ flex: 1 }}>
           <View style={styles.mainView}>
             <View>
               <Image
@@ -118,19 +128,19 @@ const ItemDetails = props => {
               />
             </View>
             <View>
-              <View style={{marginBottom: '7%'}}>
-                <View style={{flexDirection: 'row'}}>
+              <View style={{ marginBottom: '7%' }}>
+                <View style={{ flexDirection: 'row' }}>
                   <Text
                     style={[
                       styles.textStyle,
-                      {fontSize: 12, color: colors.secondaryGray},
+                      { fontSize: 12, color: colors.secondaryGray },
                     ]}>
                     Baby & Child <AntDesign type="AntDesign" name="right" />{' '}
                   </Text>
                   <Text
                     style={[
                       styles.textStyle,
-                      {fontSize: 12, color: colors.primaryOrange},
+                      { fontSize: 12, color: colors.primaryOrange },
                     ]}>
                     {props.route.params.item.product_category.name}
                     {/* {item?.product_category?.name} */}
@@ -138,7 +148,7 @@ const ItemDetails = props => {
                 </View>
               </View>
               <Image
-                style={{height: 200, width: '100%'}}
+                style={{ height: 200, width: '100%' }}
                 resizeMode="center"
                 source={{
                   uri: renderUri(props.route.params.item.product_image),
@@ -152,20 +162,21 @@ const ItemDetails = props => {
                   marginTop: '7%',
                   marginBottom: '3%',
                 }}>
-                <Text style={[styles.textStyle, {fontSize: 16, width: '90%'}]}>
+                <Text
+                  style={[styles.textStyle, { fontSize: 16, width: '90%' }]}>
                   {props.route.params.item.product_name}
                   {/* {item?.product_name} */}
                 </Text>
                 <Text
                   style={[
                     styles.textStyle,
-                    {fontSize: 15, color: colors.primaryOrange},
+                    { fontSize: 15, color: colors.primaryOrange },
                   ]}>
                   ${props.route.params.item.product_price}
                   {/* ${item?.product_price} */}
                 </Text>
               </View>
-              <View style={{height: '30%'}}>
+              <View style={{ height: '30%' }}>
                 <ScrollView>
                   <Text style={styles.description}>
                     {/* <HTML
@@ -235,7 +246,7 @@ const ItemDetails = props => {
                     <Text
                       style={[
                         styles.textStyle,
-                        {fontSize: 18, color: colors.secondaryGray},
+                        { fontSize: 18, color: colors.secondaryGray },
                       ]}>
                       {countProduct ? countProduct : 0}
                     </Text>
@@ -269,7 +280,7 @@ const ItemDetails = props => {
           title="Add To Cart"
           onPress={pressHandler}
           disabled={loading}
-          style={{width: '50%'}}
+          style={{ width: '50%' }}
         />
       </View>
     </NativeBaseProvider>

@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
   View,
   Text,
@@ -13,10 +13,10 @@ import {
   Platform,
   PermissionsAndroid,
 } from 'react-native';
-import {NativeBaseProvider} from 'native-base';
+import { NativeBaseProvider } from 'native-base';
 import Snackbar from 'react-native-snackbar';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import {colors} from '../../util/colors';
+import { colors } from '../../util/colors';
 import FooterButton from '../../common/FooterButton';
 import SelectField from '../../common/SelectField';
 import {
@@ -25,7 +25,7 @@ import {
 } from 'react-native-responsive-screen';
 import ParcelProductCard from '../../common/ParcelProductCard';
 import Camera from '../../common/Camera';
-import {launchImageLibrary, launchCamera} from 'react-native-image-picker';
+import { launchImageLibrary, launchCamera } from 'react-native-image-picker';
 import AppService from '../../services/AppService';
 import Loader from '../../common/Loader';
 
@@ -41,23 +41,23 @@ class PackagePickupAndDeliveryCheckout extends Component {
       isValid: false,
       error: false,
       packageType: [
-        {name: 'Parcel', value: 'Parcel'},
-        {name: 'Documents', value: 'Documents'},
+        { name: 'Parcel', value: 'Parcel' },
+        { name: 'Documents', value: 'Documents' },
       ],
       itemWeights: [
-        {name: '5', value: '5'},
-        {name: '10', value: '10'},
-        {name: '15', value: '15'},
-        {name: '20', value: '20'},
+        { name: '5', value: '5' },
+        { name: '10', value: '10' },
+        { name: '15', value: '15' },
+        { name: '20', value: '20' },
       ],
       fragile: [
-        {name: 'No', value: 'No'},
-        {name: 'Yes', value: 'Yes'},
+        { name: 'No', value: 'No' },
+        { name: 'Yes', value: 'Yes' },
       ],
       size: [
-        {name: 'Small', value: 'Small'},
-        {name: 'Medium', value: 'Medium'},
-        {name: 'Large', value: 'Large'},
+        { name: 'Small', value: 'Small' },
+        { name: 'Medium', value: 'Medium' },
+        { name: 'Large', value: 'Large' },
       ],
       selectedSize: '',
       selectedFragile: '',
@@ -84,16 +84,16 @@ class PackagePickupAndDeliveryCheckout extends Component {
     console.log(e);
     // debugger;
     if (field === 'selectedPackageType') {
-      let newState = {selectedPackageType: e.name};
+      let newState = { selectedPackageType: e.name };
       this.setState(newState);
     } else if (field === 'selectedItemWeight') {
-      let newState = {selectedItemWeight: e.name};
+      let newState = { selectedItemWeight: e.name };
       this.setState(newState);
     } else if (field === 'selectedFragile') {
-      let newState = {selectedFragile: e.name};
+      let newState = { selectedFragile: e.name };
       this.setState(newState);
     } else if (field === 'selectedSize') {
-      let newState = {selectedSize: e.name};
+      let newState = { selectedSize: e.name };
       this.setState(newState);
     }
   };
@@ -172,31 +172,41 @@ class PackagePickupAndDeliveryCheckout extends Component {
       type: photo.type,
       uri: Platform.OS === 'ios' ? photo.uri.replace('file://', '') : photo.uri,
     };
-    await AppService.uploadImage(photo1).then(res => {
-      console.log('res uploadImage: ', res);
+    await AppService.uploadImage(photo1)
+      .then(res => {
+        console.log('res uploadImage: ', res);
 
-      if (res.data.status) {
+        if (res.data.status) {
+          Snackbar.show({
+            text: 'Image Uploaded Successfully',
+            duration: Snackbar.LENGTH_LONG,
+          });
+          let newState = {
+            image_url: res.data.data.image_url,
+            loading: false,
+          };
+          this.setState(newState);
+        } else {
+          let error = res.data.data.message;
+          Snackbar.show({
+            text: error,
+            duration: Snackbar.LENGTH_LONG,
+          });
+          let newState = {
+            loading: false,
+          };
+          this.setState(newState);
+        }
+      })
+      .catch(error => {
+        console.log('error: ', error);
+        console.log('error.response: ', error.response);
+        this.setState({ loading: false });
         Snackbar.show({
-          text: 'Image Uploaded Successfully',
+          text: error.response.data.message,
           duration: Snackbar.LENGTH_LONG,
         });
-        let newState = {
-          image_url: res.data.data.image_url,
-          loading: false,
-        };
-        this.setState(newState);
-      } else {
-        let error = res.data.data.message;
-        Snackbar.show({
-          text: error,
-          duration: Snackbar.LENGTH_LONG,
-        });
-        let newState = {
-          loading: false,
-        };
-        this.setState(newState);
-      }
-    });
+      });
     let newState = {
       loading: false,
     };
@@ -251,6 +261,7 @@ class PackagePickupAndDeliveryCheckout extends Component {
     }
   };
   requestDriverApi = async payload => {
+    console.log('payload: ', payload);
     await AppService.createPurchase(payload)
       .then(res => {
         console.log('requestDriverApi: ', res);
@@ -262,11 +273,12 @@ class PackagePickupAndDeliveryCheckout extends Component {
       })
       .catch(error => {
         console.log('error: ', error);
-        console.log('error: ', error.response);
-        let newState = {
-          loading: false,
-        };
-        this.setState(newState);
+        console.log('error.response: ', error.response);
+        this.setState({ loading: false });
+        Snackbar.show({
+          text: error.response.data.message,
+          duration: Snackbar.LENGTH_LONG,
+        });
       });
   };
   cancelParcel = (item, index) => {
@@ -276,7 +288,7 @@ class PackagePickupAndDeliveryCheckout extends Component {
       if (index == i) {
         // let x = this.state.items[i];
         this.state.items.splice(i, 1);
-        let newState = {items: this.state.items};
+        let newState = { items: this.state.items };
         console.log('newState: ', newState);
         debugger;
 
@@ -316,18 +328,18 @@ class PackagePickupAndDeliveryCheckout extends Component {
       this.state.items.push(item);
       // console.log('item: ', newState);
 
-      this.setState({items: this.state.items});
+      this.setState({ items: this.state.items });
     }
   };
   render() {
     console.log('this.state.items: ', this.props);
     return (
       <NativeBaseProvider>
-        <View style={{flex: 1, backgroundColor: colors.gray}}>
-          <View style={{flex: 1}}>
+        <View style={{ flex: 1, backgroundColor: colors.gray }}>
+          <View style={{ flex: 1 }}>
             <View style={styles.mainView}>
-              <ScrollView style={{height: hp('80%')}}>
-                <View style={{marginBottom: hp('5%')}}>
+              <ScrollView style={{ height: hp('80%') }}>
+                <View style={{ marginBottom: hp('5%') }}>
                   <Text style={styles.textStyle}>Package Pickup</Text>
                   <Text style={styles.textStyle}>& Delivery</Text>
                 </View>
@@ -335,10 +347,10 @@ class PackagePickupAndDeliveryCheckout extends Component {
                   data={this.state.items}
                   keyExtractor={(item, index) => index + ''}
                   // ListEmptyComponent={EmptyListMessage}
-                  renderItem={({item, index}) => {
+                  renderItem={({ item, index }) => {
                     console.log('items: ', item);
                     return (
-                      <View style={{width: hp('45%'), marginLeft: 5}}>
+                      <View style={{ width: hp('45%'), marginLeft: 5 }}>
                         <ParcelProductCard
                           cancelParcel={() => this.cancelParcel(item, index)}
                           packageType={item.item_type}
@@ -388,7 +400,7 @@ class PackagePickupAndDeliveryCheckout extends Component {
                 />
                 <TouchableOpacity
                   onPress={() => this.handleCamera()}
-                  style={{marginTop: hp('3%'), flexDirection: 'row'}}>
+                  style={{ marginTop: hp('3%'), flexDirection: 'row' }}>
                   <MaterialIcons
                     type="MaterialIcons"
                     name="camera-alt"
@@ -440,7 +452,7 @@ class PackagePickupAndDeliveryCheckout extends Component {
               <TouchableOpacity
                 activeOpacity={0.8}
                 onPress={this.addParecls}
-                style={{marginLeft: '10%', marginTop: '2%'}}>
+                style={{ marginLeft: '10%', marginTop: '2%' }}>
                 <Text
                   style={[
                     styles.textStyle,
@@ -453,7 +465,7 @@ class PackagePickupAndDeliveryCheckout extends Component {
                   Add Parcel
                 </Text>
               </TouchableOpacity>
-              <View style={{width: '80%'}}>
+              <View style={{ width: '80%' }}>
                 <FooterButton
                   title="Proceed To Checkout"
                   onPress={this.pressHandler}
