@@ -29,8 +29,11 @@ import FooterButton from '../FooterButton';
 const { width, height } = Dimensions.get('window');
 
 const ASPECT_RATIO = width / height;
-const LATITUDE_DELTA = 1;
-const LONGITUDE_DELTA = 1;
+const LATITUDE_DELTA = 0.0922;
+const LONGITUDE_DELTA = 0.0421;
+
+const LATITUDE = 24.9249479;
+const LONGITUDE = 67.0832778;
 
 const GOOGLE_MAPS_APIKEY = 'AIzaSyC6Vo_6ohnkLyGIw2IPmZka0TarRaeWJ2g';
 class Map extends Component {
@@ -39,16 +42,16 @@ class Map extends Component {
 
     this.state = {
       initialPosition: {
-        latitude: 0,
-        longitude: 0,
-        latitudeDelta: 0,
-        longitudeDelta: 0,
+        latitude: LATITUDE,
+        longitude: LONGITUDE,
+        latitudeDelta: LATITUDE_DELTA,
+        longitudeDelta: LONGITUDE_DELTA,
       },
       origin: {
-        latitude: 0,
-        longitude: 0,
-        latitudeDelta: 0,
-        longitudeDelta: 0,
+        latitude: LATITUDE,
+        longitude: LONGITUDE,
+        latitudeDelta: LATITUDE_DELTA,
+        longitudeDelta: LONGITUDE_DELTA,
       },
       destination: {
         latitude: 0,
@@ -69,6 +72,7 @@ class Map extends Component {
       Token: '',
       screen: 1,
       locationData: '',
+      isDestination: false,
     };
   }
   componentDidMount() {
@@ -249,37 +253,17 @@ class Map extends Component {
         var initialRegion = {
           latitude: lat,
           longitude: long,
-          latitudeDelta: 0.0,
-          longitudeDelta: 0.0015,
+          latitudeDelta: LATITUDE_DELTA,
+          longitudeDelta: LONGITUDE_DELTA,
         };
         this.setState({ initialPosition: initialRegion });
 
-        that.map.animateToRegion(initialRegion, 500);
+        that.map.animateToRegion(initialRegion, 700);
 
-        Geocoder.init('AIzaSyC6Vo_6ohnkLyGIw2IPmZka0TarRaeWJ2g');
-        Geocoder.from(position.coords.latitude, position.coords.longitude)
-          .then(json => {
-            console.log('json: ', json);
-            var addressComponent = json.results[0].address_components;
-            let lat = json.results[0].geometry.location.lat;
-            let lng = json.results[0].geometry.location.lng;
-            let newState = {
-              pickUp: addressComponent[0].long_name,
-              pickUpAddress: addressComponent[1].long_name,
-              destination: {
-                latitude: 0,
-                longitude: 0,
-              },
-              pickLat: lat,
-              pickLong: lng,
-              locationData: json,
-            };
-            that.setState(newState);
-          })
-          .catch(error => {
-            console.log('error: ', error);
-            console.log('error.response: ', error.response);
-          });
+        this.getCustomPickUpLocation(
+          position.coords.latitude,
+          position.coords.longitude,
+        );
       },
       error => {
         console.log('error: ', error);
@@ -294,6 +278,64 @@ class Map extends Component {
     );
   };
 
+  getCustomPickUpLocation = async (latitude, longitude) => {
+    await Geocoder.init('AIzaSyC6Vo_6ohnkLyGIw2IPmZka0TarRaeWJ2g');
+    await Geocoder.from(latitude, longitude)
+      .then(json => {
+        console.log('json: ', json);
+        var addressComponent = json.results[0].address_components;
+        let lat = json.results[0].geometry.location.lat;
+        let lng = json.results[0].geometry.location.lng;
+        let newState = {
+          pickUp: addressComponent[0].long_name,
+          pickUpAddress: addressComponent[1].long_name,
+          destination: {
+            latitude: 0,
+            longitude: 0,
+          },
+          pickLat: lat,
+          pickLong: lng,
+          locationData: json,
+        };
+        this.setState(newState);
+      })
+      .catch(error => {
+        console.log('error: ', error);
+        console.log('error.response: ', error.response);
+      });
+  };
+
+  getCustomDropOffLocation = async (latitude, longitude) => {
+    await Geocoder.init('AIzaSyC6Vo_6ohnkLyGIw2IPmZka0TarRaeWJ2g');
+    await Geocoder.from(latitude, longitude)
+      .then(json => {
+        console.log('json: ', json);
+        var addressComponent = json.results[0].address_components;
+        let lat = json.results[0].geometry.location.lat;
+        let lng = json.results[0].geometry.location.lng;
+
+        this.setState({
+          regionChange1: false,
+          // regionChange2: true,
+          dropOff: addressComponent[0].long_name,
+          dropOffAddress: addressComponent[1].long_name,
+          dropLat: lat,
+          dropLong: lng,
+          destination: {
+            latitude: lat,
+            longitude: lng,
+          },
+          fakeMarkerAppearance: false,
+          // locationData: json,
+          // isDestination: true,
+        });
+      })
+      .catch(error => {
+        console.log('error: ', error);
+        console.log('error.response: ', error.response);
+      });
+  };
+
   openSearchModal1() {
     RNGooglePlaces.openAutocompleteModal()
       .then(place => {
@@ -302,8 +344,8 @@ class Map extends Component {
         var tempCords = {
           latitude: parseFloat(place.location.latitude),
           longitude: parseFloat(place.location.longitude),
-          latitudeDelta: 0.0015,
-          longitudeDelta: 0.0015,
+          latitudeDelta: LATITUDE_DELTA,
+          longitudeDelta: LONGITUDE_DELTA,
         };
         var fullAddress = place.address.slice(0, 39);
         this.setState({
@@ -316,14 +358,14 @@ class Map extends Component {
           initialPosition: {
             latitude: place.location.latitude,
             longitude: place.location.longitude,
-            latitudeDelta: 0.0015,
-            longitudeDelta: 0.0015,
+            latitudeDelta: LATITUDE_DELTA,
+            longitudeDelta: LONGITUDE_DELTA,
           },
           origin: {
             latitude: place.location.latitude,
             longitude: place.location.longitude,
-            latitudeDelta: 0.08,
-            longitudeDelta: LATITUDE_DELTA,
+            latitudeDelta: LATITUDE_DELTA,
+            longitudeDelta: LONGITUDE_DELTA,
           },
 
           destination: {
@@ -333,7 +375,7 @@ class Map extends Component {
           locationData: place,
         });
         // this.map.animateToCoordinate(tempCords, 1)
-        this.map.animateToRegion(tempCords, 2000);
+        this.map.animateToRegion(tempCords, 700);
         // place represents user's selection from the
         // suggestions and it is a simplified Google Place object.
       })
@@ -347,8 +389,8 @@ class Map extends Component {
         var tempCords = {
           latitude: parseFloat(place.location.latitude),
           longitude: parseFloat(place.location.longitude),
-          latitudeDelta: 0.0015,
-          longitudeDelta: 0.0015,
+          latitudeDelta: LATITUDE_DELTA,
+          longitudeDelta: LONGITUDE_DELTA,
         };
 
         var fullAddress = place.address.slice(0, 39);
@@ -366,11 +408,12 @@ class Map extends Component {
           },
           fakeMarkerAppearance: false,
           locationData: place,
+          isDestination: true,
         });
         // place represents user's selection from the
         // suggestions and it is a simplified Google Place object.
 
-        this.map.animateToRegion(tempCords, 2000);
+        this.map.animateToRegion(tempCords, 700);
         // setTimeout(() => {
         //   this.map.animateToRegion(this.state.origin, 2000);
         //   setTimeout(() => {
@@ -400,6 +443,7 @@ class Map extends Component {
                 zoomEnabled={true}
                 rotateEnabled={true}
                 // moveOnMarkerPress={true}
+                // onPanDrag={e => console.log(e.nativeEvent)}
                 ref={map => (this.map = map)}
                 onTouchStart={() =>
                   this.setState({
@@ -420,12 +464,17 @@ class Map extends Component {
                 // customMapStyle={mapStyle}
               >
                 <MapView.Marker.Animated
-                  draggable
+                  draggable={this.props.locationType == 'pickup' ? true : false}
+                  onDragEnd={e =>
+                    this.getCustomPickUpLocation(
+                      e.nativeEvent.coordinate.latitude,
+                      e.nativeEvent.coordinate.longitude,
+                    )
+                  }
                   coordinate={{
                     latitude: this.state.pickLat,
                     longitude: this.state.pickLong,
                   }}
-                  //onDragEnd={(e) => console.log('drag position: ', e.nativeEvent.coordinate)}
                   title={'Pick Up'}
                   description={'location'}
                   pinColor="#ff8800"
@@ -434,10 +483,17 @@ class Map extends Component {
                   // icon={<FontAwesome5 style={{fontSize: 20}} name='car' />}
                   // image={require('./images/mark.png')}
                 />
-                {this.props.locationType === 'dropoff' ? (
+                {this.state.isDestination ? (
                   <>
                     <MapView.Marker.Animated
                       //draggable
+                      draggable
+                      onDragEnd={e =>
+                        this.getCustomDropOffLocation(
+                          e.nativeEvent.coordinate.latitude,
+                          e.nativeEvent.coordinate.longitude,
+                        )
+                      }
                       coordinate={{
                         latitude: this.state.dropLat,
                         longitude: this.state.dropLong,
@@ -473,18 +529,18 @@ class Map extends Component {
                       color="#fff"
                     />
                   </View>
-                  <TouchableOpacity
-                    style={styles.searchBarView}
-                    onPress={() =>
-                      this.props.locationType === 'dropoff'
-                        ? ''
-                        : this.openSearchModal1()
-                    }>
-                    <View>
+                  <View style={styles.searchBarView}>
+                    <TouchableOpacity
+                      style={styles.searchBarView}
+                      onPress={() =>
+                        this.props.locationType === 'dropoff'
+                          ? ''
+                          : this.openSearchModal1()
+                      }>
                       <Text
                         style={[
                           styles.textStyle,
-                          { color: '#fff', fontSize: 16, width: '95%' },
+                          { color: '#fff', fontSize: 16 },
                         ]}>
                         {this.state.pickUp}
                       </Text>
@@ -495,8 +551,8 @@ class Map extends Component {
                         ]}>
                         {this.state.pickUpAddress + '...'}
                       </Text>
-                    </View>
-                  </TouchableOpacity>
+                    </TouchableOpacity>
+                  </View>
                 </View>
                 {this.props.locationType === 'dropoff' ? (
                   <View>
@@ -518,14 +574,14 @@ class Map extends Component {
                           color="#fff"
                         />
                       </View>
-                      <TouchableOpacity
-                        style={styles.searchBarView}
-                        onPress={() => this.openSearchModal2()}>
-                        <View>
+                      <View style={styles.searchBarView}>
+                        <TouchableOpacity
+                          style={styles.searchBarView}
+                          onPress={() => this.openSearchModal2()}>
                           <Text
                             style={[
                               styles.textStyle,
-                              { color: '#fff', fontSize: 16, width: '95%' },
+                              { color: '#fff', fontSize: 16 },
                             ]}>
                             {this.state.dropOff}
                           </Text>
@@ -536,8 +592,8 @@ class Map extends Component {
                             ]}>
                             {this.state.dropOffAddress + '...'}
                           </Text>
-                        </View>
-                      </TouchableOpacity>
+                        </TouchableOpacity>
+                      </View>
                     </View>
                   </View>
                 ) : null}
@@ -690,7 +746,7 @@ const styles = StyleSheet.create({
   },
   searchBarView: {
     // padding: 6,
-    // width: '90%',
+    width: '90%',
     // backgroundColor: 'yellow',
   },
 });

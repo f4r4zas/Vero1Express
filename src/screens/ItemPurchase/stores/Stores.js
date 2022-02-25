@@ -20,7 +20,14 @@ import {
   Spinner,
 } from 'native-base';
 import AppService from '../../../services/AppService';
-import { colors } from '../../../util/colors';
+import {
+  ASPECT_RATIO,
+  colors,
+  headingTextStyle,
+  height,
+  mainView,
+  width,
+} from '../../../util/colors';
 import Snackbar from 'react-native-snackbar';
 // import asyncStorage from '../../../services/asyncStorage';
 import Loader from '../../../common/Loader';
@@ -174,16 +181,13 @@ class Store extends Component {
         <ScrollView style={{ flex: 1, backgroundColor: colors.gray }}>
           <View style={{ flex: 1 }}>
             <View style={styles.mainView}>
-              <View style={{ marginBottom: '15%' }}>
+              <View style={{ marginBottom: height / 15 }}>
                 <Text style={styles.textStyle}>Select Your</Text>
                 <Text style={styles.textStyle}>Desired Store</Text>
               </View>
-              <View style={{ flex: 1 }}>
+              <View style={{ marginBottom: height / 20 }}>
                 <FlatList
                   data={this.state.storeData}
-                  style={{
-                    width: '100%',
-                  }}
                   numColumns={2}
                   scrollEnabled={false}
                   keyExtractor={(item, index) => index + ''}
@@ -191,7 +195,7 @@ class Store extends Component {
                   // ListFooterComponent={this.renderFooter}
                   renderItem={({ item, index }) => {
                     return (
-                      <View style={{ flex: 1 }}>
+                      <View>
                         <TouchableOpacity
                           // style={this.state.modalStyle}
                           key={index}
@@ -200,12 +204,12 @@ class Store extends Component {
                               ? styles.modalStyleOnPress
                               : styles.modalStyle,
                             // this.state.styleModal,
-                            { flex: 1, height: 145 },
+                            // { flex: 1, height: 145 },
                           ]}
                           activeOpacity={0.8}
                           onPress={() => this.getProducts(item, index)}>
-                          <View style={[styles.modalInnerView, { flex: 1 }]}>
-                            <View style={{ flex: 1, height: 80 }}>
+                          <View style={[styles.modalInnerView]}>
+                            <View style={{ height: height / 9 }}>
                               <Image
                                 resizeMode={'center'}
                                 // source={require('../../../assets/vero-logo.png')}
@@ -214,19 +218,26 @@ class Store extends Component {
                                     'http://157.230.183.30:3000/' +
                                     item.store_logo,
                                 }}
-                                style={{ height: 100, width: 50 }}
+                                style={{
+                                  height: height / 8,
+                                  width: width / 7,
+                                }}
                               />
                             </View>
-                            <Text style={[styles.textStyle, { fontSize: 14 }]}>
+                            <Text
+                              style={[
+                                styles.textStyle,
+                                { fontSize: ASPECT_RATIO * 24 },
+                              ]}>
                               {item.display_name}
                             </Text>
                             <Text
                               style={[
                                 styles.textStyle,
                                 {
-                                  fontSize: 10,
+                                  fontSize: ASPECT_RATIO * 18,
                                   color: colors.secondaryGray,
-                                  marginBottom: 15,
+                                  marginBottom: height / 35,
                                 },
                               ]}>
                               {item.store_distance} 4 Miles Away
@@ -250,45 +261,31 @@ class Store extends Component {
 export default Store;
 const styles = StyleSheet.create({
   mainView: {
-    marginLeft: '10%',
-    marginRight: '10%',
-    marginTop: '15%',
+    marginLeft: mainView.marginLeft,
+    marginRight: mainView.marginLeft,
+    marginTop: height / 10,
     backgroundColor: colors.gray,
   },
-  // innerViews: {
-  //   marginBottom: '35%',
-  // },
-  textStyle: {
-    fontWeight: 'bold',
-    fontSize: 20,
-    color: colors.darkGrey,
-  },
+  textStyle: headingTextStyle,
   modalStyle: {
-    // height: 160,
-    margin: '1%',
-    marginBottom: '5%',
-    width: '90%',
+    margin: ASPECT_RATIO * 10,
+    width: width / 2.8,
     backgroundColor: colors.gray,
     borderRadius: 30,
-    elevation: 5,
-    padding: '5%',
-    // flexDirection: 'row',
+    elevation: ASPECT_RATIO * 10,
+    padding: ASPECT_RATIO * 10,
   },
   modalStyleOnPress: {
-    margin: '1%',
-    marginBottom: '5%',
-    width: '90%',
+    margin: ASPECT_RATIO * 10,
+    width: width / 2.8,
     backgroundColor: colors.gray,
+    borderRadius: 30,
+    elevation: ASPECT_RATIO * 10,
+    padding: ASPECT_RATIO * 10,
     borderWidth: 3,
     borderColor: colors.primaryOrange,
-    borderRadius: 30,
-    elevation: 5,
-    padding: '5%',
   },
   modalInnerView: {
-    // alignSelf: 'left',
-    width: '100%',
-    // justifyContent: 'center',
     alignItems: 'center',
   },
 });

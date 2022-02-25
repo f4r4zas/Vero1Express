@@ -27,11 +27,14 @@ const requestUrls = {
   emptyCart: `${serverUrl}/basket/empty`,
   createWallet: `${serverUrl}/wallet`,
   getCustomerWallet: `${serverUrl}/wallet`,
+  getUserRides: `${serverUrl}/users/rides`,
   makePayment: `${serverUrl}/wallet/make-payment`,
   deleteCardFromWallet: `${serverUrl}/wallet/delete-card-customer`,
   addAmount: `${serverUrl}/purchase/charge`,
   createPurchase: `${serverUrl}/driver/request-driver`,
   uploadImage: `${serverUrl}/image`,
+  driverInfo: `${serverUrl}/purchase`,
+  notifications: `${serverUrl}/notification`,
 
   //Logout Controller
   // logOut: `${serverUrl}/logout`,

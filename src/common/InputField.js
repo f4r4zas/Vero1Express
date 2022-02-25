@@ -1,7 +1,7 @@
 import React from 'react';
-import {View, TextInput, Text, StyleSheet} from 'react-native';
+import { View, TextInput, Text, StyleSheet } from 'react-native';
 import Entypo from 'react-native-vector-icons/Entypo';
-import {colors} from '../util/colors';
+import { colors } from '../util/colors';
 
 const InputField = ({
   value,
@@ -20,14 +20,26 @@ const InputField = ({
   name,
   multiline,
   numberOfLines,
+  iconPlusName,
+  type,
 }) => {
   return (
     <View style={styles.personalInfo}>
       {label ? (
-        <Text style={[styles.textStyle, {fontSize: 16}]}>{label}</Text>
+        <>
+          {error ? (
+            <Text
+              style={[styles.textStyle, { fontSize: 16, color: '#FF0000' }]}>
+              {label}
+            </Text>
+          ) : (
+            <Text style={[styles.textStyle, { fontSize: 16 }]}>{label}</Text>
+          )}
+        </>
       ) : null}
       <View style={[styles.borderStyle, styles.view1]}>
         <TextInput
+          type={type}
           value={value}
           placeholder={placeholder}
           placeholderTextColor={placeholderTextColor}
@@ -35,12 +47,12 @@ const InputField = ({
           name={name}
           multiline={multiline}
           numberOfLines={numberOfLines}
-          // error={error}
+          error={error}
           onChangeText={onChangeText}
           onFocus={onFocus}
           style={
             style
-              ? [style, {width: '90%'}]
+              ? [style, { width: '90%' }]
               : [
                   styles.textStyle2,
                   {
@@ -55,13 +67,17 @@ const InputField = ({
         {error ? (
           <Entypo
             type="Entypo"
-            name={error == isValid ? 'check' : 'cross'}
-            style={{fontSize: 15}}
-            color={error == true ? '#006400' : '#FF0000'}
+            name={'cross'}
+            style={{ fontSize: 15 }}
+            color={'#FF0000'}
           />
-        ) : null}
+        ) : // <Text style={{ color: 'red' }}>{error}</Text>
+        null}
         {initialIcon == false ? null : inputIconShow ? (
-          <Text style={{marginRight: '5%'}}>{inputIcon}</Text>
+          <Text style={{ marginRight: iconPlusName ? '15%' : '5%' }}>
+            {inputIcon}
+            {iconPlusName ? iconPlusName : null}
+          </Text>
         ) : null}
       </View>
     </View>

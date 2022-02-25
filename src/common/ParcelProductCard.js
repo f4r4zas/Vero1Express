@@ -7,7 +7,7 @@ import {
   Image,
   TouchableOpacity,
 } from 'react-native';
-import {colors} from '../util/colors';
+import { colors } from '../util/colors';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
 const ParcelProductCard = ({
@@ -27,7 +27,7 @@ const ParcelProductCard = ({
   };
   console.log(itemWeight);
   return (
-    <View style={{flex: 1}}>
+    <View style={{ flex: 1 }}>
       <View style={styles.modalStyle} activeOpacity={0.8}>
         <View
           style={{
@@ -42,13 +42,13 @@ const ParcelProductCard = ({
             borderTopColor: 'red',
             position: 'absolute',
             right: 0,
-            transform: [{rotate: '90deg'}],
+            transform: [{ rotate: '90deg' }],
           }}></View>
         <FontAwesome
           name="close"
           size={18}
           onPress={cancelParcel}
-          style={{position: 'absolute', right: 10, marginTop: 5}}
+          style={{ position: 'absolute', right: 10, marginTop: 5 }}
         />
         <View
           style={{
@@ -56,21 +56,21 @@ const ParcelProductCard = ({
             // justifyContent: 'space-between',
             // alignSelf: 'center',
           }}>
-          <View style={{marginRight: 10}}>
+          <View style={{ marginRight: 10 }}>
             <Image
               resizeMode={'center'}
-              source={{uri: product_image}}
-              style={{width: 50, height: 60}}
+              source={{ uri: product_image }}
+              style={{ width: 50, height: 60 }}
             />
           </View>
-          <View style={{width: '70%', marginTop: 10}}>
-            <Text style={[styles.textStyle, {fontSize: 15}]}>
+          <View style={{ width: '70%', marginTop: 10 }}>
+            <Text style={[styles.textStyle, { fontSize: 15 }]}>
               {packageType + ' ' + size + ' Size'}
             </Text>
             <Text
               style={[
                 styles.textStyle,
-                {fontSize: 13, marginTop: 3, color: colors.primaryOrange},
+                { fontSize: 13, marginTop: 3, color: colors.primaryOrange },
               ]}>
               {itemWeight} {' Ibs '} {fragile ? fragile : ''}
             </Text>

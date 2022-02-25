@@ -7,7 +7,7 @@ import {
   Image,
   TouchableOpacity,
 } from 'react-native';
-import {colors} from '../util/colors';
+import { ASPECT_RATIO, colors, height, width } from '../util/colors';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import ReadMore from 'react-native-read-more-text';
 
@@ -31,7 +31,7 @@ const CartCart = ({
     return;
   };
   return (
-    <View style={{flex: 1}}>
+    <View style={{ flex: 1 }}>
       <View style={styles.modalStyle} activeOpacity={0.8}>
         <View
           style={{
@@ -46,13 +46,13 @@ const CartCart = ({
             borderTopColor: 'red',
             position: 'absolute',
             right: 0,
-            transform: [{rotate: '90deg'}],
+            transform: [{ rotate: '90deg' }],
           }}></View>
         <FontAwesome
           name="close"
           size={18}
           onPress={onProductDelete}
-          style={{position: 'absolute', right: 10, marginTop: 5}}
+          style={{ position: 'absolute', right: 10, marginTop: 5 }}
         />
         <View
           style={{
@@ -60,18 +60,18 @@ const CartCart = ({
             // justifyContent: 'space-between',
             // alignSelf: 'center',
           }}>
-          <View style={{marginRight: 10}}>
+          <View style={{ marginRight: 10 }}>
             <Image
               resizeMode={'center'}
-              source={{uri: renderUri(product_image)}}
-              style={{width: 50, height: 60}}
+              source={{ uri: renderUri(product_image) }}
+              style={{ width: 50, height: 60 }}
             />
           </View>
-          <View style={{width: '70%'}}>
+          <View style={{ width: '70%' }}>
             <ReadMore
               numberOfLines={2}
               renderTruncatedFooter={_renderTruncatedFooter}>
-              <Text style={[styles.textStyle, {fontSize: 12}]}>
+              <Text style={[styles.textStyle, { fontSize: 12 }]}>
                 {product_name}
               </Text>
             </ReadMore>
@@ -82,13 +82,13 @@ const CartCart = ({
             <Text
               style={[
                 styles.textStyle,
-                {fontSize: 14, marginTop: 2, color: colors.primaryOrange},
+                { fontSize: 14, marginTop: 2, color: colors.primaryOrange },
               ]}>
               ${product_price}
             </Text>
           </View>
         </View>
-        <View style={{position: 'absolute', bottom: '5%', right: '10%'}}>
+        <View style={{ position: 'absolute', bottom: '5%', right: '10%' }}>
           <View
             style={{
               width: '20%',
@@ -116,7 +116,7 @@ const CartCart = ({
               <Text
                 style={[
                   styles.textStyle,
-                  {fontSize: 18, color: colors.secondaryGray},
+                  { fontSize: 18, color: colors.secondaryGray },
                 ]}>
                 {product_counut}
               </Text>
@@ -150,13 +150,23 @@ const styles = StyleSheet.create({
     color: colors.darkGrey,
   },
   modalStyle: {
-    height: 100,
-    marginBottom: '5%',
-    width: '100%',
+    // height: 100,
+    // marginBottom: '5%',
+    // width: '95%',
     backgroundColor: colors.white,
-    borderRadius: 20,
-    elevation: 5,
-    padding: '5%',
+    // borderRadius: 20,
+    // elevation: 5,
+    // padding: '5%',
+    marginBottom: height / 100,
+    marginTop: height / 100,
+    marginLeft: width / 10,
+    marginRight: width / 10,
+    width: width / 1.3,
+    // backgroundColor: '#fff',
+    alignSelf: 'center',
+    borderRadius: ASPECT_RATIO * 30,
+    elevation: ASPECT_RATIO * 10,
+    padding: ASPECT_RATIO * 30,
   },
   modalStyleOnPress: {
     marginBottom: '5%',
@@ -167,7 +177,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     borderColor: colors.primaryOrange,
     borderWidth: 3,
-    borderRadius: 40,
+    // borderRadius: 40,
     elevation: 5,
     padding: '12%',
   },

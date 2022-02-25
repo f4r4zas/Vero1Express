@@ -1,15 +1,29 @@
-import React, {Component} from 'react';
-import {View, Text, StyleSheet, Image, TextInput} from 'react-native';
-import {NativeBaseProvider} from 'native-base';
-import {connect} from 'react-redux';
-import {sendMobileVerification} from '../../reduxStore/actions/AuthActions';
+import React, { Component } from 'react';
+import { View, Text, StyleSheet, Image, TextInput } from 'react-native';
+import { NativeBaseProvider } from 'native-base';
+import { connect } from 'react-redux';
+import { sendMobileVerification } from '../../reduxStore/actions/AuthActions';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Entypo from 'react-native-vector-icons/Entypo';
 import CountryPicker from 'react-native-country-picker-modal';
 import FooterButton from '../../common/FooterButton';
 import asyncStorage from '../../services/asyncStorage';
 import Snackbar from 'react-native-snackbar';
-import {colors} from '../../util/colors';
+import {
+  ASPECT_RATIO,
+  colors,
+  dottedView1,
+  dottedView2,
+  fieldTextStyle,
+  fontSize,
+  footerButtonStyle,
+  headingTextStyle,
+  height,
+  inputBorderStyle,
+  mainView,
+  veroLogoStyle,
+  width,
+} from '../../util/colors';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -79,24 +93,24 @@ class Login extends Component {
     });
     try {
       if (code == '+1') {
-        this.setState({errorText: ''});
-        data = {mobile_number: `${code}${num}`};
+        this.setState({ errorText: '' });
+        data = { mobile_number: `${code}${num}` };
         asyncStorage.setItem('mobile_number', data.mobile_number);
         check = pattern2.test(num);
         validation = pattern2.test(num);
       } else if (code == '+92') {
-        this.setState({errorText: ''});
-        data = {mobile_number: `${code}${num}`};
+        this.setState({ errorText: '' });
+        data = { mobile_number: `${code}${num}` };
         asyncStorage.setItem('mobile_number', data.mobile_number);
         check = pattern1.test(num);
         validation = pattern1.test(num);
       } else {
-        this.setState({errorText: '*Please Select a valid country'});
+        this.setState({ errorText: '*Please Select a valid country' });
         check = false;
         validation = false;
       }
     } catch (error) {
-      this.setState({loading: false});
+      this.setState({ loading: false });
     }
   }
 
@@ -121,15 +135,15 @@ class Login extends Component {
 
   pressHandler = async () => {
     if (validation == true) {
-      this.setState({loading: true});
+      this.setState({ loading: true });
       await this.props.dispatch(sendMobileVerification(data));
       if (this.props.reduxState.isMobileVerified) {
         setTimeout(() => {
-          this.setState({loading: false});
+          this.setState({ loading: false });
           this.props.navigation.navigate('CodeVerification');
         }, 600);
       } else {
-        this.setState({loading: false});
+        this.setState({ loading: false });
         Snackbar.show({
           text: this.props.reduxState.mobileVericifationError,
           duration: Snackbar.LENGTH_LONG,
@@ -148,113 +162,119 @@ class Login extends Component {
   render() {
     return (
       <NativeBaseProvider>
-        <View style={{flex: 1, backgroundColor: colors.gray}}>
-          <View style={{flexGrow: 1, padding: 0}}>
-            <View style={styles.mainView}>
-              <View style={{marginBottom: '15%'}}>
-                <Image
-                  source={require('../../assets/vero-logo.png')}
-                  style={styles.logoStyle}
-                />
-              </View>
+        <View
+          style={{
+            // flex:1,
+            backgroundColor: colors.gray,
+            height: height / 1,
+          }}>
+          {/* <View style={{ padding: 0 }}> */}
+          <View style={styles.mainView}>
+            <View style={{ marginBottom: height / 30 }}>
+              <Image
+                source={require('../../assets/vero-logo.png')}
+                style={styles.logoStyle}
+              />
+            </View>
 
-              <View style={styles.innerViews}>
-                <Text style={styles.textStyle}>Enter your</Text>
-                <Text style={styles.textStyle}>phone number to proceed</Text>
-              </View>
+            <View style={styles.innerViews}>
+              <Text style={styles.textStyle}>Enter your</Text>
+              <Text style={styles.textStyle}>phone number to proceed</Text>
+            </View>
 
-              <View style={styles.innerViews}>
-                <Text style={[styles.textStyle, {fontSize: hp('2.5%')}]}>
-                  Enter Phone Number
-                </Text>
-                <View style={styles.phoneInputView}>
-                  <View
-                    style={{
-                      flex: 0.5,
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                    }}>
-                    <CountryPicker
-                      // countryList={NORTH_AMERICA}
-                      onSelect={value => this.GetCountry(value)}
-                      cca2={this.state.cca2}
-                      translation="eng"
-                      withFilter={true}
-                      filterPlaceholder="Country Name"
-                      countryCode={this.state.cca2}
-                    />
-                    <MaterialIcons
-                      type="MaterialIcons"
-                      name="arrow-drop-down"
-                      style={styles.dropDownIcon}
-                    />
-                  </View>
-                  <View style={styles.lineStyle} />
-                  <View>
-                    <Text style={styles.textStyle2}>+</Text>
-                  </View>
-                  <View style={styles.borderStyle}>
-                    <Text
-                      style={[
-                        styles.textStyle2,
-                        {height: hp('4%'), paddingTop: hp('0.7%')},
-                      ]}>
-                      {' '}
-                      {this.state.callingCode}{' '}
-                    </Text>
-                  </View>
-                  <View style={[styles.borderStyle, styles.view1]}>
-                    <TextInput
-                      type="only-numbers"
-                      value={this.state.num}
-                      // maxLength={3}
-                      keyboardType="phone-pad"
-                      placeholder="(355) 678-6828"
-                      placeholderTextColor="#7892ab"
-                      returnKeyType="done"
-                      onChangeText={text => {
-                        this.onChangeHandler(text);
-                        this.checkValidity(text);
-                      }}
-                      style={[
-                        styles.textStyle2,
-                        {
-                          height: hp('4%'),
-                          alignItems: 'center',
-                          padding: hp(0),
-                        },
-                      ]}
-                    />
-                    {this.state.isValid ? (
-                      <Entypo
-                        type="Entypo"
-                        name={check == this.state.isValid ? 'check' : 'cross'}
-                        style={{fontSize: hp('3%')}}
-                        color={check == true ? '#006400' : '#FF0000'}
-                      />
-                    ) : null}
-                  </View>
+            <View style={styles.innerViews}>
+              <Text style={[styles.textStyle, { fontSize: ASPECT_RATIO * 35 }]}>
+                Enter Phone Number
+              </Text>
+              <View style={styles.phoneInputView}>
+                <View
+                  style={{
+                    // flex: 1,
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                  }}>
+                  <CountryPicker
+                    // countryList={NORTH_AMERICA}
+                    onSelect={value => this.GetCountry(value)}
+                    cca2={this.state.cca2}
+                    translation="eng"
+                    withFilter={true}
+                    filterPlaceholder="Country Name"
+                    countryCode={this.state.cca2}
+                  />
+                  <MaterialIcons
+                    type="MaterialIcons"
+                    name="arrow-drop-down"
+                    style={styles.dropDownIcon}
+                  />
                 </View>
-                {this.state.errorText ? (
+                <View style={styles.lineStyle} />
+                <View>
+                  <Text style={styles.textStyle2}>+</Text>
+                </View>
+                <View style={styles.borderStyle}>
                   <Text
-                    style={{
-                      color: 'red',
-                      textAlign: 'center',
-                      marginTop: hp('10%'),
-                      alignSelf: 'flex-end',
-                    }}>
-                    {this.state.errorText}{' '}
+                    style={[
+                      styles.textStyle2,
+                      { paddingTop: ASPECT_RATIO * 7 },
+                    ]}>
+                    {' '}
+                    {this.state.callingCode}{' '}
                   </Text>
-                ) : null}
+                </View>
+                <View style={[styles.borderStyle, styles.view1]}>
+                  <TextInput
+                    type="only-numbers"
+                    value={this.state.num}
+                    // maxLength={3}
+                    keyboardType="phone-pad"
+                    placeholder="(355) 678-6828"
+                    placeholderTextColor="#7892ab"
+                    returnKeyType="done"
+                    onChangeText={text => {
+                      this.onChangeHandler(text);
+                      this.checkValidity(text);
+                    }}
+                    style={[
+                      styles.textStyle2,
+                      {
+                        // height: hp('4%'),
+                        alignItems: 'center',
+                        padding: 0,
+                      },
+                    ]}
+                  />
+                  {this.state.isValid ? (
+                    <Entypo
+                      type="Entypo"
+                      name={check == this.state.isValid ? 'check' : 'cross'}
+                      style={{ fontSize: fontSize }}
+                      color={check == true ? '#006400' : '#FF0000'}
+                    />
+                  ) : null}
+                </View>
               </View>
+              {this.state.errorText ? (
+                <Text
+                  style={{
+                    color: 'red',
+                    textAlign: 'center',
+                    marginTop: hp('10%'),
+                    alignSelf: 'flex-end',
+                  }}>
+                  {this.state.errorText}{' '}
+                </Text>
+              ) : null}
+            </View>
 
-              <View style={{flexDirection: 'row', marginTop: hp('10%')}}>
-                <View style={styles.dottedView1} />
-                <View style={styles.dottedView2} />
-                <View style={styles.dottedView2} />
-              </View>
+            <View
+              style={{ flexDirection: 'row', marginTop: ASPECT_RATIO * 100 }}>
+              <View style={styles.dottedView1} />
+              <View style={styles.dottedView2} />
+              <View style={styles.dottedView2} />
             </View>
           </View>
+          {/* </View> */}
           <FooterButton
             style={styles.footerTabStyle}
             title="Get Started"
@@ -277,61 +297,29 @@ const mapDispatchToProps = dispatch => {
 export default connect(mapDispatchToProps)(Login);
 
 const styles = StyleSheet.create({
-  mainView: {
-    marginLeft: wp('10%'),
-    marginTop: hp('5%'),
-    backgroundColor: colors.gray,
-  },
+  mainView: mainView,
   innerViews: {
-    marginBottom: hp('10%'),
+    marginBottom: height / 7,
   },
-  textStyle: {
-    fontWeight: 'bold',
-    fontSize: hp('3%'),
-    color: colors.darkGrey,
-  },
-  textStyle2: {
-    fontSize: hp('2%'),
-    color: '#7893a9',
-  },
-  dottedView1: {
-    backgroundColor: colors.darkGrey,
-    width: wp('3%'),
-    height: hp('0.5%'),
-    borderRadius: wp('1%'),
-    marginRight: wp('1%'),
-  },
-  dottedView2: {
-    backgroundColor: colors.secondaryGray,
-    width: hp('1%'),
-    height: hp('0.5%'),
-    borderRadius: wp('1&'),
-    marginRight: wp('1%'),
-  },
-  logoStyle: {
-    // height: 60,
-    resizeMode: 'contain',
-    width: wp('20%'),
-    // margin: -12,
-  },
+  textStyle: headingTextStyle,
+  textStyle2: fieldTextStyle,
+  dottedView1: dottedView1,
+  dottedView2: dottedView2,
+  logoStyle: veroLogoStyle,
   dropDownIcon: {
-    fontSize: wp('5%'),
+    fontSize: ASPECT_RATIO * 50,
   },
   lineStyle: {
-    borderWidth: wp('0.2%'),
-    marginLeft: wp('5%'),
-    marginRight: wp('5%'),
+    borderWidth: ASPECT_RATIO * 3,
+    marginLeft: ASPECT_RATIO * 30,
+    marginRight: ASPECT_RATIO * 10,
     borderColor: '#e2e2e2',
-    height: hp('3%'),
+    height: ASPECT_RATIO * 50,
   },
-  borderStyle: {
-    borderBottomWidth: wp('0.5%'),
-    borderColor: '#002753',
-    paddingBottom: hp('0.7%'),
-  },
+  borderStyle: inputBorderStyle,
   phoneInputView: {
     flexDirection: 'row',
-    marginTop: hp('2%'),
+    marginTop: ASPECT_RATIO * 40,
     justifyContent: 'space-between',
     alignItems: 'center',
   },
@@ -339,14 +327,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     flexDirection: 'row',
     alignItems: 'center',
-    width: wp('50%'),
+    width: width / 1.95,
   },
-  footerTabStyle: {
-    borderTopLeftRadius: 60,
-    position: 'absolute',
-    top: hp('90.5%'),
-    left: wp('21%'),
-    overlayColor: 'transparent',
-    borderRadius: 6,
-  },
+  footerTabStyle: footerButtonStyle,
 });

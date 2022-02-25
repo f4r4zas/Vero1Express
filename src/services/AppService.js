@@ -14,7 +14,8 @@ export const headerInfo = {
   adminKey:
     'Bearer' +
     ' ' +
-    '$2a$10$z1qoIGiG17pjSQjcAUBrlu8y3K13.aen2YZ0bhWXpwaAXsxRgXkx.',
+    '$2a$10$qe37jtOjiqVJMGsf6oDMA.m/d8JMaH180NfHLa5tZVD1OS.A8AErK',
+  // '$2a$10$z1qoIGiG17pjSQjcAUBrlu8y3K13.aen2YZ0bhWXpwaAXsxRgXkx.',
   mobileVerification:
     'Basic' +
     ' ' +
@@ -54,6 +55,7 @@ let userApiKey = async () => {
 };
 class AppService extends HttpServices {
   static sendMobileVerification(mobile_number) {
+    let headers = '';
     const key = headerInfo.mobileVerification;
     const Channel = 'sms';
     params.append(mobile_number);
@@ -66,6 +68,7 @@ class AppService extends HttpServices {
     );
   }
   static verifyMobileVerification(mobile_number, verification_code) {
+    let headers = '';
     const key = headerInfo.mobileVerification;
     // let Channel = 'sms';
     params.append(mobile_number);
@@ -81,6 +84,8 @@ class AppService extends HttpServices {
     // return this.get(url);
   }
   static verifyUser(mobile_number) {
+    let headers = '';
+
     const key = headerInfo.adminKey;
     const apiType = headerInfo.contentType;
     params.append(mobile_number);
@@ -99,6 +104,8 @@ class AppService extends HttpServices {
     );
   }
   static registerUser(payload) {
+    let headers = '';
+
     const { first_name, last_name, email, gender, mobile_number, user_type } =
       payload;
     // debugger;
@@ -123,12 +130,16 @@ class AppService extends HttpServices {
     );
   }
   static getStoreData() {
+    let headers = '';
+
     const key = headerInfo.userKey;
 
     let url = requestUrls['stores'];
     return this.get(url, (headers = { Authorization: key }));
   }
   static getCategories(payload) {
+    let headers = '';
+
     const { store_name, is_main, parent_id } = payload;
 
     let url = requestUrls['getCategories'];
@@ -141,6 +152,8 @@ class AppService extends HttpServices {
     return this.get(url, {});
   }
   static getProductSearch(payload) {
+    let headers = '';
+
     const key = headerInfo.userKey;
 
     const { product_store, product_category, product_name } = payload;
@@ -154,6 +167,8 @@ class AppService extends HttpServices {
     return this.get(url, (headers = { Authorization: key }));
   }
   static getItemList(payload) {
+    let headers = '';
+
     const { store_name, page, per_page } = payload;
     const key = headerInfo.userKey;
 
@@ -163,6 +178,8 @@ class AppService extends HttpServices {
     return this.get(url, (headers = { Authorization: key }));
   }
   static async addItemToCart(payload) {
+    let headers = '';
+
     let api_key = await userApiKey();
     console.log('headerInfo.userApiKey: ', api_key);
     return this.post(
@@ -175,6 +192,8 @@ class AppService extends HttpServices {
     );
   }
   static async updateItemToCart(payload) {
+    let headers = '';
+
     let api_key = await userApiKey();
     console.log('headerInfo.userApiKey: ', api_key);
 
@@ -188,6 +207,8 @@ class AppService extends HttpServices {
     );
   }
   static async getItemsFromCart() {
+    let headers = '';
+
     let api_key = await userApiKey();
     console.log('headerInfo.userApiKey: ', api_key);
     return this.get(
@@ -196,6 +217,8 @@ class AppService extends HttpServices {
     );
   }
   static async deleteItemFromCart(id) {
+    let headers = '';
+
     let api_key = await userApiKey();
     console.log('headerInfo.userApiKey: ', api_key);
 
@@ -209,6 +232,8 @@ class AppService extends HttpServices {
     );
   }
   static async emptyCart() {
+    let headers = '';
+
     let api_key = await userApiKey();
     console.log('headerInfo.userApiKey: ', api_key);
     return this.post(
@@ -217,6 +242,8 @@ class AppService extends HttpServices {
     );
   }
   static async createWallet(payload) {
+    let headers = '';
+
     let api_key = await userApiKey();
     console.log('headerInfo.userApiKey: ', api_key);
     return this.post(
@@ -229,6 +256,8 @@ class AppService extends HttpServices {
     );
   }
   static async getCustomerWallet() {
+    let headers = '';
+
     let api_key = await userApiKey();
     console.log('headerInfo.userApiKey: ', api_key);
     return this.get(
@@ -236,7 +265,19 @@ class AppService extends HttpServices {
       (headers = { Authorization: api_key }),
     );
   }
+  static async getUserRides() {
+    let headers = '';
+
+    let api_key = await userApiKey();
+    console.log('headerInfo.userApiKey: ', api_key);
+    return this.get(
+      requestUrls['getUserRides'],
+      (headers = { Authorization: api_key }),
+    );
+  }
   static async addAmount(payload) {
+    let headers = '';
+
     let api_key = await userApiKey();
     console.log('headerInfo.userApiKey: ', api_key);
 
@@ -250,6 +291,8 @@ class AppService extends HttpServices {
     );
   }
   static async createPurchase(payload) {
+    let headers = '';
+
     let api_key = await userApiKey();
     let urlApi = requestUrls['createPurchase'];
     let dataPayload = JSON.stringify(payload);
@@ -279,6 +322,8 @@ class AppService extends HttpServices {
     // );
   }
   static async makePayment(payload) {
+    let headers = '';
+
     let api_key = await userApiKey();
     console.log('headerInfo.userApiKey: ', api_key);
     return this.post(
@@ -291,6 +336,8 @@ class AppService extends HttpServices {
     );
   }
   static async deleteCardFromWallet(payload) {
+    let headers = '';
+
     let api_key = await userApiKey();
     console.log('headerInfo.userApiKey: ', api_key);
     const { card_id } = payload;
@@ -308,6 +355,8 @@ class AppService extends HttpServices {
     );
   }
   static async uploadImage(payload) {
+    let headers = '';
+
     let api_key = await userApiKey();
     console.log('headerInfo.userApiKey: ', payload);
     const formData = new FormData();
@@ -336,6 +385,57 @@ class AppService extends HttpServices {
         'Content-Type': 'multipart/form-data',
       },
     });
+  }
+
+  static async getDriverInfo(payload) {
+    let headers = '';
+
+    let api_key = await userApiKey();
+    // console.log('headerInfo.userApiKey: ', api_key);
+    let url = requestUrls['driverInfo'];
+    const { _id } = payload;
+    console.log(_id);
+    url += `/${_id}`;
+    return this.get(
+      // requestUrls['driverInfo'],
+      url,
+      (headers = { Authorization: api_key }),
+    );
+    // params.append(_id);
+    // const data = qs.stringify({ _id: _id });
+    // return this.post(
+    //   requestUrls['driverInfo'],
+    //   (headers = {
+    //     Authorization: headerInfo.adminKey,
+    //     'Content-Type': headerInfo.contentType,
+    //   }),
+    //   data,
+    // );
+  }
+  static async getNotifications() {
+    let headers = '';
+
+    let api_key = await userApiKey();
+    // console.log('headerInfo.userApiKey: ', api_key);
+    let url = requestUrls['notifications'];
+    // const { _id } = payload;
+    // console.log(_id);
+    // url += `/${_id}`;
+    return this.get(
+      // requestUrls['driverInfo'],
+      url,
+      (headers = { Authorization: api_key }),
+    );
+    // params.append(_id);
+    // const data = qs.stringify({ _id: _id });
+    // return this.post(
+    //   requestUrls['driverInfo'],
+    //   (headers = {
+    //     Authorization: headerInfo.adminKey,
+    //     'Content-Type': headerInfo.contentType,
+    //   }),
+    //   data,
+    // );
   }
 }
 

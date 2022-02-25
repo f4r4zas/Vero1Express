@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
   View,
   Text,
@@ -10,22 +10,33 @@ import {
   Alert,
   KeyboardAvoidingView,
 } from 'react-native';
-import {ScrollView} from 'react-native-gesture-handler';
-import {NativeBaseProvider, Spinner} from 'native-base';
+import { ScrollView } from 'react-native-gesture-handler';
+import { NativeBaseProvider, Spinner } from 'native-base';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Modal from 'react-native-modalbox';
 // import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import asyncStorage from '../../services/asyncStorage';
 import FooterButton from '../../common/FooterButton';
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 import {
   verifyMobileVerification,
   verifyUser,
 } from '../../reduxStore/actions/AuthActions';
-import {sendMobileVerification} from '../../reduxStore/actions/AuthActions';
+import { sendMobileVerification } from '../../reduxStore/actions/AuthActions';
 import AsyncStorage from '@react-native-community/async-storage';
 import Snackbar from 'react-native-snackbar';
-import {colors} from '../../util/colors';
+import {
+  ASPECT_RATIO,
+  colors,
+  dottedView1,
+  dottedView2,
+  fontSize,
+  footerButtonStyle,
+  headingTextStyle,
+  height,
+  mainView,
+  veroLogoStyle,
+} from '../../util/colors';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -60,9 +71,9 @@ class CodeVerification extends Component {
           onPress: () => console.log('Cancel Pressed'),
           style: 'cancel',
         },
-        {text: 'OK', onPress: () => this.props.navigation.popToTop()},
+        { text: 'OK', onPress: () => this.props.navigation.popToTop() },
       ],
-      {cancelable: false},
+      { cancelable: false },
     );
     return true;
   };
@@ -79,7 +90,7 @@ class CodeVerification extends Component {
       vCode: code,
     });
     this.interval = setInterval(
-      () => this.setState(prevState => ({timer: prevState.timer - 1})),
+      () => this.setState(prevState => ({ timer: prevState.timer - 1 })),
       1000,
     );
   }
@@ -101,7 +112,7 @@ class CodeVerification extends Component {
       timer: 30,
     });
     var newInterval = setInterval(() => {
-      this.setState(prevState => ({timer: prevState.timer - 1}));
+      this.setState(prevState => ({ timer: prevState.timer - 1 }));
       if (this.state.timer === 0) {
         clearInterval(newInterval);
       }
@@ -114,10 +125,10 @@ class CodeVerification extends Component {
       mobile_number: this.state.phone_num,
     };
     if (validation == true) {
-      this.setState({loading: true});
+      this.setState({ loading: true });
       if (validation == true) {
         await this.props.dispatch(sendMobileVerification(data));
-        this.setState({loading: false});
+        this.setState({ loading: false });
       }
     }
   };
@@ -205,7 +216,7 @@ class CodeVerification extends Component {
   }
 
   pressHandler = async () => {
-    this.setState({loading: true});
+    this.setState({ loading: true });
     let validation = true;
     let MyNum =
       this.state.input1 +
@@ -230,32 +241,34 @@ class CodeVerification extends Component {
     if (validation == true) {
       that.refs.modal1.open();
       await this.props.dispatch(verifyMobileVerification(data));
-      console.log('returningFromRedux: ', this.props.reduxState);
-      this.setState({loading: false});
+      this.setState({ loading: false });
       if (this.props.reduxState.isCodeVerified) {
         await this.props.dispatch(verifyUser(data));
+        // console.log('returningFromRedux: ', returningFromRedux);
         let user_data = '';
         await AsyncStorage.getItem('user_data').then(res => {
           user_data = res;
         });
         let user_Info = JSON.parse(user_data);
+        this.setState({ loading: false });
         if (this.props.reduxState.isLogin && user_Info?.api_key) {
-          that.setState({modalState: false});
+          that.setState({ modalState: false });
           that.props.navigation.navigate('AppNavigation');
         } else {
-          if (returningFromRedux.status == false) {
-            this.setState({modalState: false});
+          debugger;
+          if (this.props.reduxState.loginFailureData?.status == false) {
+            this.setState({ modalState: false });
             Snackbar.show({
-              text: returningFromRedux.message,
+              text: this.props.reduxState.loginFailureData?.message,
               duration: Snackbar.LENGTH_LONG,
             });
             that.props.navigation.navigate('PersonalInfo');
           } else {
-            that.setState({modalState: false});
+            that.setState({ modalState: false });
           }
         }
       } else {
-        this.setState({modalState: false});
+        this.setState({ modalState: false });
         Snackbar.show({
           text: this.props.reduxState.codeVericifationError,
           duration: Snackbar.LENGTH_LONG,
@@ -268,17 +281,26 @@ class CodeVerification extends Component {
   render() {
     return (
       <NativeBaseProvider>
-        <View style={{flex: 1, backgroundColor: colors.gray}}>
+        <View
+          style={{
+            // flex: 1,
+            backgroundColor: colors.gray,
+            height: height / 1,
+          }}>
           <KeyboardAvoidingView
             behavior="padding"
             keyboardVerticalOffset={50}
             behavior={Platform.OS === 'ios' ? 'padding' : null}
-            style={{flex: 1}}
+            // style={{ flex: 1 }}
             enabled>
             <ScrollView>
-              <View style={{flexGrow: 1, padding: 1}}>
+              <View
+                style={{
+                  // flexGrow: 1,
+                  padding: 1,
+                }}>
                 <View style={styles.mainView}>
-                  <View style={{marginBottom: hp('15%')}}>
+                  <View style={{ marginBottom: height / 10 }}>
                     <Image
                       resizeMode={'center'}
                       source={require('../../assets/vero-logo.png')}
@@ -290,11 +312,11 @@ class CodeVerification extends Component {
                     <Text style={styles.textStyle}>Verification Code</Text>
                   </View>
                   <View>
-                    <Text style={[styles.textStyle, {fontSize: 16}]}>
+                    <Text style={styles.textStyle}>
                       Enter Verification Code
                     </Text>
 
-                    <View style={{marginBottom: '30%'}}>
+                    <View style={{ marginBottom: height / 150 }}>
                       <View style={styles.vCodeInputView}>
                         <TextInput
                           style={styles.vCodeInputStyle}
@@ -367,7 +389,11 @@ class CodeVerification extends Component {
                     </View>
                   </View>
 
-                  <View style={{flexDirection: 'row'}}>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      marginTop: ASPECT_RATIO * 100,
+                    }}>
                     <View style={styles.dottedView2} />
                     <View style={styles.dottedView1} />
                     <View style={styles.dottedView2} />
@@ -379,7 +405,7 @@ class CodeVerification extends Component {
                         <Text
                           style={[
                             styles.inputTextStyle,
-                            {textDecorationLine: 'underline'},
+                            { textDecorationLine: 'underline' },
                           ]}>
                           Resend code
                         </Text>
@@ -388,7 +414,9 @@ class CodeVerification extends Component {
                   ) : (
                     <View style={styles.resendTimerView}>
                       <Text style={styles.inputTextStyle}>Resend code in </Text>
-                      <Text style={{color: '#002655'}}>{this.state.timer}</Text>
+                      <Text style={{ color: colors.secondaryGray }}>
+                        {this.state.timer}
+                      </Text>
                     </View>
                   )}
                 </View>
@@ -412,7 +440,7 @@ class CodeVerification extends Component {
                 <Spinner
                   color="#ff8800"
                   size={70}
-                  style={{fontWeight: '100'}}
+                  style={{ fontWeight: '100' }}
                 />
               </View>
             )}
@@ -445,39 +473,14 @@ const mapDispatchToProps = dispatch => {
 export default connect(mapDispatchToProps)(CodeVerification);
 
 const styles = StyleSheet.create({
-  mainView: {
-    marginLeft: '10%',
-    marginTop: hp('5%'),
-    backgroundColor: colors.gray,
-  },
+  mainView: mainView,
   innerViews: {
-    marginBottom: hp('10%'),
+    marginBottom: height / 7,
   },
-  logoStyle: {
-    // height: 60,
-    resizeMode: 'contain',
-    width: 90,
-    // margin: -12,
-  },
-  textStyle: {
-    fontWeight: 'bold',
-    fontSize: 20,
-    color: colors.darkGrey,
-  },
-  dottedView1: {
-    backgroundColor: colors.darkGrey,
-    width: 10,
-    height: 5,
-    borderRadius: 5,
-    marginRight: 3,
-  },
-  dottedView2: {
-    backgroundColor: '#7893a7',
-    width: 5,
-    height: 5,
-    borderRadius: 2.5,
-    marginRight: 3,
-  },
+  logoStyle: veroLogoStyle,
+  textStyle: headingTextStyle,
+  dottedView1: dottedView1,
+  dottedView2: dottedView2,
   inputTextStyle: {
     fontSize: 15,
     color: '#7b93a8',
@@ -485,7 +488,7 @@ const styles = StyleSheet.create({
   resendTimerView: {
     flexDirection: 'row',
     alignSelf: 'center',
-    marginTop: 60,
+    marginTop: height / 20,
   },
   vCodeInputView: {
     flexDirection: 'row',
@@ -527,34 +530,5 @@ const styles = StyleSheet.create({
     color: colors.darkGrey,
   },
 
-  // footer style
-
-  footerStyle: {
-    width: '85%',
-    alignSelf: 'flex-end',
-    backgroundColor: '#fff',
-    borderTopLeftRadius: 60,
-  },
-  footerTabStyle: {
-    borderTopLeftRadius: 60,
-    position: 'absolute',
-    top: hp('90.5%'),
-    left: wp('21%'),
-    overlayColor: 'transparent',
-    borderRadius: 6,
-  },
-  footerTextView: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 40,
-    flexDirection: 'row',
-  },
-  touchableOpacityStyle: {
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-  },
-  footerTextStyle: {
-    color: '#fff',
-    marginRight: 6,
-  },
+  footerTabStyle: footerButtonStyle,
 });

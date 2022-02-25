@@ -1,13 +1,14 @@
 import React from 'react';
-import {View, TextInput, Text, StyleSheet} from 'react-native';
+import { View, TextInput, Text, StyleSheet } from 'react-native';
 import Entypo from 'react-native-vector-icons/Entypo';
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 import FooterButton from '../../common/FooterButton';
-import {NativeBaseProvider, Select, Checkbox} from 'native-base';
-import {registerUser} from '../../reduxStore/actions/AuthActions';
+import { NativeBaseProvider, Select, Checkbox } from 'native-base';
+import { registerUser } from '../../reduxStore/actions/AuthActions';
 import AsyncStorage from '@react-native-community/async-storage';
 import Snackbar from 'react-native-snackbar';
-import {colors} from '../../util/colors';
+import { colors } from '../../util/colors';
+import Loader from '../../common/Loader';
 var emailRegex = new RegExp(
   /^(("[\w-\s]+")|([\w-]+(?:\.[\w-]+)*)|("[\w-\s]+")([\w-]+(?:\.[\w-]+)*))(@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$)|(@\[?((25[0-5]\.|2[0-4][0-9]\.|1[0-9]{2}\.|[0-9]{1,2}\.))((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){2}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\]?$)/i,
 );
@@ -57,15 +58,14 @@ class PersonalInfo extends React.Component {
     if (tag == 'first_name') {
       let newState = {
         first_name: text,
-        // first_nameError: true,
+        first_nameError: false,
         // first_nameError: true,
       };
       this.setState(newState);
     } else if (tag == 'email') {
       let newState = {
         email: text,
-        // first_nameError: true,
-        // first_nameError: true,
+        emailError: false,
       };
       this.setState(newState);
       // let emailValidation = this.validateEmail(text);
@@ -87,21 +87,21 @@ class PersonalInfo extends React.Component {
     } else if (tag == 'gender') {
       let newState = {
         gender: text,
-        // genderError: true,
+        genderError: false,
         // genderError: true,
       };
       this.setState(newState);
     } else if (tag == 'terms') {
       let newState = {
         termsAndConditions: true,
-        // genderError: true,
+        checkError: false,
         // genderError: true,
       };
       this.setState(newState);
     } else if (tag == 'last_name') {
       let newState = {
         last_name: text,
-        // last_nameError: true,
+        last_nameError: false,
         // last_nameError: true,
       };
       this.setState(newState);
@@ -127,6 +127,8 @@ class PersonalInfo extends React.Component {
         first_nameError: true,
       };
       this.setState(newState);
+    } else {
+      this.setState({ first_nameError: false });
     }
     if (!this.state.email) {
       // ToastAndroid.show('Password Field is Required', ToastAndroid.SHORT);
@@ -147,6 +149,8 @@ class PersonalInfo extends React.Component {
           emailError: true,
         };
         this.setState(newState);
+      } else {
+        this.setState({ emailError: false });
       }
     }
     if (!this.state.gender) {
@@ -157,6 +161,8 @@ class PersonalInfo extends React.Component {
         genderError: true,
       };
       this.setState(newState);
+    } else {
+      this.setState({ genderError: false });
     }
     if (!this.state.check) {
       valid = false;
@@ -166,6 +172,8 @@ class PersonalInfo extends React.Component {
         checkError: true,
       };
       this.setState(newState);
+    } else {
+      this.setState({ checkError: false });
     }
     if (!this.state.last_name) {
       valid = false;
@@ -175,6 +183,8 @@ class PersonalInfo extends React.Component {
         last_nameError: true,
       };
       this.setState(newState);
+    } else {
+      this.setState({ last_nameError: false });
     }
     let data = {
       user_type: 'user',
@@ -192,7 +202,7 @@ class PersonalInfo extends React.Component {
       // try {
       // console.log(data);
       // var that = this;
-      this.setState({loading: true});
+      this.setState({ loading: true });
       console.log('returningFromRedux1111111: ', this.props.reduxState);
       let returningFromRedux = await this.props.dispatch(registerUser(data));
       console.log('returningFromRedux: ', this.props.reduxState);
@@ -217,53 +227,54 @@ class PersonalInfo extends React.Component {
         });
       }
       debugger;
-    } else {
-      if (this.state.first_nameError) {
-        let newState = {
-          // email: text,
-          isValid: false,
-          first_nameError: true,
-        };
-        this.setState(newState);
-      }
-      if (this.state.last_nameError) {
-        let newState = {
-          // email: text,
-          isValid: false,
-          last_nameError: true,
-        };
-        this.setState(newState);
-      }
-      if (this.state.genderError) {
-        let newState = {
-          // email: text,
-          isValid: false,
-          genderError: true,
-        };
-        this.setState(newState);
-      }
-      if (this.state.checkError) {
-        let newState = {
-          // email: text,
-          isValid: false,
-          checkError: true,
-        };
-        this.setState(newState);
-      }
-      // let error = 'Invalid Email';
-      // Snackbar.show({
-      //   text: 'Data is uploaded',
-      //   duration: Snackbar.LENGTH_LONG,
-      // });
-      // (code == '+92' && '*Number is invalid for Pakistan') ||
-      // (code == '+1' && '*Number is invalid for USA') ||
-      // '';
-      // this.setState({
-      //   inputIconShow: true,
-      //   loading: false,
-      //   errorText: error,
-      // });
     }
+    // else {
+    //   if (this.state.first_nameError) {
+    //     let newState = {
+    //       // email: text,
+    //       isValid: false,
+    //       first_nameError: true,
+    //     };
+    //     this.setState(newState);
+    //   }
+    //   if (this.state.last_nameError) {
+    //     let newState = {
+    //       // email: text,
+    //       isValid: false,
+    //       last_nameError: true,
+    //     };
+    //     this.setState(newState);
+    //   }
+    //   if (this.state.genderError) {
+    //     let newState = {
+    //       // email: text,
+    //       isValid: false,
+    //       genderError: true,
+    //     };
+    //     this.setState(newState);
+    //   }
+    //   if (this.state.checkError) {
+    //     let newState = {
+    //       // email: text,
+    //       isValid: false,
+    //       checkError: true,
+    //     };
+    //     this.setState(newState);
+    //   }
+    //   // let error = 'Invalid Email';
+    //   // Snackbar.show({
+    //   //   text: 'Data is uploaded',
+    //   //   duration: Snackbar.LENGTH_LONG,
+    //   // });
+    //   // (code == '+92' && '*Number is invalid for Pakistan') ||
+    //   // (code == '+1' && '*Number is invalid for USA') ||
+    //   // '';
+    //   // this.setState({
+    //   //   inputIconShow: true,
+    //   //   loading: false,
+    //   //   errorText: error,
+    //   // });
+    // }
     // } catch (error) {
     //   // console.log('ProfileInfo: ', error);
     //   this.setState({loading: false});
@@ -272,15 +283,24 @@ class PersonalInfo extends React.Component {
   render() {
     return (
       <NativeBaseProvider>
-        <View style={{flex: 1, backgroundColor: colors.gray}}>
-          <View style={{flexGrow: 1}}>
+        <View style={{ flex: 1, backgroundColor: colors.gray }}>
+          <View style={{ flexGrow: 1 }}>
             <View style={styles.mainView}>
-              <View style={{marginBottom: '10%'}}>
+              <View style={{ marginBottom: '10%' }}>
                 <Text style={styles.textStyle}>Put Your Personal</Text>
                 <Text style={styles.textStyle}>Information Below</Text>
               </View>
               <View style={styles.personalInfo}>
-                <Text style={[styles.textStyle, {fontSize: 16}]}>
+                <Text
+                  style={[
+                    styles.textStyle,
+                    {
+                      fontSize: 16,
+                      color: this.state.first_nameError
+                        ? 'red'
+                        : colors.darkGrey,
+                    },
+                  ]}>
                   First Name
                 </Text>
                 <View style={[styles.borderStyle, styles.view1]}>
@@ -296,7 +316,12 @@ class PersonalInfo extends React.Component {
                     }
                     style={[
                       styles.textStyle2,
-                      {height: 30, alignItems: 'center', padding: 0},
+                      {
+                        height: 30,
+                        alignItems: 'center',
+                        padding: 0,
+                        width: '90%',
+                      },
                     ]}
                   />
                   {this.state.first_nameError ? (
@@ -307,7 +332,7 @@ class PersonalInfo extends React.Component {
                           ? 'check'
                           : 'cross'
                       }
-                      style={{fontSize: 15}}
+                      style={{ fontSize: 15 }}
                       color={
                         !this.state.first_nameError == true
                           ? '#006400'
@@ -322,7 +347,16 @@ class PersonalInfo extends React.Component {
                 </View>
               </View>
               <View style={styles.personalInfo}>
-                <Text style={[styles.textStyle, {fontSize: 16}]}>
+                <Text
+                  style={[
+                    styles.textStyle,
+                    {
+                      fontSize: 16,
+                      color: this.state.last_nameError
+                        ? 'red'
+                        : colors.darkGrey,
+                    },
+                  ]}>
                   Last Name
                 </Text>
                 <View style={[styles.borderStyle, styles.view1]}>
@@ -338,7 +372,12 @@ class PersonalInfo extends React.Component {
                     }
                     style={[
                       styles.textStyle2,
-                      {height: 30, alignItems: 'center', padding: 0},
+                      {
+                        height: 30,
+                        alignItems: 'center',
+                        padding: 0,
+                        width: '90%',
+                      },
                     ]}
                   />
                   {this.state.last_nameError ? (
@@ -349,7 +388,7 @@ class PersonalInfo extends React.Component {
                           ? 'check'
                           : 'cross'
                       }
-                      style={{fontSize: 15}}
+                      style={{ fontSize: 15 }}
                       color={
                         !this.state.last_nameError == true
                           ? '#006400'
@@ -365,7 +404,14 @@ class PersonalInfo extends React.Component {
               </View>
 
               <View style={styles.personalInfo}>
-                <Text style={[styles.textStyle, {fontSize: 16}]}>
+                <Text
+                  style={[
+                    styles.textStyle,
+                    {
+                      fontSize: 16,
+                      color: this.state.emailError ? 'red' : colors.darkGrey,
+                    },
+                  ]}>
                   Email Address
                 </Text>
                 <View style={[styles.borderStyle, styles.view1]}>
@@ -379,7 +425,12 @@ class PersonalInfo extends React.Component {
                     onChangeText={text => this.onChangeHandler(text, 'email')}
                     style={[
                       styles.textStyle2,
-                      {height: 30, alignItems: 'center', padding: 0},
+                      {
+                        height: 30,
+                        alignItems: 'center',
+                        padding: 0,
+                        width: '90%',
+                      },
                     ]}
                   />
                   {this.state.emailError ? (
@@ -390,7 +441,7 @@ class PersonalInfo extends React.Component {
                           ? 'check'
                           : 'cross'
                       }
-                      style={{fontSize: 15}}
+                      style={{ fontSize: 15 }}
                       color={
                         !this.state.emailError == true ? '#006400' : '#FF0000'
                       }
@@ -403,8 +454,17 @@ class PersonalInfo extends React.Component {
                 </View>
               </View>
               <View style={styles.personalInfo}>
-                <Text style={[styles.textStyle, {fontSize: 16}]}>Gender</Text>
-                <View style={[styles.borderStyle, {width: '100%'}]}>
+                <Text
+                  style={[
+                    styles.textStyle,
+                    {
+                      fontSize: 16,
+                      color: this.state.genderError ? 'red' : colors.darkGrey,
+                    },
+                  ]}>
+                  Gender
+                </Text>
+                <View style={[styles.borderStyle, { width: '100%' }]}>
                   <Select
                     placeholder="Male"
                     selectedValue={this.state.gender}
@@ -446,7 +506,7 @@ class PersonalInfo extends React.Component {
                   ) : null} */}
                 </View>
 
-                <View style={{flexDirection: 'row', marginTop: '10%'}}>
+                <View style={{ flexDirection: 'row', marginTop: '10%' }}>
                   {/* <View style={{borderBottomWidth: 0}}> */}
                   <Checkbox
                     checked={this.state.check}
@@ -454,12 +514,22 @@ class PersonalInfo extends React.Component {
                       this.setState({
                         check: !this.state.termsAndConditions,
                         errorText4: '',
+                        checkError: false,
                       })
                     }
                     color="#002854"
                   />
-                  <View style={{marginLeft: 5}}>
-                    <Text style={[styles.textStyle, {fontSize: 12}]}>
+                  <View style={{ marginLeft: 5 }}>
+                    <Text
+                      style={[
+                        styles.textStyle,
+                        {
+                          fontSize: 12,
+                          color: this.state.checkError
+                            ? 'red'
+                            : colors.darkGrey,
+                        },
+                      ]}>
                       I accept the terms and condition
                     </Text>
                   </View>
@@ -467,9 +537,10 @@ class PersonalInfo extends React.Component {
                 </View>
               </View>
             </View>
+            <Loader loading={this.state.loading} />
           </View>
           <FooterButton
-            title="Add To Cart"
+            title="Register"
             onPress={this.pressHandler}
             disabled={this.state.loading}
           />

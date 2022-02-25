@@ -19,15 +19,14 @@ import {
 import FooterButton from '../../../common/FooterButton';
 import { colors } from '../../../util/colors';
 import { style } from 'styled-system';
-import Card from '../../../common/Card'
+import Card from '../../../common/Card';
 const images = {
   profile: {
-    profile: require("../../../assets/testing.jpg")
-
-  }
+    profile: require('../../../assets/testing.jpg'),
+  },
 };
 
-const imageList = require("../../../assets/testing.jpg")
+const imageList = require('../../../assets/testing.jpg');
 class ItemCart extends Component {
   constructor(props) {
     super(props);
@@ -43,34 +42,40 @@ class ItemCart extends Component {
       <NativeBaseProvider>
         <View style={{ flex: 1, backgroundColor: colors.gray }}>
           <View style={styles.mainView}>
-            <Card style={{
-              marginTop: '5%',
-              width: '100%',
-              backgroundColor: colors.gray,
-              borderRadius: 30,
-              elevation: 5,
-              height: 140
-            }}
+            <Card
+              style={{
+                marginTop: '5%',
+                width: '100%',
+                backgroundColor: colors.gray,
+                borderRadius: 30,
+                elevation: 5,
+                height: 140,
+              }}
               image={images.profile.profile}
-              title={" Start Stone Ring"}
-              price={(50)}
-              discription={" Start Stone Ring"} >
-            </Card>
+              title={' Start Stone Ring'}
+              price={50}
+              discription={' Start Stone Ring'}></Card>
           </View>
         </View>
-        <View >
-          <Text style={{ fontSize: 20, textDecorationLine: 'underline', color: "red", position: 'absolute', top: 10, marginLeft: 15 }}>
+        <View>
+          <Text
+            style={{
+              fontSize: 20,
+              textDecorationLine: 'underline',
+              color: 'red',
+              position: 'absolute',
+              top: 10,
+              marginLeft: 15,
+            }}>
             Precharge Wallet
           </Text>
-
         </View>
         <FooterButton
           title="Add To Cart"
-          onPress={() => props.navigation.navigate("ItemCart")}
+          onPress={() => props.navigation.navigate('ItemCart')}
           // disabled={this.state.loading}
           style={{ width: '50%' }}
         />
-
       </NativeBaseProvider>
     );
   }
@@ -85,5 +90,4 @@ const styles = StyleSheet.create({
     // marginTop: '10%',
     backgroundColor: colors.gray,
   },
-
 });

@@ -2,18 +2,21 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, FlatList, Alert } from 'react-native';
 import FooterButton from '../../../common/FooterButton';
 import { NativeBaseProvider, ScrollView } from 'native-base';
-import { colors } from '../../../util/colors';
+import { ASPECT_RATIO, colors, mainView } from '../../../util/colors';
 import CartCart from '../../../common/CartCart';
 import { textStyle } from 'styled-system';
 import AppService from '../../../services/AppService';
 import Snackbar from 'react-native-snackbar';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import Loader from '../../../common/Loader';
+import SessionExpireModal from '../../../common/SessionExpireModal';
+import AsyncStorage from '@react-native-community/async-storage';
 
 const Cart = props => {
   const [cartItems, setCartItems] = useState([]);
   let [totalPrice, setTotalPrice] = useState(0);
   const [loading, setloading] = useState(true);
+  const [rideInProgress, setRideInProgress] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [modalProperties, setModalProperties] = useState({});
   const [walletData, setWalletData] = useState();
@@ -21,6 +24,7 @@ const Cart = props => {
   const [paymentAmount, setPaymentAmount] = useState();
   const [hasWallet, setHasWallet] = useState(true);
   useEffect(async () => {
+    // console.log('wallet: ', props.route.params);
     if (props.route?.params?.isWallet) {
       setHasWallet(true);
     }
@@ -32,10 +36,10 @@ const Cart = props => {
       .then(res => {
         // console.log('getItemsFromCart: ', res);
         if (res.data.status) {
-          Snackbar.show({
-            text: res.data.message,
-            duration: Snackbar.LENGTH_LONG,
-          });
+          // Snackbar.show({
+          //   text: res.data.message,
+          //   duration: Snackbar.LENGTH_LONG,
+          // });
           setCartItems(res.data.data);
           setTimeout(() => {
             totalCalculation(res.data.data);
@@ -222,68 +226,87 @@ const Cart = props => {
   };
 
   const pressHandler = async tag => {
-    setloading(true);
-    await AppService.getCustomerWallet()
-      .then(res => {
-        if (res.data.status) {
-          setWalletData(res.data.data);
-          if (res.data.data?.wallet) {
-            let paymentCal = res.data.data.wallet.amount - totalPrice;
-            setPaymentAmount(paymentCal);
-            if (paymentCal < 0) {
-              let paymentSplit = paymentCal.toString().split('-');
-              let paymentConvert = parseFloat(paymentSplit[1]).toFixed(2);
-              setAmountToAdd(paymentConvert);
-              let modalProperties = {
-                title: tag,
-                body: `Your Card Will be charged $${paymentConvert}! Are your sure want to continue.`,
-                button1: 'Continue',
-                button2: 'Cancel',
-              };
-              confirmationAlert(modalProperties);
+    let isValid = true;
+    // const Drive_Status = await AsyncStorage.getItem('RideStatus');
+    // let valid = true;
+    const DriverID = await AsyncStorage.getItem('DriverID');
+    // if (DriverID) {
+    //   isValid = false;
+    //   this.setState({ rideInProgress: true });
+    // }
+
+    if (DriverID) {
+      isValid = false;
+      setRideInProgress(true);
+    }
+    if (isValid) {
+      setloading(true);
+      await AppService.getCustomerWallet()
+        .then(res => {
+          if (res.data.status) {
+            setWalletData(res.data.data);
+            console.log('getCustomerWallet: ', res);
+            if (res.data.data?.wallet) {
+              let paymentCal = res.data.data.wallet.amount - totalPrice;
+              setPaymentAmount(paymentCal);
+              if (paymentCal < 0) {
+                let paymentSplit = paymentCal.toString().split('-');
+                let paymentConvert = parseFloat(paymentSplit[1]).toFixed(2);
+                setAmountToAdd(paymentConvert);
+                let modalProperties = {
+                  title: tag,
+                  body: `Your Card Will be charged $${paymentConvert}! Are your sure want to continue.`,
+                  button1: 'Continue',
+                  button2: 'Cancel',
+                };
+                confirmationAlert(modalProperties);
+              } else {
+                let modalProperties = {
+                  title: tag,
+                  body: `Are your sure want to continue!`,
+                  button1: 'Continue',
+                  button2: 'Cancel',
+                };
+                confirmationAlert(modalProperties);
+              }
             } else {
               let modalProperties = {
-                title: tag,
-                body: `Are your sure want to continue!`,
+                title: 'Create Wallet',
+                body: `Please Create Wallet First!`,
                 button1: 'Continue',
                 button2: 'Cancel',
+                walletScreen: true,
               };
+              setHasWallet(false);
+              // setTimeout(() => {
               confirmationAlert(modalProperties);
+              setloading(false);
+              // }, 1000);
             }
           } else {
-            let modalProperties = {
-              title: 'Create Wallet',
-              body: `Please Create Wallet First!`,
-              button1: 'Continue',
-              button2: 'Cancel',
-            };
-            setHasWallet(false);
-            confirmationAlert(modalProperties);
+            setloading(false);
+            Snackbar.show({
+              text: res.data.message,
+              duration: Snackbar.LENGTH_LONG,
+            });
           }
-          setloading(false);
-        } else {
+        })
+        .catch(error => {
+          console.log('error: ', error);
+          console.log('error.response: ', error.response);
           setloading(false);
           Snackbar.show({
-            text: res.data.message,
+            text: error.response.data.message,
             duration: Snackbar.LENGTH_LONG,
           });
-        }
-      })
-      .catch(error => {
-        console.log('error: ', error);
-        console.log('error.response: ', error.response);
-        setloading(false);
-        Snackbar.show({
-          text: error.response.data.message,
-          duration: Snackbar.LENGTH_LONG,
         });
-      });
+    }
   };
   const confirmationAlert = async item => {
     Alert.alert(item.tag, item.body, [
       {
         text: item.button1,
-        onPress: () => onContinue(),
+        onPress: () => onContinue(item?.walletScreen),
         style: item.button2,
       },
       {
@@ -337,8 +360,10 @@ const Cart = props => {
         });
       });
   };
-  const onContinue = () => {
-    if (hasWallet === false) {
+  const onContinue = walletScreen => {
+    setloading(false);
+    // debugger
+    if (!hasWallet || walletScreen) {
       let parameter = {
         isFromCart: true,
       };
@@ -359,9 +384,9 @@ const Cart = props => {
           service_type: 'item_purchase',
           payment_type: '1',
           item_purchases: {
-            store: 'Nueplex Cinemas - Askari IV',
+            // store: 'Nueplex Cinemas - Askari IV',
             // store: 'Saima Arabian Villas, Karachi',
-            // store: storeName,
+            store: storeName,
             items: arrItems,
           },
         };
@@ -370,6 +395,36 @@ const Cart = props => {
       }
     }
   };
+
+  // const addressHandler = (data, screen) => {
+  //   // if (field === 'deliveryAddress')
+  //   console.log('data: ', data);
+  //   // debugger;
+  //   if (data?.results) {
+  //     let addressComponent = data.results[0].address_components;
+  //     let newState = {
+  //       screen: screen,
+  //       locationData: data,
+  //       deliveryAddress:
+  //         addressComponent[0].long_name +
+  //         ' ' +
+  //         addressComponent[1].long_name +
+  //         ' ' +
+  //         addressComponent[3].long_name,
+  //     };
+  //     this.setState(newState);
+  //   } else {
+  //     let addressComponent = data.address;
+  //     let newState = {
+  //       screen: screen,
+  //       locationData: data,
+  //       deliveryAddress: addressComponent,
+  //     };
+  //     this.setState(newState);
+  //   }
+  //   // }
+  // };
+  // if (screen == 0) {
   return (
     <NativeBaseProvider>
       <View
@@ -378,39 +433,47 @@ const Cart = props => {
           backgroundColor: colors.gray,
         }}>
         <View style={{ flexGrow: 1 }}>
-          <View style={styles.mainView}>
+          <View style={[styles.mainView, { marginRight: mainView.marginLeft }]}>
             <View style={styles.innerViews}>
               <View>
                 <Text style={styles.textStyle}>Cart</Text>
               </View>
             </View>
-            <ScrollView style={{ maxHeight: '83%' }}>
-              <View>
-                <FlatList
-                  data={cartItems.items}
-                  keyExtractor={(item, index) => index + ''}
-                  ListEmptyComponent={EmptyListMessage}
-                  renderItem={({ item, index }) => {
-                    return (
-                      <View>
-                        <CartCart
-                          onProductAdd={() => addProduct(item)}
-                          onProductDelete={() => deleteProduct(item)}
-                          onProductRemove={() => removeProduct(item)}
-                          product_name={item.product_id.product_name}
-                          product_price={item.product_id.product_price}
-                          product_counut={item.quantity}
-                          product_image={item.product_id.product_image}
-                        />
-                      </View>
-                    );
-                  }}
-                />
-              </View>
-            </ScrollView>
+            {/* <ScrollView style={{ maxHeight: '85%' }}> */}
+            {/* <View> */}
+            <FlatList
+              data={cartItems.items}
+              keyExtractor={(item, index) => index + ''}
+              ListEmptyComponent={EmptyListMessage}
+              style={{ height: ASPECT_RATIO * 900 }}
+              renderItem={({ item, index }) => {
+                return (
+                  <CartCart
+                    onProductAdd={() => addProduct(item)}
+                    onProductDelete={() => deleteProduct(item)}
+                    onProductRemove={() => removeProduct(item)}
+                    product_name={item.product_id.product_name}
+                    product_price={item.product_id.product_price}
+                    product_counut={item.quantity}
+                    product_image={item.product_id.product_image}
+                  />
+                );
+              }}
+            />
+            {/* </View> */}
+            {/* </ScrollView> */}
           </View>
         </View>
         <Loader loading={loading} />
+        {rideInProgress ? (
+          <SessionExpireModal
+            loading={rideInProgress}
+            icon={null}
+            text={'Ride is Already in Progress!'}
+            button={'Ok'}
+            handleButton={() => setRideInProgress(false)}
+          />
+        ) : null}
         <View style={{ position: 'absolute', bottom: 0, right: 0, left: 0 }}>
           {cartItems.items != '' ? (
             <View
@@ -434,12 +497,8 @@ const Cart = props => {
               <Text style={styles.textStyle}>${totalPrice} </Text>
             </View>
           ) : null}
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-around',
-            }}>
-            <TouchableOpacity
+          {/* <View> */}
+          {/* <TouchableOpacity
               activeOpacity={0.8}
               onPress={() => pressHandler('Precharge Wallet')}
               style={{ marginLeft: '20%', marginTop: '10%' }}>
@@ -450,28 +509,38 @@ const Cart = props => {
                 ]}>
                 Precharge Wallet
               </Text>
-            </TouchableOpacity>
-            <View style={{ width: '80%' }}>
-              <FooterButton
-                title="Proceed To Checkout"
-                onPress={() => pressHandler('Proceed To Checkout')}
-                disabled={loading}
-              />
-            </View>
-          </View>
+            </TouchableOpacity> */}
+          {/* <View style={{ width: '80%',  }}> */}
+          <FooterButton
+            title="Proceed To Checkout"
+            onPress={() => pressHandler('Proceed To Checkout')}
+            disabled={loading}
+          />
+          {/* </View> */}
+          {/* </View> */}
         </View>
       </View>
     </NativeBaseProvider>
   );
+  // } else if (screen == 1) {
+  //   return (
+  //     <Map
+  //       handleScreen={(data, screen) => addressHandler(data, screen)}
+  //       // pickupLocationData={this.state.payload.item_purchases.store}
+  //       isFrom="PurchaseItemsService"
+  //     />
+  //   );
+  // }
 };
 export default Cart;
 const styles = StyleSheet.create({
-  mainView: {
-    marginLeft: '10%',
-    marginRight: '10%',
-    marginTop: '12%',
-    backgroundColor: colors.gray,
-  },
+  mainView: mainView,
+  // {
+  //   marginLeft: '10%',
+  //   marginRight: '10%',
+  //   marginTop: '12%',
+  //   backgroundColor: colors.gray,
+  // },
   innerViews: {
     marginBottom: '10%',
   },

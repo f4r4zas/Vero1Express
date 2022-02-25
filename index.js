@@ -10,7 +10,6 @@ import { name as appName } from './app.json';
 // import history from '@history';
 import { Provider } from 'react-redux';
 import { Store } from './src/reduxStore/Store';
-import PushNotification from 'react-native-push-notification';
 
 const RNRedux = () => {
   // Must be outside of any component LifeCycle (such as `componentDidMount`).

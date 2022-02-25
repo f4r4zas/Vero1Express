@@ -1,12 +1,13 @@
-import React, {useState} from 'react';
-import {View, TextInput, Text, StyleSheet, FlatList} from 'react-native';
-import {TouchableOpacity} from 'react-native-gesture-handler';
+import React, { useState } from 'react';
+import { View, TextInput, Text, StyleSheet, FlatList } from 'react-native';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import {colors} from '../util/colors';
+import { colors } from '../util/colors';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
+import Entypo from 'react-native-vector-icons/Entypo';
 
 const SelectField = ({
   value,
@@ -54,7 +55,16 @@ const SelectField = ({
   return (
     <View style={styles.personalInfo}>
       {label ? (
-        <Text style={[styles.textStyle, {fontSize: 16}]}>{label}</Text>
+        <>
+          {error ? (
+            <Text
+              style={[styles.textStyle, { fontSize: 16, color: '#FF0000' }]}>
+              {label}
+            </Text>
+          ) : (
+            <Text style={[styles.textStyle, { fontSize: 16 }]}>{label}</Text>
+          )}
+        </>
       ) : null}
       <View style={[styles.borderStyle, styles.view1]}>
         <TextInput
@@ -73,7 +83,7 @@ const SelectField = ({
           editable={isEditable}
           style={
             style
-              ? [style, {width: '90%'}]
+              ? [style, { width: '90%' }]
               : [
                   styles.textStyle2,
                   {
@@ -85,10 +95,19 @@ const SelectField = ({
                 ]
           }
         />
+        {error ? (
+          <Entypo
+            type="Entypo"
+            name={'cross'}
+            style={{ fontSize: 15 }}
+            color={'#FF0000'}
+          />
+        ) : // <Text style={{ color: 'red' }}>{error}</Text>
+        null}
         <AntDesign
           type="AntDesign"
           name="caretdown"
-          style={{fontSize: 12, marginRight: '5%'}}
+          style={{ fontSize: 12, marginRight: '5%' }}
           color="#000"
           onPress={() => {
             toggleShowDropDown(showDropDown);
@@ -111,7 +130,7 @@ const SelectField = ({
             keyExtractor={(item, index) => index + ''}
             //   ListEmptyComponent={EmptyListMessage}
             ItemSeparatorComponent={renderSeparator}
-            renderItem={({item, index}) => {
+            renderItem={({ item, index }) => {
               return (
                 <View
                   style={{
@@ -120,7 +139,7 @@ const SelectField = ({
                     height: hp('5%'),
                   }}>
                   <TouchableOpacity onPress={() => handleSelectValue(item)}>
-                    <Text style={[styles.textStyle, {fontSize: 14}]}>
+                    <Text style={[styles.textStyle, { fontSize: 14 }]}>
                       {item.name}
                     </Text>
                   </TouchableOpacity>

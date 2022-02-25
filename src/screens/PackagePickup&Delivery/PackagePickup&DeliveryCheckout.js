@@ -16,7 +16,16 @@ import {
 import { NativeBaseProvider } from 'native-base';
 import Snackbar from 'react-native-snackbar';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import { colors } from '../../util/colors';
+import {
+  ASPECT_RATIO,
+  colors,
+  fontSize,
+  footerButtonStyle,
+  headingTextStyle,
+  height,
+  mainView,
+  width,
+} from '../../util/colors';
 import FooterButton from '../../common/FooterButton';
 import SelectField from '../../common/SelectField';
 import {
@@ -28,6 +37,9 @@ import Camera from '../../common/Camera';
 import { launchImageLibrary, launchCamera } from 'react-native-image-picker';
 import AppService from '../../services/AppService';
 import Loader from '../../common/Loader';
+import AsyncStorage from '@react-native-community/async-storage';
+import Entypo from 'react-native-vector-icons/Entypo';
+import SessionExpireModal from '../../common/SessionExpireModal';
 
 class PackagePickupAndDeliveryCheckout extends Component {
   constructor(props) {
@@ -38,6 +50,7 @@ class PackagePickupAndDeliveryCheckout extends Component {
       deliveryAddress: '',
       specificInstruction: '',
       promoCode: '',
+      rideInProgress: false,
       isValid: false,
       error: false,
       packageType: [
@@ -60,40 +73,61 @@ class PackagePickupAndDeliveryCheckout extends Component {
         { name: 'Large', value: 'Large' },
       ],
       selectedSize: '',
+      selectedSizeError: '',
       selectedFragile: '',
+      selectedFragileError: '',
       selectedItemWeight: '',
+      selectedItemWeightError: '',
       selectedPackageType: '',
+      selectedPackageTypeError: '',
       product_image: '',
       openCamera: false,
       photo: null,
       photoAppend: '',
       image_url: '',
-      items: [],
+      image_urlError: '',
+      items: [
+        // {
+        //   package_type: 'Envelope',
+        //   item_type: 'asdfa',
+        //   // image_url: this.state.image_url,
+        //   item_weight: '50',
+        //   fragile: 'mo',
+        //   size: 'fdas',
+        // },
+      ],
+      images: [],
     };
   }
 
   componentDidMount() {}
-  addressHandler = field => {
-    console.log(field);
-    if (field === 'deliveryAddress') {
-      // let newState = {deliveryAddress: e};
-      // this.setState(newState);
-    }
-  };
+  // addressHandler = field => {
+  // console.log(field);
+  // if (field === 'deliveryAddress') {
+  // let newState = {deliveryAddress: e};
+  // this.setState(newState);
+  // }
+  // };
   changeHandler = (e, field) => {
-    console.log(e);
+    // console.log(e);
     // debugger;
     if (field === 'selectedPackageType') {
-      let newState = { selectedPackageType: e.name };
+      let newState = {
+        selectedPackageType: e.name,
+        selectedPackageTypeError: '',
+      };
       this.setState(newState);
     } else if (field === 'selectedItemWeight') {
-      let newState = { selectedItemWeight: e.name };
+      let newState = {
+        selectedItemWeight: e.name,
+        selectedItemWeightError: '',
+      };
       this.setState(newState);
     } else if (field === 'selectedFragile') {
-      let newState = { selectedFragile: e.name };
+      let newState = { selectedFragile: e.name, selectedFragileError: '' };
       this.setState(newState);
     } else if (field === 'selectedSize') {
-      let newState = { selectedSize: e.name };
+      let newState = { selectedSize: e.name, selectedSizeError: '' };
       this.setState(newState);
     }
   };
@@ -107,7 +141,7 @@ class PackagePickupAndDeliveryCheckout extends Component {
         buttonPositive: 'Ok',
       },
     );
-    console.log('granted: ', granted);
+    // console.log('granted: ', granted);
     if (granted === PermissionsAndroid.RESULTS.GRANTED) {
       let options = {
         storageOptions: {
@@ -120,15 +154,15 @@ class PackagePickupAndDeliveryCheckout extends Component {
         },
       };
       await launchCamera(options, response => {
-        console.log('Response = ', response);
+        // console.log('Response = ', response);
         if (response.didCancel) {
-          console.log('User cancelled image picker');
+          // console.log('User cancelled image picker');
           let newState = {
             photot: '',
           };
           this.setState(newState);
         } else if (response.error) {
-          console.log('ImagePicker Error: ', response.error);
+          // console.log('ImagePicker Error: ', response.error);
           Snackbar.show({
             text: response.error,
             duration: Snackbar.LENGTH_LONG,
@@ -138,9 +172,11 @@ class PackagePickupAndDeliveryCheckout extends Component {
           };
           this.setState(newState);
         } else if (response.customButton) {
-          console.log('User tapped custom button: ', response.customButton);
+          // console.log('User tapped custom button: ', response.customButton);
           alert(response.customButton);
         } else {
+          // console.log('camera Response: ', response);
+          // debugger;
           let photoStatus = response.assets[0];
           let newState = {
             photo: photoStatus,
@@ -172,50 +208,52 @@ class PackagePickupAndDeliveryCheckout extends Component {
       type: photo.type,
       uri: Platform.OS === 'ios' ? photo.uri.replace('file://', '') : photo.uri,
     };
+    console.log('payload: ', photo1);
     await AppService.uploadImage(photo1)
       .then(res => {
         console.log('res uploadImage: ', res);
 
         if (res.data.status) {
+          const newState = {
+            image_url: res.data.data.image_url,
+            loading: false,
+            image_urlError: '',
+          };
+          this.setState(newState);
           Snackbar.show({
             text: 'Image Uploaded Successfully',
             duration: Snackbar.LENGTH_LONG,
           });
-          let newState = {
-            image_url: res.data.data.image_url,
+        } else {
+          const error = res.data.data.message;
+          const newState = {
             loading: false,
           };
           this.setState(newState);
-        } else {
-          let error = res.data.data.message;
           Snackbar.show({
             text: error,
             duration: Snackbar.LENGTH_LONG,
           });
-          let newState = {
-            loading: false,
-          };
-          this.setState(newState);
         }
       })
       .catch(error => {
-        console.log('error: ', error);
-        console.log('error.response: ', error.response);
+        // console.log('error: ', error);
+        // console.log('error.response: ', error.response);
         this.setState({ loading: false });
         Snackbar.show({
           text: error.response.data.message,
           duration: Snackbar.LENGTH_LONG,
         });
       });
-    let newState = {
-      loading: false,
-    };
-    this.setState(newState);
   };
   pressHandler = async () => {
     let valid = true;
     if (this.state.items.length < 1) {
       valid = false;
+      Snackbar.show({
+        text: 'Please Add Package First!',
+        duration: Snackbar.LENGTH_LONG,
+      });
     }
     if (valid) {
       let newState = {
@@ -256,20 +294,16 @@ class PackagePickupAndDeliveryCheckout extends Component {
           ],
         },
       };
-      console.log('payload out going: ', payload);
+      // console.log('payload out going: ', payload);
       this.requestDriverApi(payload);
     }
   };
   requestDriverApi = async payload => {
-    console.log('payload: ', payload);
+    // console.log('payload: ', payload);
     await AppService.createPurchase(payload)
       .then(res => {
-        console.log('requestDriverApi: ', res);
-        let newState = {
-          loading: false,
-        };
-        this.setState(newState);
-        this.props.navigation.navigate('RequestDriver', res.data);
+        // console.log('requestDriverApi: ', res);
+        this.requestDriverScreen(res);
       })
       .catch(error => {
         console.log('error: ', error);
@@ -281,38 +315,72 @@ class PackagePickupAndDeliveryCheckout extends Component {
         });
       });
   };
+  requestDriverScreen = async res => {
+    const pick_up = JSON.stringify(res.data.pick_up_location);
+    const drop_of = JSON.stringify(res.data.drop_of_location);
+    await AsyncStorage.setItem('PurchaseID', res.data._id);
+    await AsyncStorage.setItem('pick_up_location', pick_up);
+    await AsyncStorage.setItem('drop_of_location', drop_of);
+    let newState = {
+      loading: false,
+    };
+    this.setState(newState);
+    this.props.navigation.navigate('RequestDriver', res.data);
+  };
   cancelParcel = (item, index) => {
-    console.log('item: ', item);
-    console.log('items: ', this.state.items);
+    // console.log('item: ', item);
+    // console.log('items: ', this.state.items);
     for (let i = 0; i < this.state.items.length; i++) {
       if (index == i) {
         // let x = this.state.items[i];
         this.state.items.splice(i, 1);
-        let newState = { items: this.state.items };
-        console.log('newState: ', newState);
-        debugger;
+        this.state.images.splice(i, 1);
+        let newState = { items: this.state.items, images: this.state.images };
+        // console.log('newState: ', newState);
+        // debugger;
 
         this.setState(newState);
       }
     }
   };
-  addParecls = () => {
-    debugger;
+  addParecls = async () => {
+    // debugger;
     let valid = true;
+    const DriverID = await AsyncStorage.getItem('DriverID');
+    if (DriverID) {
+      valid = false;
+      this.setState({ rideInProgress: true });
+    }
+
     if (!this.state.selectedPackageType) {
       valid = false;
+      this.setState({ selectedPackageTypeError: '*Required!' });
+    } else {
+      this.setState({ selectedPackageTypeError: '' });
     }
     if (!this.state.selectedItemWeight) {
       valid = false;
+      this.setState({ selectedItemWeightError: '*Required!' });
+    } else {
+      this.setState({ selectedItemWeightError: '' });
     }
     if (!this.state.selectedFragile) {
       valid = false;
+      this.setState({ selectedFragileError: '*Required!' });
+    } else {
+      this.setState({ selectedFragileError: '' });
     }
     if (!this.state.selectedSize) {
       valid = false;
+      this.setState({ selectedSizeError: '*Required!' });
+    } else {
+      this.setState({ selectedSizeError: '' });
     }
     if (!this.state.image_url) {
       valid = false;
+      this.setState({ image_urlError: '*Required!' });
+    } else {
+      this.setState({ image_urlError: '' });
     }
     if (valid) {
       // let newArray = [];
@@ -323,158 +391,249 @@ class PackagePickupAndDeliveryCheckout extends Component {
         item_weight: this.state.selectedItemWeight,
         fragile: this.state.selectedFragile,
         size: this.state.selectedSize,
-        // image_uri: this.state.photo.uri,
       };
+      this.state.images.push({ image_uri: this.state.photo.uri });
+
       this.state.items.push(item);
       // console.log('item: ', newState);
 
-      this.setState({ items: this.state.items });
+      this.setState({
+        items: this.state.items,
+        selectedItemWeight: '',
+        selectedPackageType: '',
+        selectedSize: '',
+        selectedFragile: '',
+        image_url: '',
+        photo: '',
+        images: this.state.images,
+      });
     }
   };
   render() {
-    console.log('this.state.items: ', this.props);
+    // console.log('this.props: ', this.props);
+    // console.log('this.state: ', this.state);
     return (
       <NativeBaseProvider>
-        <View style={{ flex: 1, backgroundColor: colors.gray }}>
-          <View style={{ flex: 1 }}>
+        <View style={{ backgroundColor: colors.gray }}>
+          <ScrollView
+            style={{ marginBottom: height / 35, height: hp(78) }}
+            // style={{ height: hp('80%') }}
+          >
+            {/* <View> */}
             <View style={styles.mainView}>
-              <ScrollView style={{ height: hp('80%') }}>
-                <View style={{ marginBottom: hp('5%') }}>
-                  <Text style={styles.textStyle}>Package Pickup</Text>
-                  <Text style={styles.textStyle}>& Delivery</Text>
-                </View>
-                <FlatList
-                  data={this.state.items}
-                  keyExtractor={(item, index) => index + ''}
-                  // ListEmptyComponent={EmptyListMessage}
-                  renderItem={({ item, index }) => {
-                    console.log('items: ', item);
-                    return (
-                      <View style={{ width: hp('45%'), marginLeft: 5 }}>
-                        <ParcelProductCard
-                          cancelParcel={() => this.cancelParcel(item, index)}
-                          packageType={item.item_type}
-                          size={item.size}
-                          itemWeight={item.item_weight}
-                          product_image={
-                            'http://157.230.183.30:3000/' + item.image_url
-                          }
-                          fragile={item.fragile}
-                        />
-                      </View>
-                    );
-                  }}
-                />
+              <View
+                style={{
+                  marginBottom: height / 30,
+                  marginTop: mainView.marginTop,
+                }}>
+                <Text style={styles.textStyle}>Package Pickup</Text>
+                <Text style={styles.textStyle}>& Delivery</Text>
+              </View>
+              <FlatList
+                data={this.state.items}
+                keyExtractor={(item, index) => index + ''}
+                // ListEmptyComponent={EmptyListMessage}
+                // style={{ width: width / 1 }}
+                // nestedScrollEnabled={true}
+                renderItem={({ item, index }) => {
+                  // console.log('items: ', item);
 
-                <SelectField
-                  label={'Package Type'}
-                  placeholder={'Parcel'}
-                  value={this.state.selectedPackageType}
-                  onChangeText={e =>
-                    this.changeHandler(e, 'selectedPackageType')
-                  }
-                  dropDownData={this.state.packageType}
-                />
-                <SelectField
-                  label={'Item Weight(Ibs)'}
-                  placeholder={'10'}
-                  value={this.state.selectedItemWeight}
-                  onChangeText={e =>
-                    this.changeHandler(e, 'selectedItemWeight')
-                  }
-                  dropDownData={this.state.itemWeights}
-                />
-                <SelectField
-                  label={'Fragile'}
-                  placeholder={'No'}
-                  value={this.state.selectedFragile}
-                  onChangeText={e => this.changeHandler(e, 'selectedFragile')}
-                  dropDownData={this.state.fragile}
-                />
-                <SelectField
-                  label={'Size'}
-                  placeholder={'Medium'}
-                  value={this.state.selectedSize}
-                  onChangeText={e => this.changeHandler(e, 'selectedSize')}
-                  dropDownData={this.state.size}
-                />
-                <TouchableOpacity
-                  onPress={() => this.handleCamera()}
-                  style={{ marginTop: hp('3%'), flexDirection: 'row' }}>
-                  <MaterialIcons
-                    type="MaterialIcons"
-                    name="camera-alt"
-                    style={styles.cameraButton}
-                    // size={30}
-                  />
-                  <Text
-                    style={[
-                      styles.textStyle,
-                      {
-                        fontSize: 14,
-                        color: colors.secondaryGray,
-                        marginTop: hp('1.3%'),
-                        marginLeft: hp('1.3%'),
-                        textDecorationLine: 'underline',
-                      },
-                    ]}>
-                    Upload Item Picture
-                  </Text>
-                </TouchableOpacity>
-              </ScrollView>
-            </View>
-            {/* {this.state.openCamera ? <Camera /> : null} */}
-            <Loader loading={this.state.loading} />
-            {/* <View
-              style={{flexDirection: 'row', justifyContent: 'space-around'}}>
-              <View style={{width: 10}}>
-                <FooterButton
-                  title="Proceed To Checkout"
-                  onPress={this.pressHandler}
-                  disabled={this.state.loading}
-                />
-              </View>
-              <View>
-                <Text
-                  style={[
-                    styles.textStyle,
-                    {color: colors.primaryOrange, fontSize: 14},
-                  ]}>
-                  Add Parcel
-                </Text>
-              </View>
-            </View> */}
-            <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'space-around',
-              }}>
+                  return (
+                    <View
+                      style={{
+                        width: width / 1.23,
+                        marginLeft: width / 100,
+                      }}>
+                      <ParcelProductCard
+                        cancelParcel={() => this.cancelParcel(item, index)}
+                        packageType={item.item_type}
+                        size={item.size}
+                        itemWeight={item.item_weight}
+                        product_image={
+                          // 'http://157.230.183.30:3000/' + item.image_url
+                          this.state.images[index].image_uri
+                        }
+                        fragile={item.fragile}
+                      />
+                    </View>
+                  );
+                }}
+              />
+
+              <SelectField
+                label={'Package Type'}
+                placeholder={'Parcel'}
+                value={this.state.selectedPackageType}
+                onChangeText={e => this.changeHandler(e, 'selectedPackageType')}
+                dropDownData={this.state.packageType}
+                error={this.state.selectedPackageTypeError}
+              />
+              <SelectField
+                label={'Item Weight(Ibs)'}
+                placeholder={'10'}
+                value={this.state.selectedItemWeight}
+                onChangeText={e => this.changeHandler(e, 'selectedItemWeight')}
+                dropDownData={this.state.itemWeights}
+                error={this.state.selectedItemWeightError}
+              />
+              <SelectField
+                label={'Fragile'}
+                placeholder={'No'}
+                value={this.state.selectedFragile}
+                onChangeText={e => this.changeHandler(e, 'selectedFragile')}
+                dropDownData={this.state.fragile}
+                error={this.state.selectedFragileError}
+              />
+              <SelectField
+                label={'Size'}
+                placeholder={'Medium'}
+                value={this.state.selectedSize}
+                onChangeText={e => this.changeHandler(e, 'selectedSize')}
+                dropDownData={this.state.size}
+                error={this.state.selectedSizeError}
+              />
               <TouchableOpacity
-                activeOpacity={0.8}
-                onPress={this.addParecls}
-                style={{ marginLeft: '10%', marginTop: '2%' }}>
-                <Text
-                  style={[
-                    styles.textStyle,
-                    {
-                      color: colors.primaryOrange,
-                      textDecorationLine: 'underline',
-                      fontSize: 15,
-                    },
-                  ]}>
-                  Add Parcel
-                </Text>
+                onPress={() => this.handleCamera()}
+                style={{ marginTop: height / 20, flexDirection: 'row' }}>
+                {this.state.image_urlError ? (
+                  <>
+                    <MaterialIcons
+                      type="MaterialIcons"
+                      name="camera-alt"
+                      style={[
+                        styles.cameraButton,
+                        {
+                          // borderColor: '#FF0000',
+                          // borderWidth: 1,
+                          color: '#FF0000',
+                        },
+                      ]}
+                      // size={30}
+                    />
+                    <Text
+                      style={[
+                        styles.textStyle,
+                        {
+                          color: '#FF0000',
+                          fontSize: ASPECT_RATIO * 25,
+                          marginTop: height / 80,
+                          // width: width / 3,
+                          textDecorationLine: 'underline',
+                        },
+                      ]}>
+                      Upload Item Picture{' '}
+                    </Text>
+                    <Entypo
+                      type="Entypo"
+                      name={'cross'}
+                      style={{
+                        fontSize: headingTextStyle.fontSize,
+                        marginTop: height / 80,
+                      }}
+                      color={'#FF0000'}
+                    />
+                  </>
+                ) : (
+                  <>
+                    <MaterialIcons
+                      type="MaterialIcons"
+                      name="camera-alt"
+                      style={[
+                        styles.cameraButton,
+                        {
+                          color: this.state.image_url
+                            ? 'green'
+                            : colors.secondaryGray,
+                        },
+                      ]}
+                    />
+                    <Text
+                      style={[
+                        styles.textStyle,
+                        {
+                          color: this.state.image_url
+                            ? 'green'
+                            : colors.secondaryGray,
+                          fontSize: ASPECT_RATIO * 25,
+                          marginTop: height / 80,
+                          width: width / 3,
+                          textDecorationLine: 'underline',
+                        },
+                      ]}>
+                      {this.state.image_url
+                        ? 'Picture Uploaded'
+                        : 'Upload Item Picture'}{' '}
+                    </Text>
+                    {this.state.image_url ? (
+                      <Entypo
+                        type="Entypo"
+                        name={'check'}
+                        style={{
+                          fontSize: headingTextStyle.fontSize,
+                          marginTop: height / 80,
+                        }}
+                        color={'green'}
+                      />
+                    ) : null}
+                  </>
+                )}
               </TouchableOpacity>
-              <View style={{ width: '80%' }}>
-                <FooterButton
-                  title="Proceed To Checkout"
-                  onPress={this.pressHandler}
-                  disabled={this.state.loading}
-                />
-              </View>
+              {/* </View> */}
+            </View>
+          </ScrollView>
+          <Loader loading={this.state.loading} />
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-around',
+              marginTop: height / 11,
+            }}>
+            <TouchableOpacity
+              activeOpacity={0.8}
+              onPress={this.addParecls}
+              style={{
+                marginLeft: mainView.marginLeft,
+                marginTop: height / 50,
+              }}>
+              <Text
+                style={[
+                  styles.textStyle,
+                  {
+                    color: colors.primaryOrange,
+                    textDecorationLine: 'underline',
+                    fontSize: fontSize - 2,
+                  },
+                ]}>
+                Add Parcel
+              </Text>
+            </TouchableOpacity>
+            <View style={{ width: width / 1.2 }}>
+              <FooterButton
+                title="Proceed To Checkout"
+                onPress={this.pressHandler}
+                disabled={this.state.loading}
+              />
             </View>
           </View>
         </View>
+        {this.state.rideInProgress ? (
+          <SessionExpireModal
+            loading={this.state.rideInProgress}
+            icon={null}
+            text={'Ride is Already in Progress!'}
+            button={'Ok'}
+            handleButton={() =>
+              this.setState({
+                rideInProgress: false,
+                selectedSizeError: '',
+                selectedPackageTypeError: '',
+                selectedItemWeightError: '',
+                selectedFragileError: '',
+                image_urlError: '',
+              })
+            }
+          />
+        ) : null}
       </NativeBaseProvider>
     );
   }
@@ -482,35 +641,11 @@ class PackagePickupAndDeliveryCheckout extends Component {
 
 export default PackagePickupAndDeliveryCheckout;
 const styles = StyleSheet.create({
-  mainView: {
-    marginLeft: '10%',
-    // marginRight: '10%',
-    marginTop: '15%',
-    backgroundColor: colors.gray,
-  },
-  textStyle: {
-    fontWeight: 'bold',
-    fontSize: 20,
-    color: colors.darkGrey,
-  },
-  footerTabStyle: {
-    borderTopLeftRadius: 60,
-    position: 'absolute',
-    top: hp('90.5%'),
-    left: wp('21%'),
-    overlayColor: 'transparent',
-    borderRadius: 6,
-  },
+  mainView: mainView,
+  textStyle: headingTextStyle,
+  footerTabStyle: footerButtonStyle,
   cameraButton: {
-    // borderStyle: 'dashed',
-    borderColor: colors.secondaryGray,
-    borderWidth: 1,
-    color: colors.secondaryGray,
-    padding: hp('1%'),
-    // paddingTop: hp('1.5%'),
-    width: wp('9%'),
-    fontSize: hp('3%'),
-    borderRadius: 30,
-    borderStyle: 'dashed',
+    paddingTop: height / 100,
+    fontSize: ASPECT_RATIO * 45,
   },
 });

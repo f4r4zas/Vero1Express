@@ -46,7 +46,7 @@ const initialState = {
   isLogin: false,
   isLoginLoader: false,
   isLoginError: null,
-
+  loginFailureData: null,
   // cart: null,
   // counter: 0,
 
@@ -153,6 +153,7 @@ export default function AuthReducer(state = initialState, action) {
         user: null,
         loginLoader: false,
         loginError: action.error,
+        loginFailureData: action.payload,
       };
 
     ////////////////////////// REGISTER /////////////////////

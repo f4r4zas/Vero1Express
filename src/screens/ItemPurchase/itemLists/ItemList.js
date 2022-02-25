@@ -14,6 +14,8 @@ import {
   LayoutAnimation,
   Platform,
   UIManager,
+  ImageBackground,
+  ActivityIndicator,
 } from 'react-native';
 import { NativeBaseProvider, Spinner } from 'native-base';
 import { colors } from '../../../util/colors';
@@ -23,7 +25,6 @@ import Zocial from 'react-native-vector-icons/Zocial';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-// import DropDownItem from 'react-native-drop-down-item';
 // import {marginRight} from 'styled-system';
 import Loader from '../../../common/Loader';
 import Snackbar from 'react-native-snackbar';
@@ -86,7 +87,7 @@ class ItemList extends Component {
   setModalVisible(visible) {
     this.setState({ modalVisible: visible });
   }
-  async componentDidMount() {
+  async UNSAFE_componentWillMount() {
     let newState = {
       loading: true,
     };
@@ -665,6 +666,7 @@ class ItemList extends Component {
                   keyExtractor={(item, index) => index + ''}
                   ListEmptyComponent={this.EmptyListMessage}
                   // ListFooterComponent={this.renderFooter}
+
                   renderItem={({ item, index }) => {
                     return (
                       <View style={{ flex: 1 }}>
@@ -684,25 +686,35 @@ class ItemList extends Component {
                             <View
                               style={{
                                 flex: 1,
-                                height: 40,
+                                // height: 80,
                                 alignItems: 'center',
                               }}>
                               <Image
                                 resizeMode={'center'}
                                 source={{
+                                  // uri: 'http:' + item.product_image,
                                   uri: this.renderUri(item.product_image),
                                 }}
                                 style={{
                                   flex: 1,
-                                  //
-                                  width: 60,
-                                  height: 60,
+                                  width: 200,
+                                  height: 200,
                                 }}
+                                onLoadStart={() => (
+                                  <ActivityIndicator
+                                    size="large"
+                                    color={colors.primaryOrange}
+                                  />
+                                )}
+                                // onLoadStart={<ActivityIndicator size="small" />}
                               />
                             </View>
                             <View
                               style={{
-                                margin: 10,
+                                marginLeft: 8,
+                                marginRight: 8,
+                                marginBottom: 0,
+                                marginTop: 0,
                               }}>
                               <ReadMore
                                 numberOfLines={2}
@@ -712,7 +724,7 @@ class ItemList extends Component {
                                 <Text
                                   style={[
                                     styles.textStyle,
-                                    { fontSize: 12, width: '80%' },
+                                    { fontSize: 9, width: '80%' },
                                   ]}>
                                   {item.product_name}
                                 </Text>
@@ -722,10 +734,10 @@ class ItemList extends Component {
                                 style={[
                                   styles.textStyle,
                                   {
-                                    fontSize: 14,
+                                    fontSize: 9,
                                     color: colors.primaryOrange,
-                                    marginTop: 4,
-                                    marginBottom: 4,
+                                    marginTop: 0,
+                                    // marginBottom: 4,
                                   },
                                 ]}>
                                 ${item.product_price}
@@ -736,14 +748,15 @@ class ItemList extends Component {
                             style={{
                               flexDirection: 'row',
                               justifyContent: 'space-between',
-                              margin: 10,
+                              margin: 8,
+                              marginTop: 0,
                             }}>
                             <TouchableOpacity>
                               <Text
                                 style={[
                                   styles.textStyle,
                                   {
-                                    fontSize: 12,
+                                    fontSize: 9,
                                     color: colors.secondaryGray,
                                   },
                                 ]}>
@@ -754,11 +767,11 @@ class ItemList extends Component {
                               onPress={() => this.getItemsFromCart(item)}
                               name="cart"
                               color={colors.primaryOrange}
-                              size={16}
+                              size={14}
                               tyle={[
                                 styles.textStyle,
                                 {
-                                  fontSize: 12,
+                                  fontSize: 9,
                                   color: colors.primaryOrange,
                                 },
                               ]}

@@ -1,5 +1,6 @@
 // import history from '@history.js';
 import Snackbar from 'react-native-snackbar';
+import messaging from '@react-native-firebase/messaging';
 import {
   MOBILE_VERIFICATION,
   MOBILE_VERIFICATION_SUCCESS,
@@ -54,7 +55,7 @@ export const sendMobileVerification = payload => async dispatch => {
         // asyncStorage.setItem('verification_code', res.data);
         // return data.message
       } else {
-        dispatch({ type: MOBILE_VERIFICATION_FAILURE, payload: data });
+        dispatch({ type: MOBILE_VERIFICATION_FAILURE, payload: res.data });
         // return data.message
       }
     })
@@ -81,8 +82,8 @@ export const verifyMobileVerification = payload => async dispatch => {
     await AppService.verifyMobileVerification(mobile_number, verification_code)
       .then(res => {
         console.log('code Verification: ', res);
-        const { data } = res.data;
-        if (res.data.status) {
+        const { data } = res;
+        if (data.status == 'approved') {
           // verifyUser(mobile_number);
           dispatch({ type: CODE_VERIFICATION_SUCCESS, payload: data });
           // asyncStorage.setItem(data.data.mobile_number);
@@ -123,8 +124,14 @@ export const verifyUser = data => async dispatch => {
           // let api_key = data[0].api_key;
           // let mobile_num = data[0].mobile_number;
           // let user_type = data[0].user_type;
-          let user_data = data[0];
-          dispatch({ type: LOGIN_SUCCESS, payload: data[0] });
+          const user_data = data[0];
+          // debugger;
+          messaging().subscribeToTopic('ride-accepted-' + user_data._id);
+          messaging().subscribeToTopic('ride-started-' + user_data._id);
+          messaging().subscribeToTopic('ride-ended-' + user_data._id);
+          messaging().subscribeToTopic('ride-usercancelled-' + user_data._id);
+          messaging().subscribeToTopic('driver-location-ride-' + user_data._id);
+          dispatch({ type: LOGIN_SUCCESS, payload: user_data });
           // asyncStorage.setItem('api_key', api_key);
           // asyncStorage.setItem('mobile_number', mobile_num);
           // asyncStorage.setItem('user_type', user_type);
@@ -134,13 +141,22 @@ export const verifyUser = data => async dispatch => {
         }
       })
       .catch(error => {
-        console.log('error: ', error);
-        console.log('error.response: ', error.response);
-        // this.setState({ loading: false });
-        Snackbar.show({
-          text: error.response.data.message,
-          duration: Snackbar.LENGTH_LONG,
-        });
+        const errorMessage = error.response.data.message;
+        console.log(
+          'api result: ',
+          error.response.data,
+          ' errorMessage: ',
+          errorMessage,
+        );
+        if (error.response.data.status == false) {
+          dispatch({
+            type: LOGIN_FAILURE,
+            errorMessage,
+            payload: error.response.data,
+          });
+          // return error.response.data;
+        }
+        // console.log(error);
       });
   } catch (error) {
     let errorMessage = error.response.data.message;
@@ -171,11 +187,16 @@ export const registerUser = payload => async dispatch => {
         if (res.data.status) {
           // asyncStorage.setItem(data.data.mobile_number);
           dispatch({ type: REGISTER_SUCCESS, payload: data });
-          // let api_key = data[0].api_key;
-          let mobile_num = data[0].mobile_number;
-          // let user_type = data[0].user_type;
-          let user_data = data[0];
-          dispatch({ type: LOGIN_SUCCESS, payload: data[0] });
+          // const api_key = data[0].api_key;
+          const mobile_num = data.mobile_number;
+          // const user_type = data[0].user_type;
+          const user_data = data;
+          messaging().subscribeToTopic('ride-accepted-' + user_data._id);
+          messaging().subscribeToTopic('ride-started-' + user_data._id);
+          messaging().subscribeToTopic('ride-ended-' + user_data._id);
+          messaging().subscribeToTopic('ride-usercancelled-' + user_data._id);
+          messaging().subscribeToTopic('driver-location-ride-' + user_data._id);
+          dispatch({ type: LOGIN_SUCCESS, payload: user_data });
           // asyncStorage.setItem('api_key', api_key);
           asyncStorage.setItem('mobile_number', mobile_num);
           // asyncStorage.setItem('user_type', user_type);

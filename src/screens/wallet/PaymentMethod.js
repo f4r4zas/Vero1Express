@@ -434,7 +434,6 @@ export default class PaymentMethod extends Component {
                                 //   : 'Credit Card Number'
                               }
                               placeholderTextColor="#7892ab"
-                              maxLength={16}
                               onChangeText={text =>
                                 this.setState({
                                   creditCard: text,
@@ -459,7 +458,6 @@ export default class PaymentMethod extends Component {
                                   //   ? `${this.state.lastFour}`
                                   //   : 'Exp Month'
                                 }
-                                placeholderTextColor="#7892ab"
                                 placeholderTextColor="#7892ab"
                                 onChangeText={text => {
                                   if (parseInt(text) > 12)
@@ -489,7 +487,6 @@ export default class PaymentMethod extends Component {
                                   //   ? `${this.state.lastFour}`
                                   //   : 'Exp Year'
                                 }
-                                placeholderTextColor="#7892ab"
                                 placeholderTextColor="#7892ab"
                                 onChangeText={text =>
                                   this.setState({
@@ -570,7 +567,6 @@ export default class PaymentMethod extends Component {
                             maxLength={4}
                             keyboardType="phone-pad"
                             placeholder="Enter Amount"
-                            placeholderTextColor="#7892ab"
                             placeholderTextColor="#7892ab"
                             onChangeText={text =>
                               this.setState({

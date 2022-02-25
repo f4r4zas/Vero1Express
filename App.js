@@ -1,8 +1,9 @@
 import React from 'react';
-import {NavigationContainer} from '@react-navigation/native';
-import {createStackNavigator} from '@react-navigation/stack';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
 import Splash from './src/screens/splash/Splash';
 import AuthNavigation from './src/AuthNavigation/AuthNavigation';
+
 const Stack = createStackNavigator();
 class App extends React.Component {
   render() {
@@ -12,12 +13,12 @@ class App extends React.Component {
           <Stack.Screen
             name="Splash"
             component={Splash}
-            options={{headerShown: false, animationTypeForReplace: 'pop'}}
+            options={{ headerShown: false, animationTypeForReplace: 'pop' }}
           />
           <Stack.Screen
             name="AuthNavigation"
             component={AuthNavigation}
-            options={{headerShown: false}}
+            options={{ headerShown: false }}
           />
         </Stack.Navigator>
       </NavigationContainer>
