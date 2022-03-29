@@ -35,6 +35,7 @@ const requestUrls = {
   uploadImage: `${serverUrl}/image`,
   driverInfo: `${serverUrl}/purchase`,
   notifications: `${serverUrl}/notification`,
+  transactionHistory: `${serverUrl}/driver/transaction-history`,
 
   //Logout Controller
   // logOut: `${serverUrl}/logout`,

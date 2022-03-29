@@ -48,11 +48,13 @@ export class Wallet extends Component {
       modalRef: '',
       addAmount: false,
       user_api: '',
+      transactionHistory: '',
     };
   }
 
   async componentDidMount() {
     this.getCustomerWallet();
+    this.getTransactionHistory();
   }
   getCustomerWallet = async () => {
     // this.refs.modal1.open();
@@ -95,6 +97,31 @@ export class Wallet extends Component {
           text: error.response.data.message,
           duration: Snackbar.LENGTH_LONG,
         });
+      });
+  };
+  getTransactionHistory = async () => {
+    AppService.getTransactionHistory()
+      .then(res => {
+        console.log('transaction History Res: ', res);
+        if (res.data.status) {
+          this.setState({
+            transactionHistory: res?.data?.data,
+            loading: false,
+          });
+        } else {
+          let newState = {
+            loading: false,
+          };
+          this.setState(newState);
+          // Snackbar.show({
+          //   text: res.data.message,
+          //   duration: Snackbar.LENGTH_LONG,
+          // });
+        }
+      })
+      .catch(err => {
+        console.log(err);
+        console.log(err.response);
       });
   };
   renderUri(itemImage) {
@@ -171,8 +198,8 @@ export class Wallet extends Component {
     }
   };
   render() {
-    console.log('this.state.dataWallet.cards: ', this.props);
-    console.log('this.state.dataWallet.cards: ', this.state.createWallet);
+    // console.log('this.state.dataWallet.cards: ', this.props);
+    // console.log('this.state.dataWallet.cards: ', this.state.createWallet);
     if (this.state.createWallet) {
       return (
         <>
@@ -309,148 +336,166 @@ export class Wallet extends Component {
                 <ScrollView style={{ height: '45%' }}>
                   {
                     this.state.activeTab == 0 ? (
-                      <>
-                        <View style={styles.walletCard}>
-                          <View style={{ height: 90 }}>
-                            <Image
-                              resizeMode={'center'}
-                              source={require('../../assets/cvs.png')}
-                              // source={{
-                              //   uri:
-                              //     'http://157.230.183.30:3000/' +
-                              //     item.store_logo,
-                              // }}
-                              style={{ height: 100, width: 100 }}
-                            />
-                          </View>
-                          <View style={{ justifyContent: 'center' }}>
-                            <View
-                              style={{
-                                flexDirection: 'row',
-                                // justifyContent: 'space-around',
-                              }}>
-                              <Text
-                                style={[
-                                  styles.textStyle,
-                                  { fontSize: 14, width: '60%' },
-                                ]}>
-                                Electician fair
-                              </Text>
-                              <Text
-                                style={[styles.textStyle, { fontSize: 14 }]}>
-                                $120.25
-                              </Text>
-                            </View>
-                            <View
-                              style={{
-                                flexDirection: 'row',
-                              }}>
-                              <Text
-                                style={[
-                                  styles.textStyle,
-                                  {
-                                    fontSize: 10,
-                                    color: colors.secondaryGray,
-                                    width: '71%',
-                                  },
-                                ]}>
-                                <Entypo
-                                  name="location-pin"
-                                  color={colors.primaryOrange}
-                                  size={10}
+                      this.state.transactionHistory ? (
+                        this.state.transactionHistory?.map((val, index) => (
+                          <>
+                            <View style={styles.walletCard}>
+                              {/* <View style={{ height: 90 }}>
+                                <Image
+                                  resizeMode={'center'}
+                                  source={require('../../assets/cvs.png')}
+                                  // source={{
+                                  //   uri:
+                                  //     'http://157.230.183.30:3000/' +
+                                  //     item.store_logo,
+                                  // }}
+                                  style={{ height: 100, width: 100 }}
                                 />
-                                10/10 Garden Road, Street 20
-                              </Text>
-                              <Text
-                                style={[
-                                  styles.textStyle,
-                                  { fontSize: 10, color: 'red' },
-                                ]}>
-                                -$20
-                              </Text>
+                              </View> */}
+                              <View
+                                style={{
+                                  justifyContent: 'center',
+                                  marginLeft: '10%',
+                                }}>
+                                <View
+                                  style={
+                                    {
+                                      // flexDirection: 'row',
+                                      // justifyContent: 'space-around',
+                                    }
+                                  }>
+                                  <Text
+                                    style={[
+                                      styles.textStyle,
+                                      { fontSize: 12 },
+                                    ]}>
+                                    Transaction Id:{' '}
+                                    <Text
+                                      style={[
+                                        styles.textStyle,
+                                        {
+                                          fontSize: 10,
+                                          color: colors.primaryOrange,
+                                        },
+                                      ]}>
+                                      ${val?.transaction_number}
+                                    </Text>
+                                  </Text>
+                                </View>
+                                <View
+                                  style={{
+                                    flexDirection: 'row',
+                                    // justifyContent: 'space-around',
+                                  }}>
+                                  <Text
+                                    style={[
+                                      styles.textStyle,
+                                      { fontSize: 12 },
+                                    ]}>
+                                    Transaction Amount:{' '}
+                                    <Text
+                                      style={[
+                                        styles.textStyle,
+                                        {
+                                          fontSize: 10,
+                                          color: colors.primaryOrange,
+                                        },
+                                      ]}>
+                                      ${val?.amount_charged}
+                                    </Text>
+                                  </Text>
+                                </View>
+                                <View
+                                  style={{
+                                    flexDirection: 'row',
+                                    // justifyContent: 'space-around',
+                                  }}>
+                                  <Text
+                                    style={[
+                                      styles.textStyle,
+                                      { fontSize: 12 },
+                                    ]}>
+                                    Card Charged:{' '}
+                                    <Text
+                                      style={[
+                                        styles.textStyle,
+                                        {
+                                          fontSize: 10,
+                                          color: colors.primaryOrange,
+                                        },
+                                      ]}>
+                                      ${val?.card_charged}
+                                    </Text>
+                                  </Text>
+                                </View>
+                                <View
+                                  style={{
+                                    flexDirection: 'row',
+                                    // justifyContent: 'space-around',
+                                  }}>
+                                  <Text
+                                    style={[
+                                      styles.textStyle,
+                                      { fontSize: 12 },
+                                    ]}>
+                                    Created Date:{' '}
+                                    <Text
+                                      style={[
+                                        styles.textStyle,
+                                        {
+                                          fontSize: 12,
+                                          color: colors.primaryOrange,
+                                        },
+                                      ]}>
+                                      ${val?.created_at}
+                                    </Text>
+                                  </Text>
+                                </View>
+                                {/* <View
+                                  style={{
+                                    flexDirection: 'row',
+                                  }}>
+                                  <Text
+                                    style={[
+                                      styles.textStyle,
+                                      {
+                                        fontSize: 10,
+                                        color: colors.secondaryGray,
+                                        width: '71%',
+                                      },
+                                    ]}>
+                                    <Entypo
+                                      name="location-pin"
+                                      color={colors.primaryOrange}
+                                      size={10}
+                                    />
+                                    10/10 Garden Road, Street 20
+                                  </Text>
+                                  <Text
+                                    style={[
+                                      styles.textStyle,
+                                      { fontSize: 10, color: 'red' },
+                                    ]}>
+                                    -$20
+                                  </Text>
+                                </View>
+                                <View style={{ marginTop: '5%' }}>
+                                  <Text
+                                    style={[
+                                      styles.textStyle,
+                                      {
+                                        fontSize: 10,
+                                        color: colors.secondaryGray,
+                                      },
+                                    ]}>
+                                    {val?.created_at}
+                                  </Text>
+                                </View> */}
+                              </View>
                             </View>
-                            <View style={{ marginTop: '5%' }}>
-                              <Text
-                                style={[
-                                  styles.textStyle,
-                                  { fontSize: 10, color: colors.secondaryGray },
-                                ]}>
-                                Dec 17, 08:57 PM
-                              </Text>
-                            </View>
-                          </View>
-                        </View>
-                        <View style={styles.walletCard}>
-                          <View style={{ height: 90 }}>
-                            <Image
-                              resizeMode={'center'}
-                              source={require('../../assets/cvs.png')}
-                              // source={{
-                              //   uri:
-                              //     'http://157.230.183.30:3000/' +
-                              //     item.store_logo,
-                              // }}
-                              style={{ height: 100, width: 100 }}
-                            />
-                          </View>
-                          <View style={{ justifyContent: 'center' }}>
-                            <View
-                              style={{
-                                flexDirection: 'row',
-                                // justifyContent: 'space-around',
-                              }}>
-                              <Text
-                                style={[
-                                  styles.textStyle,
-                                  { fontSize: 14, width: '60%' },
-                                ]}>
-                                Electician fair
-                              </Text>
-                              <Text
-                                style={[styles.textStyle, { fontSize: 14 }]}>
-                                $120.25
-                              </Text>
-                            </View>
-                            <View
-                              style={{
-                                flexDirection: 'row',
-                              }}>
-                              <Text
-                                style={[
-                                  styles.textStyle,
-                                  {
-                                    fontSize: 10,
-                                    color: colors.secondaryGray,
-                                    width: '71%',
-                                  },
-                                ]}>
-                                <Entypo
-                                  name="location-pin"
-                                  color={colors.primaryOrange}
-                                  size={10}
-                                />
-                                10/10 Garden Road, Street 20
-                              </Text>
-                              <Text
-                                style={[
-                                  styles.textStyle,
-                                  { fontSize: 10, color: 'red' },
-                                ]}>
-                                -$20
-                              </Text>
-                            </View>
-                            <View style={{ marginTop: '5%' }}>
-                              <Text
-                                style={[
-                                  styles.textStyle,
-                                  { fontSize: 10, color: colors.secondaryGray },
-                                ]}>
-                                Dec 17, 08:57 PM
-                              </Text>
-                            </View>
-                          </View>
-                        </View>
-                      </>
+                          </>
+                        ))
+                      ) : null
                     ) : (
                       <View>
                         {this.state.cards.length > 0 ? (

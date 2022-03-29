@@ -437,6 +437,48 @@ class AppService extends HttpServices {
     //   data,
     // );
   }
+
+  static async getTransactionHistory() {
+    let headers = '';
+
+    let api_key = await userApiKey();
+    // console.log('headerInfo.userApiKey: ', api_key);
+    let url = requestUrls['transactionHistory'];
+    // const { _id } = payload;
+    // console.log(_id);
+    // url += `/${_id}`;
+    return this.get(
+      // requestUrls['driverInfo'],
+      url,
+      (headers = { Authorization: api_key }),
+    );
+    // params.append(_id);
+    // const data = qs.stringify({ _id: _id });
+    // return this.post(
+    //   requestUrls['driverInfo'],
+    //   (headers = {
+    //     Authorization: headerInfo.adminKey,
+    //     'Content-Type': headerInfo.contentType,
+    //   }),
+    //   data,
+    // );
+  }
+
+  static async calculateFair(payload) {
+    let headers = '';
+
+    let api_key = await userApiKey();
+    console.log('headerInfo.userApiKey: ', api_key);
+    const url = `${requestUrls['driverInfo']}/${payload}/calculate-fair-v2`;
+    return this.post(
+      url,
+      (headers = {
+        Authorization: api_key,
+        'Content-Type': headerInfo.cartContentType,
+      }),
+      payload,
+    );
+  }
 }
 
 export default AppService;
